@@ -10,8 +10,8 @@ import { Toaster } from "react-hot-toast";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Memora",
-  description: "Memora makes memmorization easy with flashcard",
+  title: "Dentistry",
+  description: "Make appointments with the best dentists in the world.",
 };
 
 export default function RootLayout({
