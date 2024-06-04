@@ -5,9 +5,9 @@ import React from "react";
 
 function HeroSection() {
   return (
-    <div className="w-full flex flex-row justify-center bg-cover bg-[url(https://cdn.medpro.vn/prod-partner/1fb4b491-d889-4e93-9ae7-8d237dd4fb8e-hero.webp)]">
+    <div className="w-full flex flex-row justify-center bg-cover bg-bottom bg-[url(https://cdn.medpro.vn/prod-partner/1fb4b491-d889-4e93-9ae7-8d237dd4fb8e-hero.webp)]">
       <section className="container py-16 ">
-        <div className="flex flex-col items-center mb-16">
+        <div className="flex flex-col items-center mb-32">
           <Typography
             headingElement="h3"
             headingStyle={"h4"}

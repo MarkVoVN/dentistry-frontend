@@ -46,10 +46,10 @@ function Header({
         />
       </Link>
       <NavigationMenu>
-        <NavigationMenuList className="gap-4 pt-2">
+        <NavigationMenuList className="gap-4 pt- pr-2 text-secondary">
           <NavigationMenuItem>
             <NavigationMenuTrigger>Book Appointment</NavigationMenuTrigger>
-            <NavigationMenuContent className="">
+            <NavigationMenuContent className="text-secondary hover:text-secondary">
               <ul className="grid gap-3 p-3 py-5 md:w-[300px]  ">
                 <ListItem href="/clinic" title="Clinics">
                   View available clinics

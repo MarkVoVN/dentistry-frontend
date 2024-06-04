@@ -7,8 +7,6 @@ import { useRouter } from "next/navigation";
 import React from "react";
 
 function SearchBar() {
-  // const searchInputRef = React.useRef<HTMLInputElement>(null);
-
   const router = useRouter();
   const value = useGlobalStore((s) => s.searchInputValue);
   const setValue = useGlobalStore((s) => s.setSearchInputValue);
@@ -44,7 +42,6 @@ function SearchBar() {
         onKeyDown={onEnter}
         className={cn(
           "w-full text-neutral-7 focus:outline-none font-light bg-none"
-          // !value && "italic"
         )}
       />
     </div>
