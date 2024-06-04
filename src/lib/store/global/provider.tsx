@@ -31,7 +31,7 @@ export const useGlobalStore = <T,>(selector: (store: GlobalStore) => T): T => {
   const globalStoreContext = useContext(GlobalStoreContext);
 
   if (!globalStoreContext) {
-    throw new Error(`useCounterStore must be use within CounterStoreProvider`);
+    throw new Error(`useGlobalStore must be use within CounterStoreProvider`);
   }
 
   return useStore(globalStoreContext, selector);
