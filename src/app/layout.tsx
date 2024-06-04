@@ -6,6 +6,7 @@ import Header from "@/components/shared/Header";
 import "@/styles/globals.css";
 import QueryProvider from "@/components/provider/QueryProvider";
 import { Toaster } from "react-hot-toast";
+import Footer from "@/components/shared/Footer";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -40,6 +41,7 @@ export default function RootLayout({
         <QueryProvider>
           <Header />
           {children}
+          <Footer />
         </QueryProvider>
       </body>
     </html>
