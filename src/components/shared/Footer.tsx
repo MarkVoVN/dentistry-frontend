@@ -64,7 +64,7 @@ const footerData: { title: string; items: { text: string; url?: string }[] }[] =
 
 export default async function Footer() {
   return (
-    <footer className="main-footer w-full flex justify-center items-center bg-neutral-7">
+    <footer className="main-footer w-full flex justify-center items-center bg-secondary">
       {/* laptop */}
       <div className="container hidden md:flex flex-col justify-between">
         <div className="main-footer--top">

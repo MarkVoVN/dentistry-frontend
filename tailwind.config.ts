@@ -16,6 +16,7 @@ module.exports = {
     },
     fontFamily: {
       "be-vietnam-pro": ["Be Vietnam Pro", "sans-serif"],
+      orbitron: ["Orbitron", "sans-serif"],
     },
     colors: {
       primary: {
@@ -56,16 +57,16 @@ module.exports = {
         // 100: "#f0f7f8",
         // 50: "#f8fbfc",
 
-        DEFAULT: "#f6fafd",
-        900: "#e2eff9",
-        800: "#cce4f5",
-        700: "#b5d8f0",
-        600: "#9bcaeb",
-        500: "#7dbae5",
-        400: "#5aa7de",
-        300: "#2d8fd5",
-        200: "#006fbe",
-        100: "#004170",
+        DEFAULT: "#004170",
+        900: "#006fbe",
+        800: "#2d8fd5",
+        700: "#5aa7de",
+        600: "#7dbae5",
+        500: "#9bcaeb",
+        400: "#b5d8f0",
+        300: "#cce4f5",
+        200: "#e2eff9",
+        100: "#f6fafd",
       },
       error: {
         1: "#FEF8F6",
@@ -75,6 +76,7 @@ module.exports = {
         1: "#d2202f",
         2: "#df5f6a",
         3: "#e6838b",
+        4: "#FF8878",
       },
       discount: "#19b43c",
       link: "#0984e3",

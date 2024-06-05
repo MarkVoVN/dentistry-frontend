@@ -7,8 +7,9 @@ import "@/styles/globals.css";
 import QueryProvider from "@/components/provider/QueryProvider";
 import { Toaster } from "react-hot-toast";
 import Footer from "@/components/shared/Footer";
+import { GlobalStoreProvider } from "@/lib/store/global/provider";
 
-const inter = Inter({ subsets: ["latin"] });
+// const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Dentistry",
@@ -22,7 +23,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={"absolute w-[100vw]"}>
         <Toaster
           position="bottom-right"
           containerStyle={{
@@ -39,9 +40,11 @@ export default function RootLayout({
           reverseOrder={false}
         />
         <QueryProvider>
-          <Header />
-          {children}
-          <Footer />
+          <GlobalStoreProvider>
+            <Header />
+            {children}
+            <Footer />
+          </GlobalStoreProvider>
         </QueryProvider>
       </body>
     </html>
