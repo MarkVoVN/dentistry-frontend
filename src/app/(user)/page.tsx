@@ -2,10 +2,10 @@ import getQueryClient from "@/hooks/getQueryClient";
 import { getTodoList } from "@/lib/api/testAPI";
 import { HydrationBoundary, dehydrate, useQuery } from "@tanstack/react-query";
 import React from "react";
-import TodoSection from "./(homepage)/TodoSection";
-import HeroSection from "./(homepage)/HeroSection";
-import CallToActionSection from "./(homepage)/CallToActionSection";
-import FeatureHighlightSection from "./(homepage)/FeatureHighlight";
+import TodoSection from "./components/TodoSection";
+import HeroSection from "./components/HeroSection";
+import CallToActionSection from "./components/CallToActionSection";
+import FeatureHighlightSection from "./components/FeatureHighlight";
 
 export default async function Home() {
   const queryClient = getQueryClient();
