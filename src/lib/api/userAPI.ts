@@ -9,3 +9,13 @@ export const loginUser = (data: { id: number; title: string | undefined }) => {
     data,
   });
 };
+
+export const refreshToken = async (refreshToken: string) => {
+  return await request({
+    method: "POST",
+    url: `/api/refresh`,
+    data: {
+      refreshToken: refreshToken,
+    },
+  });
+};
