@@ -19,7 +19,7 @@ export const request = async (options) => {
   //   (client.defaults.headers.common.Authorization = `Bearer ${token}`);
 
   const onSuccess = (response) => {
-    return response?.data?.data;
+    return response?.data;
   };
 
   const onError = (error) => {

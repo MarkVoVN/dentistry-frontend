@@ -56,7 +56,7 @@ export function Filter({
 						onChange={(value) => column.setFilterValue(value)}
 						placeholder={` (${column.columnDef.header}) (${column.getFacetedUniqueValues().size
 							})`}
-						className="border shadow rounded text-sm ps-2 py-1"
+						className="w-full border shadow rounded text-sm ps-2 py-1"
 						list={column.id + "list"}
 					/>
 

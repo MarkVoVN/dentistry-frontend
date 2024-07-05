@@ -25,12 +25,15 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import { DataTablePagination } from "../../components/table/data-table-pagination";
+import { DataTablePagination } from "../components/table/data-table-pagination";
 import { DataTableToolbar } from "./data-table-toolbar";
 import { DebouncedInput, Filter } from "./filter";
 
 interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
+  columns: (ColumnDef<TData, TValue> & {
+    show?: boolean;
+    accessorKey?: string;
+  })[];
   data: TData[];
 }
 
@@ -38,9 +41,15 @@ export function DataTable<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
+  let initState: { [x: string]: boolean } = {};
+  columns.map((column) => {
+    if (column.show == false && column.accessorKey) {
+      initState[column.accessorKey] = false;
+    }
+  });
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({});
+    React.useState<VisibilityState>(initState);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
@@ -98,11 +107,12 @@ export function DataTable<TData, TValue>({
                               desc: " 🔽",
                             }[header.column.getIsSorted() as string] ?? null}
                           </div>
-                          {header.column.getCanFilter() ? (
+                          {/* {header.column.getCanFilter() &&
+                          header.column.id == "name" ? (
                             <div>
                               <Filter column={header.column} table={table} />
                             </div>
-                          ) : null}
+                          ) : null} */}
                         </>
                       )}
                     </TableHead>
@@ -134,7 +144,7 @@ export function DataTable<TData, TValue>({
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  Không có sản phẩm.
+                  No Clinic Available
                 </TableCell>
               </TableRow>
             )}
