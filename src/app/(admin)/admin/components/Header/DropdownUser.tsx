@@ -17,7 +17,7 @@ const DropdownUser = () => {
     if (refreshToken != null) {
       localStorage.removeItem("refreshToken");
     }
-    router.push("/authentication/login");
+    router.push("/login");
   };
 
   const trigger = useRef<any>(null);

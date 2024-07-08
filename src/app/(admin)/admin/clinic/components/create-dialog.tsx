@@ -137,7 +137,7 @@ export default function ClinicAddDialog({
       openingHours: defaultValues?.openingHours || "",
       closingHours: defaultValues?.closingHours || "",
       image: defaultValues?.image || "",
-      status: defaultValues?.status || false,
+      status: defaultValues?.status || true,
     },
   });
 
