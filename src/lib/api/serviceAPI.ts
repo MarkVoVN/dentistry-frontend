@@ -52,10 +52,10 @@ export const updateService = (data: ServiceModel) => {
   console.log(data);
   return request({
     method: "PUT",
-    url: `${BASE_URL}`,
-    params: {
-      id: data.serviceID,
-    },
+
+    url: `${BASE_URL}/${data.serviceID}`,
+
+
     data,
   });
 };
