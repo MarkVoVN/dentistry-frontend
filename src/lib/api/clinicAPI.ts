@@ -1,16 +1,17 @@
 import { request } from "../utils/axios.config";
-
-export type ClinicModel = {
-  id?: string;
-  clinicID?: string;
+export type ClinicCreateModel = {
   name: string;
   address: string;
   phoneNumber: string;
   email: string;
-  openingHours: string; // Should be a date-time string
-  closingHours: string; // Should be a date-time string
+  openingHours: string;
+  closingHours: string;
   image: string;
   status: boolean;
+};
+export type ClinicModel = ClinicCreateModel & {
+  id?: string;
+  clinicID: string;
 };
 
 export const fetchClinicList = () => {
@@ -27,7 +28,7 @@ export const getClinicById = (id: string) => {
   });
 };
 
-export const createClinic = (data: ClinicModel) => {
+export const createClinic = (data: ClinicCreateModel) => {
   return request({
     method: "POST",
     url: `/clinic`,
@@ -41,7 +42,7 @@ export const updateClinic = (data: ClinicModel) => {
     method: "PUT",
     url: `/clinic`,
     params: {
-      id: data.id,
+      id: data.clinicID,
     },
     data,
   });

@@ -141,16 +141,6 @@ export default function ClinicUpdateDialog({
     },
   });
 
-  //watch
-  const watchFields = form.watch([
-    "name",
-    "address",
-    "phoneNumber",
-    "email",
-    "openingHours",
-    "closingHours",
-  ]);
-
   const queryClient = useQueryClient();
 
   const {
@@ -179,7 +169,7 @@ export default function ClinicUpdateDialog({
     );
 
     mutate({
-      id: defaultValues?.id || "",
+      clinicID: defaultValues?.id || "",
       name: values.name || "",
       address: values.address || "",
       phoneNumber: values.phoneNumber || "",
