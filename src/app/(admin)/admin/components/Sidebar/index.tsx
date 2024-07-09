@@ -48,6 +48,11 @@ const sidebarStructure: {
         icon: <Hospital />,
       },
       {
+        name: "Clinic Owner",
+        link: "/admin/clinicOwner",
+        icon: <Laptop />,
+      },
+      {
         name: "Services",
         link: "/admin/service",
         icon: <Stethoscope />,
