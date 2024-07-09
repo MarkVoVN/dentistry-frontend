@@ -49,7 +49,7 @@ const sidebarStructure: {
       },
       {
         name: "Services",
-        link: "/admin/services",
+        link: "/admin/service",
         icon: <Stethoscope />,
       },
     ],
