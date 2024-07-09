@@ -11,7 +11,7 @@ const Header = (props: {
   setSidebarOpen: (arg0: boolean) => void;
 }) => {
   return (
-    <header className="sticky top-0 z-[99999] flex w-full bg-shade-1-100%  drop-shadow-sm dark:bg-[#1C2434] dark:drop-shadow-none dark:text-shade-1-100% text-[#1C2434]">
+    <header className="sticky top-0 z-[10000] flex w-full bg-shade-1-100%  drop-shadow-sm dark:bg-[#1C2434] dark:drop-shadow-none dark:text-shade-1-100% text-[#1C2434]">
       <div className="flex flex-grow items-center justify-between px-4 py-2 shadow-2 md:px-6 2xl:px-11">
         <div className="flex items-center gap-2 sm:gap-4 lg:hidden">
           {/* <!-- Hamburger Toggle BTN --> */}
