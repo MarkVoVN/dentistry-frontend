@@ -1,4 +1,5 @@
 import { request } from "../utils/axios.config";
+
 export type ClinicCreateModel = {
   name: string;
   address: string;
@@ -14,6 +15,15 @@ export type ClinicModel = ClinicCreateModel & {
   clinicID: string;
 };
 
+export type ClinicQuery = {
+  OrderBy?: string;
+  SearchTerm?: string;
+  Status?: boolean;
+  PageNumber?: number;
+  PageSize?: number;
+  [key: string]: any;
+};
+
 export const fetchClinicList = () => {
   return request({
     method: "GET",
@@ -24,7 +34,7 @@ export const fetchClinicList = () => {
 export const getClinicById = (id: string) => {
   return request({
     method: "GET",
-    url: `/clinic/${id}`,
+    url: `/clinic/${id}/getById`,
   });
 };
 
@@ -52,5 +62,15 @@ export const deleteClinic = (id: string) => {
   return request({
     method: "DELETE",
     url: `/clinic/${id}`,
+  });
+};
+
+export const queryClinic = (query: ClinicQuery) => {
+  return request({
+    method: "GET",
+    url: `/clinic`,
+    params: {
+      ...query,
+    },
   });
 };

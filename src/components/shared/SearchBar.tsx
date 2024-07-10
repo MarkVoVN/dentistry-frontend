@@ -6,29 +6,25 @@ import { Search } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React from "react";
 
-function SearchBar() {
+type SearchBarProps = {
+  searchInputValue: string | undefined;
+  setSearchInputValue: (value: string) => void;
+  handleOnEnter: () => void;
+};
+
+function SearchBar({
+  searchInputValue,
+  setSearchInputValue,
+  handleOnEnter,
+}: SearchBarProps) {
   const router = useRouter();
-  const value = useGlobalStore((s) => s.searchInputValue);
-  const setValue = useGlobalStore((s) => s.setSearchInputValue);
+  // const value = useGlobalStore((s) => s.searchInputValue);
+  // const setValue = useGlobalStore((s) => s.setSearchInputValue);
 
   const onEnter = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
-      redirectToSearchPage();
+      handleOnEnter();
     }
-  };
-
-  const redirectToSearchPage = () => {
-    if (!value || value.trim().length === 0) return;
-    let queryParams: { [key: string]: string } = {
-      search: value,
-    };
-
-    let stringifiedParams: { [key: string]: string } = {};
-    Object.keys(queryParams).map((key) => {
-      stringifiedParams[key] = JSON.stringify(queryParams[key]);
-    });
-    const query = new URLSearchParams(stringifiedParams);
-    router.push(`/search?${query}`);
   };
 
   return (
@@ -36,9 +32,9 @@ function SearchBar() {
       <Search className="w-6 h-6 text-neutral-7"></Search>
       <input
         type="text"
-        value={value}
+        value={searchInputValue}
         placeholder="Search for a clinic | dentist | service"
-        onChange={(e) => setValue(e.target.value)}
+        onChange={(e) => setSearchInputValue(e.target.value)}
         onKeyDown={onEnter}
         className={cn(
           "w-full text-neutral-7 focus:outline-none font-light bg-none"

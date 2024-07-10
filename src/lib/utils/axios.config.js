@@ -21,7 +21,16 @@ export const request = async (options) => {
     (client.defaults.headers.common.Authorization = `Bearer ${accessToken}`);
 
   const onSuccess = (response) => {
-    return response?.data;
+    // console.log(response);
+    let pagination = {};
+    try {
+      if (response.headers["pagination"]) {
+        pagination = JSON.parse(response.headers["pagination"]);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+    return { data: response?.data, pagination };
   };
 
   const onError = (error) => {

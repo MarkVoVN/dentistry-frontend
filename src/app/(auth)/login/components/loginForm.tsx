@@ -56,7 +56,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
   } = useMutation({
     mutationFn: loginUser,
     onSuccess: (res, variables) => {
-      const { email, token } = res;
+      const { email, token } = res.data;
 
       localStorage.setItem("accessToken", token);
       const decoded = jwt.decode(token) as JwtPayload;

@@ -14,7 +14,7 @@ export default function ClinicManagementPage() {
   const queryClient = useQueryClient();
 
   const {
-    data: clinics,
+    data: req_data,
     isLoading,
     error,
     isError,
@@ -25,14 +25,15 @@ export default function ClinicManagementPage() {
   });
 
   useEffect(() => {
-    if (clinics) {
+    if (isSuccess && req_data) {
+      const { data: clinics, pagination } = req_data;
       clinics.map((clinic: ClinicModel) => {
         clinic.id = clinic.clinicID;
         return clinic;
       });
       setItemList(clinics);
     }
-  }, [isSuccess, clinics]);
+  }, [isSuccess, req_data]);
 
   useErrorNotification({
     isError: isError,

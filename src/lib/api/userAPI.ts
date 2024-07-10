@@ -17,3 +17,28 @@ export const refreshToken = async (refreshToken: string) => {
     },
   });
 };
+
+export type SearchQuery = {
+  OrderBy?: string;
+  SearchTerm?: string;
+  PageNumber?: number;
+  PageSize?: number;
+};
+
+export const getSearchResult = ({
+  OrderBy,
+  SearchTerm,
+  PageNumber,
+  PageSize,
+}: SearchQuery) => {
+  return request({
+    method: "GET",
+    url: `/search`,
+    params: {
+      OrderBy,
+      SearchTerm,
+      PageNumber,
+      PageSize,
+    },
+  });
+};

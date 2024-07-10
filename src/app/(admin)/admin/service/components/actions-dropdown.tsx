@@ -25,6 +25,7 @@ import toast from "react-hot-toast";
 
 import ServiceUpdateDialog from "./update-dialog";
 import { ServiceModel, deleteService } from "@/lib/api/serviceAPI";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export function ActionsDropdown({
   row,
@@ -47,15 +48,27 @@ export function ActionsDropdown({
     clinicID: row.original.clinicID || "",
   };
 
-  const handleDelete = () => {
-    deleteService(row?.original?.id).then((res) => {
-      const { data, error } = res;
-      if (error != null) {
-        toast.error(error);
-        return;
-      }
+  const queryClient = useQueryClient();
+
+  const {
+    mutate,
+    status,
+    error: mutateError,
+  } = useMutation({
+    mutationFn: deleteService,
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["services"] });
+
       toast.success("Delete service " + row.original.name + " thành công!");
-    });
+      setIsOpen(false);
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+
+  const handleDelete = () => {
+    mutate(row?.original?.id);
   };
 
   return (
