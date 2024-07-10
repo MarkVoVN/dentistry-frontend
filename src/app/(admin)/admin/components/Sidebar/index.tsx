@@ -4,6 +4,7 @@ import {
   ComputerIcon,
   Hospital,
   Laptop,
+  CalendarDays,
   Layers,
   LayoutDashboard,
   LayoutDashboardIcon,
@@ -48,9 +49,14 @@ const sidebarStructure: {
         icon: <Hospital />,
       },
       {
-        name: "Clinic Owner",
+        name: "ClinicOwner",
         link: "/admin/clinicOwner",
         icon: <Laptop />,
+      },
+      {
+        name: "Clinic Schedule",
+        link: "/admin/schedule",
+        icon: <CalendarDays />,
       },
       {
         name: "Services",
@@ -143,7 +149,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
               </h3>
 
               <ul className="mb-6 flex flex-col gap-1.5 min-w-[250px]">
-                {sidebarItem.items.map((item) => (
+                {sidebarItem.items.map((item) => (                  
                   <li key={item.name}>
                     <Link
                       href={item.link}

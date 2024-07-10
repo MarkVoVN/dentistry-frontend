@@ -21,16 +21,17 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 
 import toast from "react-hot-toast";
 import { createClinicOwner } from "@/lib/api/clinicOwnerAPI";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useErrorNotification } from "@/hooks/useErrorNotification";
 import "react-time-picker/dist/TimePicker.css";
-import { Select, SelectContent, SelectTrigger } from "@/components/ui/select";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger } from "@/components/ui/select";
+import { ClinicModel, fetchClinicList } from "@/lib/api/clinicAPI";
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -42,7 +43,9 @@ const formSchema = z.object({
   email: z.string().email({
     message: "Email không hợp lệ",
   }),
-  clinicId: z.string().optional(),
+  clinicId: z.string().refine((value) => value !== undefined && value !== null, {
+    message: "Phòng khám không thể để trống",
+  }),
   status: z.boolean().optional(),
 });
 
@@ -73,11 +76,30 @@ export default function ClinicOwnerAddDialog({
   hideTrigger?: boolean;
 }) {
   const [dialogOpen, setDialogOpen] = useState(open);
+  const [clinicList, setClinicList] = useState<ClinicModel[]>([]);
+
+  var selectedId: string | null = null;
+  const selectedClinic = clinicList.find((clinic) => clinic.clinicID === selectedId); 
 
   const setDialogOpenState = (state: boolean) => {
     setDialogOpen(state);
     onOpenChange?.(state);
   };
+
+  const {data: clinics} = useQuery({
+    queryKey: ["clinics"],
+    queryFn: fetchClinicList,
+  });
+
+  useEffect(() => {
+    if (clinics) {
+      clinics.map((clinic: ClinicModel) => {
+        clinic.id = clinic.clinicID;
+        return clinic;
+      });
+      setClinicList(clinics);
+    }
+  }, [clinics]);
 
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
@@ -200,9 +222,25 @@ export default function ClinicOwnerAddDialog({
                       <FormItem className="mt-2">
                         <FormLabel>Phòng khám</FormLabel>
                         <FormControl>
-                          <Select>
-                            <SelectTrigger/>
-                            <SelectContent/>
+                          <Select 
+                            onValueChange={(value) => {
+                              form.setValue("clinicId", value);
+                              selectedId = value;
+                            }}
+                            value={form.watch("clinicId")}  
+                          >
+                            <SelectTrigger>
+                              {selectedClinic ? selectedClinic.name : 'Choose clinic'}
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectGroup>
+                                {clinicList.map((clinic) => (
+                                  <SelectItem  key={clinic.clinicID} value={clinic.clinicID.toString()}>
+                                    {clinic.name}
+                                  </SelectItem>
+                                ))}
+                              </SelectGroup>
+                            </SelectContent>
                           </Select>
                         </FormControl>
                         <FormMessage />
