@@ -124,13 +124,20 @@ export default function ServiceAddDialog({
     title: mutateError?.message,
   });
 
-  const { data, isLoading, error, isError, isSuccess } = useQuery({
+  const {
+    data: req_data,
+    isLoading,
+    error,
+    isError,
+    isSuccess,
+  } = useQuery({
     queryKey: ["clinics"],
     queryFn: fetchClinicList,
   });
 
   useEffect(() => {
-    if (isSuccess && data) {
+    if (isSuccess && req_data) {
+      const { data, pagination } = req_data;
       setClinics(data);
     }
   }, [isSuccess]);

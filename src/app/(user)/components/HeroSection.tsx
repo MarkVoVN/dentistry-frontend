@@ -1,9 +1,29 @@
+"use client";
+
 import SearchBar from "@/components/shared/SearchBar";
 import { Card } from "@/components/ui/card";
 import { Typography } from "@/components/ui/typography";
-import React from "react";
+import { useRouter } from "next/navigation";
+import React, { useState } from "react";
 
 function HeroSection() {
+  const router = useRouter();
+  const [search, setSearch] = useState<string>();
+
+  const redirectToSearchPage = () => {
+    if (!search || search.trim().length === 0) return;
+    let queryParams: { [key: string]: string } = {
+      search: search,
+    };
+
+    let stringifiedParams: { [key: string]: string } = {};
+    Object.keys(queryParams).map((key) => {
+      stringifiedParams[key] = JSON.stringify(queryParams[key]);
+    });
+    const query = new URLSearchParams(stringifiedParams);
+    router.push(`/search?${query}`);
+  };
+
   return (
     <div className="w-full flex flex-row justify-center bg-cover bg-bottom bg-[url(https://cdn.medpro.vn/prod-partner/1fb4b491-d889-4e93-9ae7-8d237dd4fb8e-hero.webp)]">
       <section className="container py-16 ">
@@ -22,7 +42,11 @@ function HeroSection() {
           >
             Connects people to clinics
           </Typography>
-          <SearchBar></SearchBar>
+          <SearchBar
+            searchInputValue={search}
+            setSearchInputValue={setSearch}
+            handleOnEnter={redirectToSearchPage}
+          ></SearchBar>
         </div>
         <div className="flex flex-row justify-center gap-12">
           {heroCardList.map((card, index) => {

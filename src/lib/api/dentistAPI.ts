@@ -1,21 +1,18 @@
 import { request } from "../utils/axios.config";
-import { ClinicModel } from "./clinicAPI";
 
-export type ServiceCreateModel = {
-  clinicID: string;
-  clinicDto?: ClinicModel;
-  name: string;
-  description: string;
-  duration: number;
-  price: number;
-};
-
-export type ServiceModel = ServiceCreateModel & {
+export type DentistModel = {
+  clinicID: number;
+  dentistId: number;
+  email: string;
   id?: string;
-  serviceID: string;
+  image: string;
+  name: string;
+  phoneNumber: string;
+  specialization: string;
+  status?: boolean;
 };
 
-export type ServiceQuery = {
+export type DentistQuery = {
   OrderBy?: string;
   SearchTerm?: string;
   ClinicID?: string;
@@ -23,23 +20,23 @@ export type ServiceQuery = {
   PageSize?: number;
 };
 
-const BASE_URL = "/service";
+const BASE_URL = "/dentist";
 
-export const getServiceList = () => {
+export const getDentistList = () => {
   return request({
     method: "GET",
     url: `${BASE_URL}`,
   });
 };
 
-export const getServiceById = (id: string) => {
+export const getDentistById = (id: string) => {
   return request({
     method: "GET",
     url: `${BASE_URL}/${id}`,
   });
 };
 
-export const createService = (data: ServiceCreateModel) => {
+export const createDentist = (data: DentistModel) => {
   return request({
     method: "POST",
     url: `${BASE_URL}`,
@@ -47,23 +44,23 @@ export const createService = (data: ServiceCreateModel) => {
   });
 };
 
-export const updateService = (data: ServiceModel) => {
+export const updateDentist = (data: DentistModel) => {
   console.log(data);
   return request({
     method: "PUT",
-    url: `${BASE_URL}/${data.serviceID}`,
+    url: `${BASE_URL}/${data.dentistId}`,
     data,
   });
 };
 
-export const deleteService = (id: string) => {
+export const deleteDentist = (id: string) => {
   return request({
     method: "DELETE",
     url: `${BASE_URL}/${id}`,
   });
 };
 
-export const queryService = (query: ServiceQuery) => {
+export const queryDentist = (query: DentistQuery) => {
   return request({
     method: "GET",
     url: `${BASE_URL}`,
