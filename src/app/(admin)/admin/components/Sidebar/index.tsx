@@ -49,7 +49,7 @@ const sidebarStructure: {
         icon: <Hospital />,
       },
       {
-        name: "ClinicOwner",
+        name: "Clinic Owner",
         link: "/admin/clinicOwner",
         icon: <Laptop />,
       },
