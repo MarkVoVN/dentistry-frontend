@@ -14,12 +14,23 @@ export const request = async (options) => {
   //   const { accessToken } = userState;
   //   token = accessToken;
   // }
-  // // Set the authorization header
-  // token !== "" &&
-  //   (client.defaults.headers.common.Authorization = `Bearer ${token}`);
+
+  const accessToken = localStorage.getItem("accessToken");
+  // Set the authorization header
+  accessToken !== "" &&
+    (client.defaults.headers.common.Authorization = `Bearer ${accessToken}`);
 
   const onSuccess = (response) => {
-    return response?.data?.data;
+    // console.log(response);
+    let pagination = {};
+    try {
+      if (response.headers["pagination"]) {
+        pagination = JSON.parse(response.headers["pagination"]);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+    return { data: response?.data, pagination };
   };
 
   const onError = (error) => {
