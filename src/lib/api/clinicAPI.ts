@@ -47,7 +47,6 @@ export const createClinic = (data: ClinicCreateModel) => {
 };
 
 export const updateClinic = (data: ClinicModel) => {
-  console.log(data);
   return request({
     method: "PUT",
     url: `/clinic`,

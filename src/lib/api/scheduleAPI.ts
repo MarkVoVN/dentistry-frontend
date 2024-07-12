@@ -3,6 +3,7 @@ import { request } from "../utils/axios.config";
 export type ScheduleQuery = {
   OrderBy?: string;
   SearchTerm?: string;
+  Date?: string;
   ClinicID?: string;
   ViewType?: "available" | "unavailable" | "";
   PageNumber?: number;
@@ -20,6 +21,7 @@ export type ScheduleModel = {
     | "Friday"
     | "Saturday"
     | "Sunday";
+  appointmentDate: string;
   openingTime: string;
   closingTime: string;
   slotDuration: number;
@@ -51,7 +53,6 @@ export const createSchedule = (data: ScheduleModel) => {
 };
 
 export const updateSchedule = (data: ScheduleModel) => {
-  console.log(data);
   return request({
     method: "PUT",
     url: `${BASE_URL}/${data.scheduleID}`,

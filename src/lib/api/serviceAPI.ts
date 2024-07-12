@@ -48,7 +48,6 @@ export const createService = (data: ServiceCreateModel) => {
 };
 
 export const updateService = (data: ServiceModel) => {
-  console.log(data);
   return request({
     method: "PUT",
     url: `${BASE_URL}/${data.serviceID}`,

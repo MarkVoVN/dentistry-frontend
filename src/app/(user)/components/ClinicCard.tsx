@@ -12,9 +12,7 @@ export default function ClinicCard({
   description,
   logo,
   isLoading = false,
-  onClickBookNow = () => {
-    console.log("Book Now Clicked");
-  },
+  onClickBookNow,
 }: {
   id: number;
   name: string;
@@ -22,7 +20,7 @@ export default function ClinicCard({
   description: string;
   logo?: string;
   isLoading?: boolean;
-  onClickBookNow?: () => void;
+  onClickBookNow: () => void;
 }) {
   return (
     <div className="flex flex-row gap-4 hover:bg-neutral-2 py-4 px-8">

@@ -41,7 +41,6 @@ export function ActionsDropdown({
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isAlertOpen, setIsAlertOpen] = useState<boolean>(false);
 
-  console.log("row", row.original);
   const defaultValues = {
     id: row?.original?.id || "",
     name: row.original.name || "",

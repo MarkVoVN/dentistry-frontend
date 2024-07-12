@@ -21,7 +21,6 @@ export const request = async (options) => {
     (client.defaults.headers.common.Authorization = `Bearer ${accessToken}`);
 
   const onSuccess = (response) => {
-    // console.log(response);
     let pagination = {};
     try {
       if (response.headers["pagination"]) {
