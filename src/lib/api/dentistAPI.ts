@@ -45,7 +45,6 @@ export const createDentist = (data: DentistModel) => {
 };
 
 export const updateDentist = (data: DentistModel) => {
-  console.log(data);
   return request({
     method: "PUT",
     url: `${BASE_URL}/${data.dentistId}`,

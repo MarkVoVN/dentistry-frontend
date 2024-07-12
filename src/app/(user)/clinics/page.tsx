@@ -61,7 +61,6 @@ export default function SearchPage() {
   useEffect(() => {
     if (isSuccess && req_data) {
       const { data, pagination: req_pagination } = req_data;
-      console.log(req_pagination);
 
       setPagination(req_pagination);
       setSearchResult(data);
@@ -134,7 +133,7 @@ export default function SearchPage() {
                     logo={clinic.image}
                     isLoading={isLoading}
                     onClickBookNow={() => {
-                      console.log("clicked");
+                      router.push(`/clinics/${clinic.clinicID}`);
                     }}
                   />
                 ))}

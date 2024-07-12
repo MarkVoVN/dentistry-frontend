@@ -201,7 +201,6 @@ export default function ServiceAddDialog({
                           path: string;
                           value: any;
                         }) => {
-                          console.log(value);
                           form.setValue("clinicID", value);
                           setSelectedClinic(
                             clinics.find((clinic) => clinic.clinicID === value)

@@ -41,7 +41,7 @@ export default function ServiecSelectSection({
   });
 
   const defaultQuery: ServiceQuery & AppointmentSelectionQuery = {
-    ClinicID: appointmentSelectionQuery.clinicId,
+    clinicId: appointmentSelectionQuery.clinicId,
     SearchTerm: "",
     PageNumber: 1,
     PageSize: 5,

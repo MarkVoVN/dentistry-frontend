@@ -10,13 +10,11 @@ const DropdownUser = () => {
 
   const handleLogout = () => {
     const accessToken = localStorage.getItem("accessToken");
-    const refreshToken = localStorage.getItem("refreshToken");
+
     if (accessToken != null) {
       localStorage.removeItem("accessToken");
     }
-    if (refreshToken != null) {
-      localStorage.removeItem("refreshToken");
-    }
+
     router.push("/login");
   };
 

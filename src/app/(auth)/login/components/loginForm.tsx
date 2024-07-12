@@ -23,6 +23,7 @@ import { loginUser } from "@/lib/api/userAPI";
 import { useErrorNotification } from "@/hooks/useErrorNotification";
 
 import jwt, { JwtPayload } from "jsonwebtoken";
+import toast from "react-hot-toast";
 
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
@@ -73,7 +74,8 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
       setIsLoading(false);
     },
     onError: (error) => {
-      console.log(error);
+      toast.error(error.message);
+
       setIsLoading(false);
     },
   });
