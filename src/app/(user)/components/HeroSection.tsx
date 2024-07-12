@@ -8,7 +8,7 @@ import React, { useState } from "react";
 
 function HeroSection() {
   const router = useRouter();
-  const [search, setSearch] = useState<string>();
+  const [search, setSearch] = useState<string>("");
 
   const redirectToSearchPage = () => {
     if (!search || search.trim().length === 0) return;

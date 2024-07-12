@@ -11,11 +11,13 @@ export default function ServiceCard({
   name,
   clinic,
   fee,
+  handleBookNow,
 }: {
   id: number;
   name: string;
   clinic: ClinicModel;
   fee: number;
+  handleBookNow: () => void;
 }) {
   return (
     <div className="flex flex-row hover:bg-neutral-2 gap-4 py-4 px-8">
@@ -56,24 +58,15 @@ export default function ServiceCard({
           </div>
         </div>
       </div>
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col justify-center gap-4">
         <Button
           onClick={() => {
-            console.log("clicked");
+            handleBookNow();
           }}
           variant={"secondary"}
           className="w-full text-shade-1-100% px-4 rounded-full"
         >
           Book Now
-        </Button>
-        <Button
-          onClick={() => {
-            console.log("clicked");
-          }}
-          variant={"outline"}
-          className="w-fit px-4 rounded-full"
-        >
-          View detail
         </Button>
       </div>
     </div>
