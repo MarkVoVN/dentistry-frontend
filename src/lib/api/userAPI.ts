@@ -7,7 +7,6 @@ export const loginUser = (data: { username: string; password: string }) => {
     data,
   });
 };
-
 export const refreshToken = async (refreshToken: string) => {
   return await request({
     method: "POST",
