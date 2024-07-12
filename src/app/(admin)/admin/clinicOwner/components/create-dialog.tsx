@@ -30,8 +30,8 @@ import { createClinicOwner } from "@/lib/api/clinicOwnerAPI";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useErrorNotification } from "@/hooks/useErrorNotification";
 import "react-time-picker/dist/TimePicker.css";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger } from "@/components/ui/select";
 import { ClinicModel, fetchClinicList } from "@/lib/api/clinicAPI";
+import { MyInputSelect } from "@/components/myinput";
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -43,9 +43,7 @@ const formSchema = z.object({
   email: z.string().email({
     message: "Email không hợp lệ",
   }),
-  clinicId: z.string().refine((value) => value !== undefined && value !== null, {
-    message: "Phòng khám không thể để trống",
-  }),
+  clinicID: z.number(),
   status: z.boolean().optional(),
 });
 
@@ -77,29 +75,28 @@ export default function ClinicOwnerAddDialog({
 }) {
   const [dialogOpen, setDialogOpen] = useState(open);
   const [clinicList, setClinicList] = useState<ClinicModel[]>([]);
-
-  var selectedId: string | null = null;
-  const selectedClinic = clinicList.find((clinic) => clinic.clinicID === selectedId); 
+  const [selectedClinic, setSelectedClinic] = useState<ClinicModel>();
 
   const setDialogOpenState = (state: boolean) => {
     setDialogOpen(state);
     onOpenChange?.(state);
   };
 
-  const {data: clinics} = useQuery({
+  const {data: clinics, isLoading, error, isError, isSuccess} = useQuery({
     queryKey: ["clinics"],
     queryFn: fetchClinicList,
   });
 
   useEffect(() => {
-    if (clinics) {
-      clinics.map((clinic: ClinicModel) => {
-        clinic.id = clinic.clinicID;
-        return clinic;
-      });
+    if (isSuccess && clinics) {
       setClinicList(clinics);
     }
-  }, [clinics]);
+  }, [isSuccess]);
+
+  useErrorNotification({
+    isError,
+    title: error?.message,
+  });
 
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
@@ -108,7 +105,6 @@ export default function ClinicOwnerAddDialog({
       name: defaultValues?.name || "",
       phoneNumber: defaultValues?.phoneNumber || "",
       email: defaultValues?.email || "",
-      clinicId: defaultValues?.clinicId || "",
       status: defaultValues?.status || true,
     },
   });
@@ -118,7 +114,6 @@ export default function ClinicOwnerAddDialog({
     "name",
     "phoneNumber",
     "email",
-    "clinicId",
   ]);
 
   const queryClient = useQueryClient();
@@ -149,7 +144,7 @@ export default function ClinicOwnerAddDialog({
       phoneNumber: values.phoneNumber || "",
       email: values.email || "",
       status: values.status || false,
-      clinicID: values.clinicId || ""
+      clinicID: (values.clinicID || 0).toString(),
     });
   }
 
@@ -217,32 +212,36 @@ export default function ClinicOwnerAddDialog({
                   {/* TODO: select clinic */}
                   <FormField
                     control={form.control}
-                    name="clinicId"
+                    name="clinicID"
                     render={({ field }) => (
-                      <FormItem className="mt-2">
-                        <FormLabel>Phòng khám</FormLabel>
-                        <FormControl>
-                          <Select 
-                            onValueChange={(value) => {
-                              form.setValue("clinicId", value);
-                              selectedId = value;
-                            }}
-                            value={form.watch("clinicId")}  
-                          >
-                            <SelectTrigger>
-                              {selectedClinic ? selectedClinic.name : 'Choose clinic'}
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectGroup>
-                                {clinicList.map((clinic) => (
-                                  <SelectItem  key={clinic.clinicID} value={clinic.clinicID.toString()}>
-                                    {clinic.name}
-                                  </SelectItem>
-                                ))}
-                              </SelectGroup>
-                            </SelectContent>
-                          </Select>
-                        </FormControl>
+                      <FormItem className="mt-4">
+                        {/* <FormLabel>Clinic</FormLabel> */}
+                        <MyInputSelect
+                          props={{
+                            path: "clinicID",
+                            value: selectedClinic?.clinicID,
+                            valueDisplay: selectedClinic?.name,
+                            placeholderText: "Select Clinic",
+                            label: "Clinic",
+                            items: clinicList?.map((clinic: any) => ({
+                              value: clinic.clinicID,
+                              text: clinic.name,
+                            })),
+                          }}
+                          updateFormData={({
+                            path,
+                            value,
+                          }: {
+                            path: string;
+                            value: any;
+                          }) => {
+                            console.log(value);
+                            form.setValue("clinicID", value);
+                            setSelectedClinic(
+                              clinicList.find((clinic) => clinic.clinicID === value)
+                            );
+                          }}
+                        />
                         <FormMessage />
                       </FormItem>
                     )}
