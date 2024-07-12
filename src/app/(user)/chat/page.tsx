@@ -5,8 +5,10 @@ import "./ChatComponent.css";
 import ChatSearch from "./chatSearch";
 import {
   MessageModel,
+  ReceiverModel,
   createMessage,
   getMessagesById,
+  getReceivers,
 } from "@/lib/api/chatAPI";
 import * as signalR from "@microsoft/signalr";
 import { HubConnection } from "@microsoft/signalr";
@@ -15,7 +17,7 @@ import { Button } from "@/components/ui/button";
 
 import { Input } from "@/components/ui/input";
 import { DentistModel } from "@/lib/api/dentistAPI";
-import { useQuery } from "@tanstack/react-query";
+
 const ChatComponent: React.FC = () => {
   const [newMessage, setNewMessage] = useState<string>("");
   const [messages, setMessages] = useState<MessageModel[]>([]);
@@ -24,26 +26,8 @@ const ChatComponent: React.FC = () => {
   const [receiverId, setReceiverId] = useState("");
   const [open, setOpen] = useState(false);
   const [dentist, setDentist] = useState<DentistModel | null>(null);
-
-  const {
-    data: messages_data,
-    isLoading,
-    error,
-    isError,
-    isSuccess,
-  } = useQuery({
-    queryKey: ["messages", userId],
-    queryFn: () => getMessagesById(userId, receiverId),
-  });
-
-  useEffect(() => {
-    const req = getMessagesById(userId, receiverId);
-    req.then((res) => {
-      setMessages(res.data);
-      console.log(res.data);
-    });
-  }, [userId, receiverId]);
-
+  const [receivers, setReceivers] = useState<ReceiverModel[]>([]);
+  const [receiverName, setReceiverName] = useState("");
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
     if (token) {
@@ -55,6 +39,23 @@ const ChatComponent: React.FC = () => {
       setUserId(userId);
     }
   }, []);
+
+  useEffect(() => {
+    if (!userId) return;
+    const req = getReceivers(userId);
+    req.then((res) => {
+      setReceivers(res.data);
+      console.log(res.data);
+    });
+  }, [userId, receiverId]);
+
+  useEffect(() => {
+    const req = getMessagesById(userId, receiverId);
+    req.then((res) => {
+      setMessages(res.data);
+      console.log(res.data);
+    });
+  }, [userId, receiverId, dentist]);
 
   useEffect(() => {
     const newConnection = new signalR.HubConnectionBuilder()
@@ -96,7 +97,6 @@ const ChatComponent: React.FC = () => {
   }, []);
 
   const sendMessage = async (message: string) => {
-    console.log(receiverId); // Log to see the value of receiverId
     if (!receiverId) {
       console.error("Receiver ID is not set!");
       return;
@@ -123,6 +123,11 @@ const ChatComponent: React.FC = () => {
     setNewMessage("");
   };
 
+  const handleSetReceiver = (id: string, name: string) => {
+    setReceiverName(name);
+    setReceiverId(id);
+  };
+
   return (
     <>
       <ChatSearch
@@ -131,57 +136,85 @@ const ChatComponent: React.FC = () => {
         setOpen={setOpen}
         setDentist={setDentist}
       />
-      <div className="flex flex-col h-[calc(100vh-64px)] container mx-auto">
-        <header className="flex items-center justify-between px-4 py-2 border-b">
-          {dentist && <h1 className="text-lg font-semibold">{dentist.name}</h1>}
-          {!dentist && <h1 className="text-lg font-semibold">Chat Room</h1>}
-          <Button variant="outline" size="sm">
-            Leave Chat
-          </Button>
-        </header>
-        <main className="flex-1 overflow-y-auto p-4 space-y-4">
-          {messages.map((message, index) => {
-            return (
-              <div
-                key={index}
-                className={
-                  message.senderID === userId
-                    ? "flex items-end justify-end space-x-2"
-                    : "flex items-end space-x-2"
-                }
-              >
+      <div className="flex h-[calc(100vh-64px)] container mx-auto">
+        {/* Left Column: List of users */}
+        <aside className="w-1/4 border-r ">
+          <h2 className="text-lg font-semibold mt-2">Messages</h2>
+          <ul className="space-y-0">
+            {receivers.map((user) => (
+              <li key={user.id}>
+                <Button
+                  variant="ghost"
+                  size="lg"
+                  onClick={() => handleSetReceiver(user.id, user.name)}
+                  className="bg-gray-300 w-full"
+                >
+                  {user.name}
+                </Button>
+              </li>
+            ))}
+          </ul>
+        </aside>
+
+        {/* Right Column: Chat window */}
+        <div className="flex flex-col w-3/4">
+          <header className="flex items-center justify-between px-4 py-2 border-b">
+            {dentist ? (
+              <h1 className="text-lg font-semibold">{dentist.name}</h1>
+            ) : receiverName ? (
+              <h1 className="text-lg font-semibold">{receiverName}</h1>
+            ) : (
+              <h1 className="text-lg font-semibold">Message</h1>
+            )}
+
+            <Button variant="outline" size="sm">
+              Leave Chat
+            </Button>
+          </header>
+          <main className="flex-1 overflow-y-auto p-4 space-y-4">
+            {messages.map((message, index) => {
+              return (
                 <div
+                  key={index}
                   className={
                     message.senderID === userId
-                      ? "p-2 rounded-lg bg-secondary-900 dark:bg-gray-800"
-                      : "p-2 rounded-lg bg-neutral-8 dark:bg-gray-700"
+                      ? "flex items-end justify-end space-x-2"
+                      : "flex items-end space-x-2"
                   }
                 >
-                  <p className="text-sm text-secondary-100">
-                    {message.messageContent}
-                  </p>
+                  <div
+                    className={
+                      message.senderID === userId
+                        ? "p-2 rounded-lg bg-secondary-900 dark:bg-gray-800"
+                        : "p-2 rounded-lg bg-neutral-8 dark:bg-gray-700"
+                    }
+                  >
+                    <p className="text-sm text-secondary-100">
+                      {message.messageContent}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            );
-          })}
-        </main>
-        <footer className="flex items-center space-x-2 p-2 border-t">
-          <Input
-            className="flex-1"
-            placeholder="Press / to open chat"
-            onChange={(e) => setNewMessage(e.target.value)}
-            disabled={!receiverId}
-            value={newMessage}
-          />
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleSendMessage}
-            disabled={!receiverId || newMessage.length === 0}
-          >
-            Send
-          </Button>
-        </footer>
+              );
+            })}
+          </main>
+          <footer className="flex items-center space-x-2 p-2 border-t">
+            <Input
+              className="flex-1"
+              placeholder="Press / to open chat"
+              onChange={(e) => setNewMessage(e.target.value)}
+              disabled={!receiverId}
+              value={newMessage}
+            />
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleSendMessage}
+              disabled={!receiverId || newMessage.length === 0}
+            >
+              Send
+            </Button>
+          </footer>
+        </div>
       </div>
     </>
   );
