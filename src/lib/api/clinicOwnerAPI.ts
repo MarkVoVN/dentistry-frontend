@@ -1,15 +1,18 @@
 import { request } from "../utils/axios.config";
 import { ClinicModel } from "./clinicAPI";
 
-export type ClinicOwnerModel = {
-  id?: string;
-  ownerID?: number;
+export type ClinicOwnerCreateModel = {
   name: string;
   phoneNumber: string;
   email: string;
   status: boolean;
   clinicID: string;
   clinicDto?: ClinicModel;
+};
+
+export type ClinicOwnerModel = ClinicOwnerCreateModel & {
+  id?: string;
+  ownerID?: number;
 };
 
 export const fetchClinicOwnerList = () => {
@@ -26,7 +29,9 @@ export const getClinicOwnerById = (id: string) => {
   });
 };
 
-export const createClinicOwner = (data: ClinicOwnerModel) => {
+export const createClinicOwner = (data: ClinicOwnerCreateModel) => {
+  console.log(data);
+  
   return request({
     method: "POST",
     url: `/clinicOwner`,

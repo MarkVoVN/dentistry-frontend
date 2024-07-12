@@ -89,7 +89,8 @@ export default function ClinicOwnerAddDialog({
 
   useEffect(() => {
     if (isSuccess && clinics) {
-      setClinicList(clinics);
+      const { data, pagination } = clinics;
+      setClinicList(data);
     }
   }, [isSuccess]);
 
@@ -126,7 +127,6 @@ export default function ClinicOwnerAddDialog({
     mutationFn: createClinicOwner,
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["clinicOwners"] });
-
       toast.success("Tạo nhân viên " + variables.name + " thành công!");
 
       setDialogOpenState(false);
@@ -139,6 +139,8 @@ export default function ClinicOwnerAddDialog({
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    console.log(values);
+
     mutate({
       name: values.name || "",
       phoneNumber: values.phoneNumber || "",
@@ -235,7 +237,6 @@ export default function ClinicOwnerAddDialog({
                             path: string;
                             value: any;
                           }) => {
-                            console.log(value);
                             form.setValue("clinicID", value);
                             setSelectedClinic(
                               clinicList.find((clinic) => clinic.clinicID === value)

@@ -14,7 +14,7 @@ export default function ClinicOwnerManagementPage() {
   const queryClient = useQueryClient();
 
   const {
-    data: clinicOwners,
+    data: req_data,
     isLoading,
     error,
     isError,
@@ -25,15 +25,16 @@ export default function ClinicOwnerManagementPage() {
   });
 
   useEffect(() => {
-    if (clinicOwners) {
-      clinicOwners.map((clinic: ClinicOwnerModel) => {
-        clinic.id = clinic.clinicID;
-        return clinic;
+    if (isSuccess && req_data) {
+      const { data: clinicOwners, pagination } = req_data;
+      clinicOwners.map((clinicOwner: ClinicOwnerModel) => {
+        clinicOwner.id = clinicOwner.ownerID?.toString();
+        return clinicOwner;
       });
       setItemList(clinicOwners);
     }
-  }, [isSuccess, clinicOwners]);
-
+  }, [isSuccess, req_data]);
+  
   useErrorNotification({
     isError: isError,
     title: error?.message,

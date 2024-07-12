@@ -25,6 +25,7 @@ import toast from "react-hot-toast";
 
 import ClinicOwnerUpdateDialog from "./update-dialog";
 import { ClinicOwnerModel, deleteClinicOwner } from "@/lib/api/clinicOwnerAPI";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export function ActionsDropdown({
   row,
@@ -40,7 +41,6 @@ export function ActionsDropdown({
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isAlertOpen, setIsAlertOpen] = useState<boolean>(false);
 
-  console.log("row", row.original);
   const defaultValues = {
     id: row?.original?.id || "",
     name: row.original.name || "",
@@ -49,16 +49,28 @@ export function ActionsDropdown({
     clinicId: row.original.clinicID || "",
     status: row.original.status || false,
   };
+  
+  const queryClient = useQueryClient();
+
+  const {
+    mutate,
+    status,
+    error: mutateError,
+  } = useMutation({
+    mutationFn: deleteClinicOwner,
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["clinicOwners"] });
+
+      toast.success("Delete clinic owner " + row.original.name + " thành công!");
+      setIsOpen(false);
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
 
   const handleDelete = () => {
-    deleteClinicOwner(row?.original?.id).then((res) => {
-      const { data, error } = res;
-      if (error != null) {
-        toast.error(error);
-        return;
-      }
-      toast.success("Xóa nhân viên " + row.original.name + " thành công!");
-    });
+    mutate(row?.original?.id);
   };
 
   return (
