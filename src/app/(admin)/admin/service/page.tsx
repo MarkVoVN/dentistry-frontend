@@ -14,7 +14,7 @@ export default function ServiceManagementPage() {
   const queryClient = useQueryClient();
 
   const {
-    data: services,
+    data: req_data,
     isLoading,
     error,
     isError,
@@ -22,14 +22,15 @@ export default function ServiceManagementPage() {
   } = useQuery({ queryKey: ["services"], queryFn: getServiceList }); // Adjust queryKey and queryFn as per service API
 
   useEffect(() => {
-    if (isSuccess && services) {
+    if (isSuccess && req_data) {
+      const { data: services, pagination } = req_data;
       services.map((service: ServiceModel) => {
         service.id = service.serviceID;
         return service;
       });
       setItemList(services);
     }
-  }, [isSuccess, services]);
+  }, [isSuccess, req_data]);
 
   useErrorNotification({
     isError,

@@ -98,6 +98,8 @@ export default function ClinicUpdateDialog({
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
 
+  console.log(defaultValues);
+
   const thumbs =
     defaultValues?.image && selectedImages.length == 0
       ? [defaultValues?.image].map((file: any) => (
@@ -163,10 +165,15 @@ export default function ClinicUpdateDialog({
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    const image = await uploadMultiImages(
-      selectedImages,
-      "/clinic/" + defaultValues?.id || values.name
-    );
+    let image = defaultValues?.image;
+    if (selectedImages.length > 0) {
+      image = (
+        await uploadMultiImages(
+          selectedImages,
+          "/clinic/" + defaultValues?.id || values.name
+        )
+      )[0];
+    }
 
     mutate({
       clinicID: defaultValues?.id || "",
@@ -176,7 +183,7 @@ export default function ClinicUpdateDialog({
       email: values.email || "",
       openingHours: convertHHmmToISO(values.openingHours || ""),
       closingHours: convertHHmmToISO(values.closingHours || ""),
-      image: image[0] || "",
+      image: image || "",
       status: values.status || false,
     });
   }

@@ -8,6 +8,7 @@ import QueryProvider from "@/components/provider/QueryProvider";
 import { Toaster } from "react-hot-toast";
 import Footer from "@/components/shared/Footer";
 import { GlobalStoreProvider } from "@/lib/store/global/provider";
+import { Suspense } from "react";
 
 // const inter = Inter({ subsets: ["latin"] });
 
@@ -42,7 +43,7 @@ export default function RootLayout({
         <QueryProvider>
           <GlobalStoreProvider>
             <Header />
-            {children}
+            <Suspense>{children}</Suspense>
             <Footer />
           </GlobalStoreProvider>
         </QueryProvider>

@@ -125,13 +125,20 @@ export default function ServiceUpdateDialog({
     title: mutateError?.message,
   });
 
-  const { data, isLoading, error, isError, isSuccess } = useQuery({
+  const {
+    data: req_data,
+    isLoading,
+    error,
+    isError,
+    isSuccess,
+  } = useQuery({
     queryKey: ["clinics"],
     queryFn: fetchClinicList,
   });
 
   useEffect(() => {
-    if (isSuccess && data) {
+    if (isSuccess && req_data) {
+      const { data, pagination } = req_data;
       setClinics(data);
       setSelectedClinic(
         data.find((clinic: any) => clinic.clinicID === defaultValues?.clinicID)
@@ -168,9 +175,7 @@ export default function ServiceUpdateDialog({
               onSubmit={form.handleSubmit(onSubmit)}
               className="space-y-8 pt-4"
             >
-
               <div className="flex flex-col gap-4">
-
                 <FormField
                   control={form.control}
                   name="clinicID"

@@ -25,6 +25,7 @@ import toast from "react-hot-toast";
 
 import ClinicUpdateDialog from "./update-dialog";
 import { ClinicModel, deleteClinic } from "@/lib/api/clinicAPI";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export function ActionsDropdown({
   row,
@@ -53,15 +54,27 @@ export function ActionsDropdown({
     status: row.original.status || false,
   };
 
-  const handleDelete = () => {
-    deleteClinic(row?.original?.id).then((res) => {
-      const { data, error } = res;
-      if (error != null) {
-        toast.error(error);
-        return;
-      }
+  const queryClient = useQueryClient();
+
+  const {
+    mutate,
+    status,
+    error: mutateError,
+  } = useMutation({
+    mutationFn: deleteClinic,
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["clinics"] });
+
       toast.success("Xóa phòng khám " + row.original.name + " thành công!");
-    });
+      setIsOpen(false);
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+
+  const handleDelete = () => {
+    mutate(row?.original?.id);
   };
 
   return (
