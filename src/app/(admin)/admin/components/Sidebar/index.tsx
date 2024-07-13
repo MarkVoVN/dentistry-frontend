@@ -16,6 +16,7 @@ import {
   StickyNote,
   TagIcon,
   UserIcon,
+  Pill,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -62,6 +63,11 @@ const sidebarStructure: {
         name: "Services",
         link: "/admin/service",
         icon: <Stethoscope />,
+      },
+      {
+        name: "Treatment Plan",
+        link: "/admin/treatmentPlan",
+        icon: <Pill />,
       },
     ],
   },
@@ -149,7 +155,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
               </h3>
 
               <ul className="mb-6 flex flex-col gap-1.5 min-w-[250px]">
-                {sidebarItem.items.map((item) => (                  
+                {sidebarItem.items.map((item) => (
                   <li key={item.name}>
                     <Link
                       href={item.link}

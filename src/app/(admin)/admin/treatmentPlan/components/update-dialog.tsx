@@ -27,7 +27,7 @@ import {
 } from "@/lib/api/treatmentPlanAPI"; // Update with treatment plan API functions
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useErrorNotification } from "@/hooks/useErrorNotification";
-import { getDentistList } from "@/lib/api/dentistAPI";
+import { DentistModel, getDentistList } from "@/lib/api/dentistAPI";
 import { fetchCustomerList } from "@/lib/api/customerAPI";
 import {
   Select,
@@ -37,7 +37,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import _ from "lodash";
+import _, { values } from "lodash";
+import { text } from "stream/consumers";
+import moment from "moment";
 
 const treatmentPlanFormSchema = z.object({
   customerID: z.number(),
@@ -48,7 +50,7 @@ const treatmentPlanFormSchema = z.object({
     message: "Mô tả phải có ít nhất 5 ký tự",
   }),
   nextAppointmentDate: z.string().optional(),
-  status: z.string().min(1, {
+  status: z.string().min(0, {
     message: "Status is required",
   }),
   paymentStatus: z.string().min(1, {
@@ -56,7 +58,7 @@ const treatmentPlanFormSchema = z.object({
   }),
 });
 
-export default function TreatmentPlanUpdateDialog({
+export default function TreatmentPlanAddDialog({
   title = "Add Treatment Plan",
   buttonTitle = "Add",
   description,
@@ -72,7 +74,7 @@ export default function TreatmentPlanUpdateDialog({
   description?: string;
   buttonTitle?: string;
   defaultValues?: {
-    planId: number;
+    planID: number;
     customerID: number;
     dentistID: number;
     startDate: string;
@@ -84,32 +86,25 @@ export default function TreatmentPlanUpdateDialog({
   };
   submitFunction: any;
   open?: boolean;
-  onOpenChange?: Dispatch<SetStateAction<boolean>>;
+  onOpenChange: Dispatch<SetStateAction<boolean>>;
   onSuccess?: any;
   onFail?: any;
   hideTrigger?: boolean;
 }) {
   const [customers, setCustomers] = useState([]);
-  const [dentists, setDentists] = useState([]);
-
-  const [dialogOpen, setDialogOpen] = useState(open);
-
-  const setDialogOpenState = (state: boolean) => {
-    setDialogOpen(state);
-    onOpenChange?.(state);
-  };
+  const [dentists, setDentists] = useState<DentistModel[]>([]);
 
   const form = useForm<z.infer<typeof treatmentPlanFormSchema>>({
     resolver: zodResolver(treatmentPlanFormSchema),
     defaultValues: {
-      customerID: defaultValues?.customerID || 0,
-      dentistID: defaultValues?.dentistID || 0,
-      startDate: defaultValues?.startDate || "",
-      endDate: defaultValues?.endDate || "",
+      customerID: defaultValues?.customerID,
+      dentistID: defaultValues?.dentistID,
+      startDate: defaultValues?.startDate || moment().format("YYYY-MM-DD"),
+      endDate: defaultValues?.endDate,
       description: defaultValues?.description || "",
-      nextAppointmentDate: defaultValues?.nextAppointmentDate || "",
-      status: defaultValues?.status || "",
-      paymentStatus: defaultValues?.paymentStatus || "",
+      nextAppointmentDate: defaultValues?.nextAppointmentDate,
+      status: defaultValues?.status || "In Progress",
+      paymentStatus: defaultValues?.paymentStatus || "Unpaid",
     },
   });
 
@@ -124,7 +119,7 @@ export default function TreatmentPlanUpdateDialog({
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["treatmentPlans"] });
       toast.success("Created treatment plan successfully!");
-      setDialogOpenState(false);
+      onOpenChange(false);
     },
   });
 
@@ -165,26 +160,25 @@ export default function TreatmentPlanUpdateDialog({
 
   async function onSubmit(values: z.infer<typeof treatmentPlanFormSchema>) {
     mutate({
-      planId: defaultValues?.planId || 0,
+      planID: defaultValues?.planID || 0,
       customerID: values.customerID,
       dentistID: values.dentistID,
-      startDate: values.startDate,
-      endDate: values.endDate,
+      startDate: moment(values.startDate).format("YYYY-MM-DD"),
+      endDate: values?.endDate
+        ? moment(values.endDate).format("YYYY-MM-DD")
+        : undefined,
       description: values.description,
-      nextAppointmentDate: values.nextAppointmentDate,
+      nextAppointmentDate: values.nextAppointmentDate
+        ? moment(values.nextAppointmentDate).format("YYYY-MM-DD")
+        : undefined,
       status: values.status,
       paymentStatus: values.paymentStatus,
     });
   }
 
   return (
-    <Dialog open={dialogOpen} onOpenChange={setDialogOpenState}>
-      {!hideTrigger && (
-        <DialogTrigger asChild>
-          <Button variant="outline">{buttonTitle}</Button>
-        </DialogTrigger>
-      )}
-      <DialogContent className="max-h-[90%] overflow-y-scroll lg:overflow-auto">
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-h-[90%] min-w-[50vw] overflow-y-scroll lg:overflow-auto">
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
           {description && <DialogDescription>{description}</DialogDescription>}
@@ -195,132 +189,184 @@ export default function TreatmentPlanUpdateDialog({
               onSubmit={form.handleSubmit(onSubmit)}
               className="space-y-8 pt-4"
             >
-              <div className="flex flex-col gap-2">
-                <FormField
-                  control={form.control}
-                  name="customerID"
-                  render={({ field }) => (
-                    <FormItem className="mt-4">
-                      <Select
-                        onValueChange={(value) =>
-                          form.setValue("customerID", Number(value))
-                        }
-                        defaultValue={field.value.toString()}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select Customer" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {customers.map((customer: any) => (
-                            <SelectItem
-                              key={customer.customerID}
-                              value={customer.customerID.toString()}
-                            >
-                              {customer.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
+              <div className="flex flex-row gap-4">
+                <div className="flex flex-col gap-2 w-1/2">
+                  {customers?.length > 0 && (
+                    <FormField
+                      control={form.control}
+                      name="customerID"
+                      render={({ field }) => (
+                        <FormItem className="mt-4">
+                          <FormLabel>Customer</FormLabel>
+
+                          <Select
+                            onValueChange={(value) =>
+                              form.setValue("customerID", Number(value))
+                            }
+                            defaultValue={field.value?.toString()}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select Customer" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {customers.map((customer: any) => (
+                                <SelectItem
+                                  key={customer.customerID}
+                                  value={customer.customerID.toString()}
+                                >
+                                  {customer.name}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
                   )}
-                />
-                <FormField
-                  control={form.control}
-                  name="dentistID"
-                  render={({ field }) => (
-                    <FormItem className="mt-4">
-                      <Select
-                        onValueChange={(value) =>
-                          form.setValue("dentistID", Number(value))
-                        }
-                        defaultValue={field.value.toString()}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select Dentist" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {dentists.map((dentist: any) => (
-                            <SelectItem
-                              key={dentist.dentistID}
-                              value={dentist.dentistID.toString()}
-                            >
-                              {dentist.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
+                  {dentists.length > 0 && (
+                    <FormField
+                      control={form.control}
+                      name="dentistID"
+                      render={({ field }) => (
+                        <FormItem className="mt-4">
+                          <FormLabel>Dentist</FormLabel>
+                          <Select
+                            onValueChange={(value) =>
+                              form.setValue("dentistID", Number(value))
+                            }
+                            defaultValue={field.value?.toString()}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select Dentist" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {dentists.map((dentist: DentistModel) => (
+                                <SelectItem
+                                  key={dentist.dentistId}
+                                  value={dentist.dentistId.toString()}
+                                >
+                                  {dentist.name}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
                   )}
-                />
-                <FormField
-                  control={form.control}
-                  name="startDate"
-                  render={({ field }) => (
-                    <FormItem className="mt-4">
-                      <FormLabel>Start Date</FormLabel>
-                      <Input type="date" {...field} />
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="endDate"
-                  render={({ field }) => (
-                    <FormItem className="mt-4">
-                      <FormLabel>End Date</FormLabel>
-                      <Input type="date" {...field} />
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="description"
-                  render={({ field }) => (
-                    <FormItem className="mt-4">
-                      <FormLabel>Description</FormLabel>
-                      <Textarea placeholder="Description" {...field} />
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="nextAppointmentDate"
-                  render={({ field }) => (
-                    <FormItem className="mt-4">
-                      <FormLabel>Next Appointment Date</FormLabel>
-                      <Input type="date" {...field} />
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="status"
-                  render={({ field }) => (
-                    <FormItem className="mt-4">
-                      <FormLabel>Status</FormLabel>
-                      <Input placeholder="Status" {...field} />
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="paymentStatus"
-                  render={({ field }) => (
-                    <FormItem className="mt-4">
-                      <FormLabel>Payment Status</FormLabel>
-                      <Input placeholder="Payment Status" {...field} />
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+
+                  <FormField
+                    control={form.control}
+                    name="status"
+                    render={({ field }) => (
+                      <FormItem className="mt-4">
+                        <FormLabel>Status</FormLabel>
+                        <Select
+                          onValueChange={(value) =>
+                            form.setValue("status", value)
+                          }
+                          defaultValue={field.value.toString()}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select status" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {[
+                              { text: "In Progress", value: "In Progress" },
+                              { text: "Completed", value: "Completed" },
+                              { text: "Cancelled", value: "Cancelled" },
+                            ].map(({ text, value }) => (
+                              <SelectItem key={value} value={value}>
+                                {text}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="paymentStatus"
+                    render={({ field }) => (
+                      <FormItem className="mt-4">
+                        <FormLabel>Payment Status</FormLabel>
+                        {/* <Input placeholder="Payment Status" {...field} /> */}
+                        <Select
+                          onValueChange={(value) =>
+                            form.setValue("paymentStatus", value)
+                          }
+                          defaultValue={field.value.toString()}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select Status" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {[
+                              { text: "Unpaid", value: "Unpaid" },
+                              { text: "Paid", value: "Paid" },
+                            ].map(({ text, value }) => (
+                              <SelectItem key={value} value={value}>
+                                {text}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div className="flex flex-col gap-2 w-1/2">
+                  <FormField
+                    control={form.control}
+                    name="startDate"
+                    render={({ field }) => (
+                      <FormItem className="mt-4">
+                        <FormLabel>Start Date</FormLabel>
+                        <Input type="date" {...field} />
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="endDate"
+                    render={({ field }) => (
+                      <FormItem className="mt-4">
+                        <FormLabel>End Date</FormLabel>
+                        <Input type="date" {...field} />
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="nextAppointmentDate"
+                    render={({ field }) => (
+                      <FormItem className="mt-4">
+                        <FormLabel>Next Appointment Date</FormLabel>
+                        <Input type="date" {...field} />
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
               </div>
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem className="mt-4">
+                    <FormLabel>Description</FormLabel>
+                    <Textarea placeholder="Description" {...field} />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <DialogFooter>
                 <Button
                   type="submit"

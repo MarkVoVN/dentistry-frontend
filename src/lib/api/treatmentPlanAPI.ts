@@ -15,7 +15,7 @@ export type TreatmentPlanCreateModel = {
 
 export type TreatmentPlanModel = TreatmentPlanCreateModel & {
   id?: string;
-  planId: number;
+  planID: number;
 };
 
 export type TreatmentPlanQuery = {
@@ -55,7 +55,7 @@ export const createTreatmentPlan = (data: TreatmentPlanCreateModel) => {
 export const updateTreatmentPlan = (data: TreatmentPlanModel) => {
   return request({
     method: "PUT",
-    url: `${BASE_URL}/${data.planId}`,
+    url: `${BASE_URL}/${data.planID}`,
     data,
   });
 };

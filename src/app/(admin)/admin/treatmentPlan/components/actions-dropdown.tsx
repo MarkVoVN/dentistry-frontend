@@ -43,16 +43,18 @@ export function ActionsDropdown({
   const [isAlertOpen, setIsAlertOpen] = useState<boolean>(false);
 
   const defaultValues = {
-    planId: row?.original?.planId,
+    planID: row?.original?.planID,
     customerID: row.original.customerID,
     dentistID: row.original.dentistID,
     startDate: row.original.startDate,
-    endDate: row.original.endDate,
+    endDate: row.original.endDate ?? undefined,
     description: row.original.description,
-    nextAppointmentDate: row.original.nextAppointmentDate,
+    nextAppointmentDate: row.original.nextAppointmentDate ?? undefined,
     status: row.original.status,
     paymentStatus: row.original.paymentStatus,
   };
+
+  console.log(row.original?.planID);
 
   const queryClient = useQueryClient();
 
@@ -66,9 +68,10 @@ export function ActionsDropdown({
       queryClient.invalidateQueries({ queryKey: ["treatmentPlans"] });
 
       toast.success(
-        "Delete treatment plan " + row.original.planId + " thành công!"
+        "Delete treatment plan " + row.original.planID + " thành công!"
       );
       setIsOpen(false);
+      setIsAlertOpen(false);
     },
     onError: (error) => {
       toast.error(error.message);
@@ -76,7 +79,7 @@ export function ActionsDropdown({
   });
 
   const handleDelete = () => {
-    mutate(row?.original?.id);
+    mutate(row?.original?.planID.toString());
   };
 
   return (
@@ -98,6 +101,7 @@ export function ActionsDropdown({
       </DropdownMenuContent>
       <TreatmentPlanUpdateDialog
         title="Update Treatment Plan"
+        buttonTitle="Update Treatment Plan"
         open={isOpen}
         onOpenChange={setIsOpen}
         submitFunction={() => {}}

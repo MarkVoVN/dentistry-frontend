@@ -11,6 +11,7 @@ import {
   getTreatmentPlanList,
   TreatmentPlanModel,
 } from "@/lib/api/treatmentPlanAPI";
+import TreatmentPlanAddDialog from "./components/create-dialog";
 
 export default function ServiceManagementPage() {
   const [itemList, setItemList] = useState<TreatmentPlanModel[]>([]); // Initialize with ServiceModel type
@@ -23,7 +24,7 @@ export default function ServiceManagementPage() {
     error,
     isError,
     isSuccess,
-  } = useQuery({ queryKey: ["treatmentPlan"], queryFn: getTreatmentPlanList }); // Adjust queryKey and queryFn as per service API
+  } = useQuery({ queryKey: ["treatmentPlans"], queryFn: getTreatmentPlanList }); // Adjust queryKey and queryFn as per service API
 
   useEffect(() => {
     if (isSuccess && req_data) {
@@ -55,9 +56,9 @@ export default function ServiceManagementPage() {
           </p>
         </div>
         <div>
-          <ServiceAddDialog
-            title="Add Service"
-            buttonTitle="Add Service"
+          <TreatmentPlanAddDialog
+            title="Add Treatment Plan"
+            buttonTitle="Add Treatment Plan"
             submitFunction={() => {}}
           />
         </div>

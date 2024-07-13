@@ -100,13 +100,13 @@ export default function TreatmentPlanAddDialog({
   const form = useForm<z.infer<typeof treatmentPlanFormSchema>>({
     resolver: zodResolver(treatmentPlanFormSchema),
     defaultValues: {
-      customerID: defaultValues?.customerID || 0,
-      dentistID: defaultValues?.dentistID || 0,
+      customerID: defaultValues?.customerID,
+      dentistID: defaultValues?.dentistID,
       startDate: defaultValues?.startDate || moment().format("YYYY-MM-DD"),
-      endDate: defaultValues?.endDate || "",
+      endDate: defaultValues?.endDate,
       description: defaultValues?.description || "",
-      nextAppointmentDate: defaultValues?.nextAppointmentDate || "",
-      status: defaultValues?.status || "",
+      nextAppointmentDate: defaultValues?.nextAppointmentDate,
+      status: defaultValues?.status || "In Progress",
       paymentStatus: defaultValues?.paymentStatus || "Unpaid",
     },
   });
@@ -166,11 +166,13 @@ export default function TreatmentPlanAddDialog({
       customerID: values.customerID,
       dentistID: values.dentistID,
       startDate: moment(values.startDate).format("YYYY-MM-DD"),
-      endDate: moment(values.endDate).format("YYYY-MM-DD"),
+      endDate: values?.endDate
+        ? moment(values.endDate).format("YYYY-MM-DD")
+        : undefined,
       description: values.description,
-      nextAppointmentDate:
-        values.nextAppointmentDate ??
-        moment(values.nextAppointmentDate).format("YYYY-MM-DD"),
+      nextAppointmentDate: values.nextAppointmentDate
+        ? moment(values.nextAppointmentDate).format("YYYY-MM-DD")
+        : undefined,
       status: values.status,
       paymentStatus: values.paymentStatus,
     });
@@ -183,7 +185,7 @@ export default function TreatmentPlanAddDialog({
           <Button variant="outline">{buttonTitle}</Button>
         </DialogTrigger>
       )}
-      <DialogContent className="max-h-[90%] overflow-y-scroll lg:overflow-auto">
+      <DialogContent className="max-h-[90%] min-w-[50vw] overflow-y-scroll lg:overflow-auto">
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
           {description && <DialogDescription>{description}</DialogDescription>}
@@ -194,63 +196,97 @@ export default function TreatmentPlanAddDialog({
               onSubmit={form.handleSubmit(onSubmit)}
               className="space-y-8 pt-4"
             >
-              <div className="flex flex-col gap-2">
-                {customers?.length > 0 && (
-                  <FormField
-                    control={form.control}
-                    name="customerID"
-                    render={({ field }) => (
-                      <FormItem className="mt-4">
-                        <FormLabel>Customer</FormLabel>
+              <div className="flex flex-row gap-4">
+                <div className="flex flex-col gap-2 w-1/2">
+                  {customers?.length > 0 && (
+                    <FormField
+                      control={form.control}
+                      name="customerID"
+                      render={({ field }) => (
+                        <FormItem className="mt-4">
+                          <FormLabel>Customer</FormLabel>
 
-                        <Select
-                          onValueChange={(value) =>
-                            form.setValue("customerID", Number(value))
-                          }
-                          defaultValue={field.value.toString()}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select Customer" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {customers.map((customer: any) => (
-                              <SelectItem
-                                key={customer.customerID}
-                                value={customer.customerID.toString()}
-                              >
-                                {customer.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                )}
-                {dentists.length > 0 && (
+                          <Select
+                            onValueChange={(value) =>
+                              form.setValue("customerID", Number(value))
+                            }
+                            defaultValue={field.value?.toString()}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select Customer" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {customers.map((customer: any) => (
+                                <SelectItem
+                                  key={customer.customerID}
+                                  value={customer.customerID.toString()}
+                                >
+                                  {customer.name}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  )}
+                  {dentists.length > 0 && (
+                    <FormField
+                      control={form.control}
+                      name="dentistID"
+                      render={({ field }) => (
+                        <FormItem className="mt-4">
+                          <FormLabel>Dentist</FormLabel>
+                          <Select
+                            onValueChange={(value) =>
+                              form.setValue("dentistID", Number(value))
+                            }
+                            defaultValue={field.value?.toString()}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select Dentist" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {dentists.map((dentist: DentistModel) => (
+                                <SelectItem
+                                  key={dentist.dentistId}
+                                  value={dentist.dentistId.toString()}
+                                >
+                                  {dentist.name}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  )}
+
                   <FormField
                     control={form.control}
-                    name="dentistID"
+                    name="status"
                     render={({ field }) => (
                       <FormItem className="mt-4">
-                        <FormLabel>Dentist</FormLabel>
+                        <FormLabel>Status</FormLabel>
                         <Select
                           onValueChange={(value) =>
-                            form.setValue("dentistID", Number(value))
+                            form.setValue("status", value)
                           }
                           defaultValue={field.value.toString()}
                         >
                           <SelectTrigger>
-                            <SelectValue placeholder="Select Dentist" />
+                            <SelectValue placeholder="Select status" />
                           </SelectTrigger>
                           <SelectContent>
-                            {dentists.map((dentist: DentistModel) => (
-                              <SelectItem
-                                key={dentist.dentistId}
-                                value={dentist.dentistId.toString()}
-                              >
-                                {dentist.name}
+                            {[
+                              { text: "In Progress", value: "In Progress" },
+                              { text: "Completed", value: "Completed" },
+                              { text: "Cancelled", value: "Cancelled" },
+                            ].map(({ text, value }) => (
+                              <SelectItem key={value} value={value}>
+                                {text}
                               </SelectItem>
                             ))}
                           </SelectContent>
@@ -259,114 +295,85 @@ export default function TreatmentPlanAddDialog({
                       </FormItem>
                     )}
                   />
-                )}
-                <FormField
-                  control={form.control}
-                  name="startDate"
-                  render={({ field }) => (
-                    <FormItem className="mt-4">
-                      <FormLabel>Start Date</FormLabel>
-                      <Input type="date" {...field} />
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="endDate"
-                  render={({ field }) => (
-                    <FormItem className="mt-4">
-                      <FormLabel>End Date</FormLabel>
-                      <Input type="date" {...field} />
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="description"
-                  render={({ field }) => (
-                    <FormItem className="mt-4">
-                      <FormLabel>Description</FormLabel>
-                      <Textarea placeholder="Description" {...field} />
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="nextAppointmentDate"
-                  render={({ field }) => (
-                    <FormItem className="mt-4">
-                      <FormLabel>Next Appointment Date</FormLabel>
-                      <Input type="date" {...field} />
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                {/* <FormField
-                  control={form.control}
-                  name="status"
-                  render={({ field }) => (
-                    <FormItem className="mt-4">
-                      <FormLabel>Status</FormLabel>
-                      <Input placeholder="Status" {...field} />
-                      <Select
+                  <FormField
+                    control={form.control}
+                    name="paymentStatus"
+                    render={({ field }) => (
+                      <FormItem className="mt-4">
+                        <FormLabel>Payment Status</FormLabel>
+                        {/* <Input placeholder="Payment Status" {...field} /> */}
+                        <Select
                           onValueChange={(value) =>
-                            form.setValue("status", (value))
+                            form.setValue("paymentStatus", value)
                           }
                           defaultValue={field.value.toString()}
                         >
                           <SelectTrigger>
-                            <SelectValue placeholder="Select Customer" />
+                            <SelectValue placeholder="Select Status" />
                           </SelectTrigger>
                           <SelectContent>
-                            {[].map((customer: any) => (
-                              <SelectItem
-                                key={customer.customerID}
-                                value={customer.customerID.toString()}
-                              >
-                                {customer.name}
+                            {[
+                              { text: "Unpaid", value: "Unpaid" },
+                              { text: "Paid", value: "Paid" },
+                            ].map(({ text, value }) => (
+                              <SelectItem key={value} value={value}>
+                                {text}
                               </SelectItem>
                             ))}
                           </SelectContent>
                         </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                /> */}
-                <FormField
-                  control={form.control}
-                  name="paymentStatus"
-                  render={({ field }) => (
-                    <FormItem className="mt-4">
-                      <FormLabel>Payment Status</FormLabel>
-                      {/* <Input placeholder="Payment Status" {...field} /> */}
-                      <Select
-                        onValueChange={(value) =>
-                          form.setValue("paymentStatus", value)
-                        }
-                        defaultValue={field.value.toString()}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select Status" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {[
-                            { text: "Unpaid", value: "Unpaid" },
-                            { text: "Paid", value: "Paid" },
-                          ].map(({ text, value }) => (
-                            <SelectItem key={value} value={value}>
-                              {text}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div className="flex flex-col gap-2 w-1/2">
+                  <FormField
+                    control={form.control}
+                    name="startDate"
+                    render={({ field }) => (
+                      <FormItem className="mt-4">
+                        <FormLabel>Start Date</FormLabel>
+                        <Input type="date" {...field} />
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="endDate"
+                    render={({ field }) => (
+                      <FormItem className="mt-4">
+                        <FormLabel>End Date</FormLabel>
+                        <Input type="date" {...field} />
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="nextAppointmentDate"
+                    render={({ field }) => (
+                      <FormItem className="mt-4">
+                        <FormLabel>Next Appointment Date</FormLabel>
+                        <Input type="date" {...field} />
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
               </div>
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem className="mt-4">
+                    <FormLabel>Description</FormLabel>
+                    <Textarea placeholder="Description" {...field} />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <DialogFooter>
                 <Button
                   type="submit"
