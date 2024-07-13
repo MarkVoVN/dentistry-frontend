@@ -34,7 +34,7 @@ export const fetchClinicList = () => {
 export const getClinicById = (id: string) => {
   return request({
     method: "GET",
-    url: `/clinic/${id}/getById`,
+    url: `/clinic/${id}`,
   });
 };
 
@@ -47,7 +47,6 @@ export const createClinic = (data: ClinicCreateModel) => {
 };
 
 export const updateClinic = (data: ClinicModel) => {
-  console.log(data);
   return request({
     method: "PUT",
     url: `/clinic`,

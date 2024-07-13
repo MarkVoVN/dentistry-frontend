@@ -33,6 +33,7 @@ import ServiceCard, {
 import Image from "next/image";
 import ServiecSelectSection from "./components/ServiceSelectSection";
 import DentistSelectSection from "./components/DentistSelectSection";
+import AppointmentInfoSection from "../../appointments/book/components/AppointmentInfoSection";
 
 export type AppointmentSelectionQuery = {
   clinicId: string;
@@ -114,42 +115,7 @@ export default function SearchPage({ params: { clinicId } }: any) {
       </div>
       <div className="w-full flex flex-row justify-center bg-primary-100 py-12">
         <section className="container flex flex-row justify-center">
-          <section className="w-1/3 flex flex-col gap-6 px-6 ">
-            <div className="flex flex-col bg-shade-1-100% rounded-xl">
-              <div className="flex flex-row justify-between p-6 pb-2">
-                <Typography headingElement="h2" headingStyle={"h4"}>
-                  Clinic
-                </Typography>
-              </div>
-              <div className="flex flex-row gap-4 py-4 px-8">
-                <ImageWithFallbackWithIcon
-                  alt="clinic logo"
-                  src={clinic?.image ?? ""}
-                  width={100}
-                  height={100}
-                  fallbackIconComponent={
-                    <HospitalIcon width={100} height={100} className="p-4" />
-                  }
-                ></ImageWithFallbackWithIcon>
-                <div className="flex flex-col gap-2">
-                  <Typography
-                    headingElement="h5"
-                    headingStyle={"h6"}
-                    className="text-secondary-900 font-bold"
-                  >
-                    {clinic?.name}
-                  </Typography>
-                  <Typography
-                    headingElement="h5"
-                    headingStyle={"p"}
-                    className="text-neutral-7"
-                  >
-                    {clinic?.address}
-                  </Typography>
-                </div>
-              </div>
-            </div>
-          </section>
+          <AppointmentInfoSection defaultClinicId={clinicId} />
           {clinicId && !serviceId && (
             <ServiecSelectSection
               appointmentSelectionQuery={appointmentSelectionQuery}

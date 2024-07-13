@@ -98,8 +98,6 @@ export default function ClinicUpdateDialog({
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
 
-  console.log(defaultValues);
-
   const thumbs =
     defaultValues?.image && selectedImages.length == 0
       ? [defaultValues?.image].map((file: any) => (

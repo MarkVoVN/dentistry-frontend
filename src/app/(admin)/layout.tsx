@@ -32,10 +32,6 @@ export default function RootLayout({
         decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
       const exp = decoded["exp"];
 
-      console.log(decoded);
-      console.log("role", role);
-      console.log("exp", exp);
-
       setLoading(false);
     } catch (err) {
       router.push("/login");

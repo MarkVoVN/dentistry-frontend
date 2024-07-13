@@ -10,11 +10,13 @@ export default function DentistCard({
   name,
   clinic,
   image,
+  handleBookNow,
 }: {
   id: number;
   name: string;
   clinic: ClinicModel;
   image?: string;
+  handleBookNow: () => void;
 }) {
   return (
     <div className="flex flex-col gap-4 min-w-[260px] border-2 border-neutral-3 hover:border-secondary-500 rounded-xl">
@@ -58,7 +60,7 @@ export default function DentistCard({
         </div>
         <Button
           onClick={() => {
-            console.log("clicked");
+            handleBookNow();
           }}
           variant={"outline"}
           className="w-full text-secondary px-4 rounded-full"

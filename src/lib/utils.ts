@@ -63,6 +63,19 @@ export function formatTime(dateTimeStr: string) {
   return `${hours}:${minutes < 10 ? "0" + minutes : minutes}`;
 }
 
+// string -> HH:MM:SS
+export function convertToHHMMSS(timeString: string) {
+  const [hours, minutes, seconds] = timeString.split(':').map(Number);
+  
+  const pad = (num: number) => num.toString().padStart(2, '0');
+  
+  const formattedHours = pad(hours);
+  const formattedMinutes = pad(minutes);
+  const formattedSeconds = pad(seconds);
+  
+  return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
+};
+
 export function convertHHmmToISO(timeString: string) {
   const [hours, minutes] = timeString.split(":").map(Number);
   let date = new Date();
