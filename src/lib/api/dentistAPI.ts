@@ -1,16 +1,28 @@
 import { request } from "../utils/axios.config";
+import _ from "lodash";
 
-export type DentistModel = {
+export type DentistCreateModel = {
   clinicID: number;
-  dentistId: number;
   email: string;
-  id?: string;
   image: string;
+  username: string;
   name: string;
   phoneNumber: string;
   specialization: string;
   status?: boolean;
+  password: string,
 };
+
+export type DentistModel = DentistCreateModel & {
+  id?: string;
+  dentistId: number;
+};
+
+export type DentistUpdateModel = Pick<DentistModel, 'id' | 'name' | 'phoneNumber' | 'email' | 'specialization' | 'status'> & {
+  id?: string;
+  dentistId: number;
+};;
+
 
 export type DentistQuery = {
   OrderBy?: string;
@@ -36,15 +48,16 @@ export const getDentistById = (id: string) => {
   });
 };
 
-export const createDentist = (data: DentistModel) => {
+export const createDentist = (data: DentistCreateModel) => {
   return request({
     method: "POST",
-    url: `${BASE_URL}`,
+    url: `/Account/register-dentist`,
     data,
   });
 };
 
 export const updateDentist = (data: DentistModel) => {
+  console.log("data: ", data)
   return request({
     method: "PUT",
     url: `${BASE_URL}/${data.dentistId}`,
