@@ -36,7 +36,7 @@ export default function RootLayout({
     } catch (err) {
       router.push("/login");
     }
-  }, [router]);
+  }, []);
 
   return (
     <html lang="en">
