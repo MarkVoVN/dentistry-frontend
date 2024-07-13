@@ -3,88 +3,27 @@ import React, { useEffect, useState } from "react";
 
 import "./ChatComponent.css";
 import ChatSearch from "./chatSearch";
-import {
-  MessageModel,
-  ReceiverModel,
-  createMessage,
-  getMessagesById,
-  getReceivers,
-} from "@/lib/api/chatAPI";
-import * as signalR from "@microsoft/signalr";
-import { HubConnection } from "@microsoft/signalr";
-import jwt from "jsonwebtoken";
 import { Button } from "@/components/ui/button";
 
 import { Input } from "@/components/ui/input";
-import { DentistModel } from "@/lib/api/dentistAPI";
+import useSignalRChat from "./chatService";
 
 const ChatComponent: React.FC = () => {
-  const [newMessage, setNewMessage] = useState<string>("");
-  const [messages, setMessages] = useState<MessageModel[]>([]);
-  const [connection, setConnection] = useState<HubConnection | null>(null);
-  const [userId, setUserId] = useState("");
-  const [role, setRole] = useState<string>("");
-  const [receiverId, setReceiverId] = useState("");
   const [open, setOpen] = useState(false);
-  const [dentist, setDentist] = useState<DentistModel | null>(null);
-  const [receivers, setReceivers] = useState<ReceiverModel[]>([]);
-  const [receiverName, setReceiverName] = useState("");
-  useEffect(() => {
-    const token = localStorage.getItem("accessToken");
-    if (token) {
-      const decoded: any = jwt.decode(token);
-      const userId =
-        decoded[
-          "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"
-        ];
-      const role =
-        decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
-      setUserId(userId);
-      setRole(role);
-    }
-  }, []);
-console.log(role);
-  useEffect(() => {
-    if (!userId && !role) return;
-   
-    const req = getReceivers(userId, role);
-    req.then((res) => {
-      setReceivers(res.data);
-      console.log(res.data);
-    });
-  }, [userId, receiverId, role]);
-
-  useEffect(() => {
-    const req = getMessagesById(userId, receiverId);
-    req.then((res) => {
-      setMessages(res.data);
-      console.log(res.data);
-    });
-  }, [userId, receiverId, dentist]);
-
-  useEffect(() => {
-    const newConnection = new signalR.HubConnectionBuilder()
-      .withUrl(`http://localhost:3000/chatHub`)
-      .build();
-
-    setConnection(newConnection);
-  }, []);
-
-  useEffect(() => {
-    if (connection) {
-      connection
-        .start()
-        .then(() => {
-          console.log("SignalR Connected!");
-          connection.on("ReceiveMessage", (message: MessageModel) => {
-            console.log(message);
-            setMessages((currentMessages) => [...currentMessages, message]);
-            console.log("Received Message");
-          });
-        })
-        .catch((error) => console.error("SignalR Connection Error:", error));
-    }
-  }, [connection]);
+  const {
+    userId,
+    dentist,
+    setDentist,
+    receivers,
+    messages,
+    receiverId,
+    setReceiverId,
+    handleSetReceiver,
+    receiverName,
+    handleSendMessage,
+    setNewMessage,
+    newMessage,
+  } = useSignalRChat();
 
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
@@ -101,38 +40,7 @@ console.log(role);
     };
   }, []);
 
-  const sendMessage = async (message: string) => {
-    if (!receiverId) {
-      console.error("Receiver ID is not set!");
-      return;
-    }
-    const messageDto = {
-      senderID: userId,
-      receiverID: receiverId,
-      messageContent: message,
-      timestamp: new Date().toISOString(),
-    };
-    try {
-      if (connection && message.length > 0) {
-        await createMessage(messageDto);
-        await connection.send("SendMessage", message);
-      }
-    } catch (error) {
-      console.error("Error sending message:", error);
-    }
-  };
-
-  const handleSendMessage = () => {
-    console.log(receiverId);
-    sendMessage(newMessage);
-    setNewMessage("");
-  };
-
-  const handleSetReceiver = (id: string, name: string) => {
-    setReceiverName(name);
-    setReceiverId(id);
-  };
-
+  if (receiverId === undefined) return <></>;
   return (
     <>
       <ChatSearch
@@ -152,7 +60,11 @@ console.log(role);
                   variant="ghost"
                   size="lg"
                   onClick={() => handleSetReceiver(user.id, user.name)}
-                  className="bg-gray-300 w-full"
+                  className={`w-full ${
+                    receiverId === user.id
+                      ? "bg-secondary-200"
+                      : "bg-gray-300"
+                  }`}
                 >
                   {user.name}
                 </Button>
@@ -213,7 +125,10 @@ console.log(role);
             <Button
               variant="outline"
               size="sm"
-              onClick={handleSendMessage}
+              onClick={() => {
+                handleSendMessage();
+                localStorage.setItem("receiverId", receiverId);
+              }}
               disabled={!receiverId || newMessage.length === 0}
             >
               Send

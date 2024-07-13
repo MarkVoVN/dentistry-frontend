@@ -26,9 +26,9 @@ export const getMessagesById = (senderId: string, receiverId: string) => {
   });
 };
 
-export const getReceivers = (senderId: string, role: string) => {
+export const getReceivers = (senderId: string) => {
   return request({
     method: "GET",
-    url: `/chatmessage/receivers/${senderId}/role/${role}`,
+    url: `/chatmessage/receivers/${senderId}`,
   });
 };

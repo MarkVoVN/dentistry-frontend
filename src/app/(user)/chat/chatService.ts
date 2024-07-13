@@ -1,30 +1,53 @@
-import { createMessage, MessageModel } from "@/lib/api/chatAPI";
+import {
+  createMessage,
+  getMessagesById,
+  getReceivers,
+  MessageModel,
+  ReceiverModel,
+} from "@/lib/api/chatAPI";
 import * as signalR from "@microsoft/signalr";
 import { HubConnection } from "@microsoft/signalr";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { DentistModel } from "@/lib/api/dentistAPI";
-const SERVER_URL = "http://localhost:3000"; // Điều chỉnh URL của server SignalR của bạn
 
 const useSignalRChat = () => {
   const [newMessage, setNewMessage] = useState<string>("");
   const [messages, setMessages] = useState<MessageModel[]>([]);
   const [connection, setConnection] = useState<HubConnection | null>(null);
   const [userId, setUserId] = useState("");
-  const [receiverId, setReceiverId] = useState("");
+  const [receiverId, setReceiverId] = useState(
+    localStorage.getItem("receiverId") || ""
+  );
   const [open, setOpen] = useState(false);
   const [dentist, setDentist] = useState<DentistModel | null>(null);
+  const [receivers, setReceivers] = useState<ReceiverModel[]>([]);
+  const [receiverName, setReceiverName] = useState("");
+
+  useEffect(() => {
+    if (!userId && !receiverId) return;
+    const req = getMessagesById(userId, receiverId);
+    req.then((res) => {
+      setMessages(res.data);
+    });
+  }, [userId, receiverId, dentist]);
+
+  useEffect(() => {
+    if (!userId) return;
+    const req = getReceivers(userId);
+    req.then((res) => {
+      setReceivers(res.data);
+    });
+  }, [userId, receiverId]);
+
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
-
     if (token) {
       const decoded: any = jwt.decode(token);
-
       const userId =
         decoded[
           "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"
         ];
-
       setUserId(userId);
     }
   }, []);
@@ -33,7 +56,6 @@ const useSignalRChat = () => {
     const newConnection = new signalR.HubConnectionBuilder()
       .withUrl(`http://localhost:3000/chatHub`)
       .build();
-
     setConnection(newConnection);
   }, []);
 
@@ -68,8 +90,11 @@ const useSignalRChat = () => {
     };
   }, []);
 
+  const handleSetReceiver = (id: string, name: string) => {
+    setReceiverName(name);
+    setReceiverId(id);
+  };
   const sendMessage = async (message: string) => {
-    console.log(receiverId); // Log to see the value of receiverId
     if (!receiverId) {
       console.error("Receiver ID is not set!");
       return;
@@ -80,8 +105,9 @@ const useSignalRChat = () => {
       messageContent: message,
       timestamp: new Date().toISOString(),
     };
+    console.log(messageDto);
     try {
-      if (connection) {
+      if (connection && message.length > 0) {
         await createMessage(messageDto);
         await connection.send("SendMessage", message);
       }
@@ -91,11 +117,25 @@ const useSignalRChat = () => {
   };
 
   const handleSendMessage = () => {
-    console.log(receiverId);
     sendMessage(newMessage);
     setNewMessage("");
   };
-  return { messages, sendMessage, userId, setReceiverId, receiverId, dentist };
+
+  return {
+    messages,
+    sendMessage,
+    userId,
+    setReceiverId,
+    receiverId,
+    dentist,
+    setDentist,
+    receivers,
+    receiverName,
+    handleSetReceiver,
+    handleSendMessage,
+    setNewMessage,
+    newMessage,
+  };
 };
 
 export default useSignalRChat;
