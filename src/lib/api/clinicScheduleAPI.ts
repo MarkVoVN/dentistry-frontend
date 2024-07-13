@@ -9,6 +9,7 @@ export type ClinicScheduleCreateModel = {
 };
 export type ClinicScheduleModel = ClinicScheduleCreateModel & {
   id?: string;
+  scheduleId?: string;
 };
 
 export const fetchClinicScheduleList = () => {
@@ -45,7 +46,7 @@ export const updateClinicSchedule = (data: ClinicScheduleModel) => {
   });
 };
 
-export const deleteClinic = (id: string) => {
+export const deleteClinicSchedule = (id: string) => {
   return request({
     method: "DELETE",
     url: `/clinicSchedule/${id}`,
