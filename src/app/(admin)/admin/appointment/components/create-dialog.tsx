@@ -21,12 +21,16 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import toast from "react-hot-toast";
-import { createService } from "@/lib/api/serviceAPI"; // Update with service API functions
+import { createAppointment } from "@/lib/api/appointmentAPI"; // Update with appointment API functions
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useErrorNotification } from "@/hooks/useErrorNotification";
-import TimePicker from "react-time-picker";
-import "react-time-picker/dist/TimePicker.css";
 import { ClinicModel, fetchClinicList } from "@/lib/api/clinicAPI";
+
+import { MyInputSelect, MyPriceInput } from "@/components/myinput";
+import _ from "lodash";
+import { DentistModel, getDentistList } from "@/lib/api/dentistAPI";
+import { getServiceList, ServiceModel } from "@/lib/api/serviceAPI";
+import { getScheduleList, ScheduleModel } from "@/lib/api/scheduleAPI";
 import {
   Select,
   SelectContent,
@@ -34,28 +38,32 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { MyInputSelect, MyPriceInput } from "@/components/myinput";
-import { Textarea } from "@/components/ui/textarea";
-import _ from "lodash";
+import moment from "moment";
+import { fetchCustomerList } from "@/lib/api/customerAPI";
 
-const serviceFormSchema = z.object({
+const dayArray = [
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+];
+
+const appointmentFormSchema = z.object({
   clinicID: z.number(),
-  name: z.string().min(2, {
-    message: "Tên dịch vụ phải có ít nhất 2 ký tự",
-  }),
-  description: z.string().min(5, {
-    message: "Mô tả phải có ít nhất 5 ký tự",
-  }),
-  duration: z.string().min(1, {
-    message: "Thời gian dịch vụ phải lớn hơn 0",
-  }),
-  price: z.number().min(1, {
-    message: "Giá dịch vụ phải lớn hơn 0",
-  }),
+  dentistID: z.number(),
+  serviceID: z.number(),
+  scheduleID: z.number(),
+  customerID: z.number(),
+  appointmentDate: z.string().min(1, { message: "Date is required" }),
+  appointmentTime: z.string().min(1, { message: "Time is required" }),
+  status: z.string().min(1, { message: "Status is required" }),
 });
 
-export default function ServiceAddDialog({
-  title = "Title",
+export default function AppointmentAddDialog({
+  title = "Create Appointment",
   buttonTitle = "Add",
   description,
   defaultValues,
@@ -70,10 +78,14 @@ export default function ServiceAddDialog({
   description?: string;
   buttonTitle?: string;
   defaultValues?: {
-    name: string;
-    description: string;
-    duration: number;
-    price: number;
+    clinicID: number;
+    customerID: number;
+    dentistID: number;
+    serviceID: number;
+    scheduleID: number;
+    appointmentDate: string;
+    appointmentTime: string;
+    status: string;
   };
   submitFunction: any;
   open?: boolean;
@@ -83,7 +95,16 @@ export default function ServiceAddDialog({
   hideTrigger?: boolean;
 }) {
   const [clinics, setClinics] = useState<ClinicModel[]>([]);
+  const [dentists, setDentists] = useState<DentistModel[]>([]);
+  const [services, setServices] = useState<ServiceModel[]>([]);
+  const [schedules, setSchedules] = useState<ScheduleModel[]>([]);
+  const [customers, setCustomers] = useState<any[]>([]);
   const [selectedClinic, setSelectedClinic] = useState<ClinicModel>();
+  const [selectedDentist, setSelectedDentist] = useState<DentistModel>();
+  const [selectedService, setSelectedService] = useState<ServiceModel>();
+  const [selectedSchedule, setSelectedSchedule] = useState<ScheduleModel>();
+  const [selectedCustomer, setSelectedCustomer] = useState<any>();
+  const [selectedDate, setSelectedDate] = useState<any>();
 
   const [dialogOpen, setDialogOpen] = useState(open);
 
@@ -92,17 +113,18 @@ export default function ServiceAddDialog({
     onOpenChange?.(state);
   };
 
-  const form = useForm<z.infer<typeof serviceFormSchema>>({
-    resolver: zodResolver(serviceFormSchema),
+  const form = useForm<z.infer<typeof appointmentFormSchema>>({
+    resolver: zodResolver(appointmentFormSchema),
     defaultValues: {
-      name: defaultValues?.name || "",
-      description: defaultValues?.description || "",
-      duration: (defaultValues?.duration || 30).toString(),
-      price: defaultValues?.price || 100000,
+      clinicID: defaultValues?.clinicID || 0,
+      dentistID: defaultValues?.dentistID || 0,
+      serviceID: defaultValues?.serviceID || 0,
+      scheduleID: defaultValues?.scheduleID || 0,
+      appointmentDate: defaultValues?.appointmentDate || "",
+      appointmentTime: defaultValues?.appointmentTime || "",
+      status: defaultValues?.status || "Scheduled",
     },
   });
-
-  const watchFields = form.watch(["name", "description", "duration", "price"]);
 
   const queryClient = useQueryClient();
 
@@ -111,10 +133,10 @@ export default function ServiceAddDialog({
     status,
     error: mutateError,
   } = useMutation({
-    mutationFn: createService,
+    mutationFn: createAppointment,
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ["services"] });
-      toast.success("Tạo dịch vụ " + variables.name + " thành công!");
+      queryClient.invalidateQueries({ queryKey: ["appointments"] });
+      toast.success("Appointment created successfully!");
       setDialogOpenState(false);
     },
   });
@@ -125,35 +147,115 @@ export default function ServiceAddDialog({
   });
 
   const {
-    data: req_data,
-    isLoading,
-    error,
-    isError,
-    isSuccess,
+    data: clinicData,
+    isLoading: isLoadingClinics,
+    error: clinicError,
+    isError: isErrorClinics,
+    isSuccess: isSuccessClinics,
   } = useQuery({
     queryKey: ["clinics"],
     queryFn: fetchClinicList,
   });
 
-  useEffect(() => {
-    if (isSuccess && req_data) {
-      const { data, pagination } = req_data;
-      setClinics(data);
-    }
-  }, [isSuccess]);
-
-  useErrorNotification({
-    isError,
-    title: error?.message,
+  const {
+    data: dentistData,
+    isLoading: isLoadingDentists,
+    error: dentistError,
+    isError: isErrorDentists,
+    isSuccess: isSuccessDentists,
+  } = useQuery({
+    queryKey: ["dentists"],
+    queryFn: getDentistList,
   });
 
-  async function onSubmit(values: z.infer<typeof serviceFormSchema>) {
+  const {
+    data: serviceData,
+    isLoading: isLoadingServices,
+    error: serviceError,
+    isError: isErrorServices,
+    isSuccess: isSuccessServices,
+  } = useQuery({
+    queryKey: ["services"],
+    queryFn: getServiceList,
+  });
+
+  const {
+    data: scheduleData,
+    isLoading: isLoadingSchedules,
+    error: scheduleError,
+    isError: isErrorSchedules,
+    isSuccess: isSuccessSchedules,
+  } = useQuery({
+    queryKey: ["schedules"],
+    queryFn: getScheduleList,
+  });
+
+  const {
+    data: customerData,
+    isLoading: isCustomerLoading,
+    isSuccess: isCustomerSuccess,
+    error: customerError,
+    isError: isErrorCustomer,
+  } = useQuery({
+    queryKey: ["customers"],
+    queryFn: fetchCustomerList,
+  });
+
+  useEffect(() => {
+    if (isCustomerSuccess && customerData) {
+      setCustomers(customerData.data);
+    }
+  }, [isCustomerSuccess]);
+
+  useEffect(() => {
+    if (isSuccessClinics && clinicData) {
+      setClinics(clinicData.data);
+    }
+  }, [isSuccessClinics]);
+
+  useEffect(() => {
+    if (isSuccessDentists && dentistData) {
+      setDentists(dentistData.data);
+    }
+  }, [isSuccessDentists]);
+
+  useEffect(() => {
+    if (isSuccessServices && serviceData) {
+      setServices(serviceData.data);
+    }
+  }, [isSuccessServices]);
+
+  useEffect(() => {
+    if (isSuccessSchedules && scheduleData) {
+      setSchedules(scheduleData.data);
+    }
+  }, [isSuccessSchedules]);
+
+  useErrorNotification({
+    isError:
+      isErrorClinics ||
+      isErrorDentists ||
+      isErrorServices ||
+      isErrorSchedules ||
+      isErrorCustomer,
+    title:
+      clinicError?.message ||
+      dentistError?.message ||
+      serviceError?.message ||
+      customerError?.message ||
+      scheduleError?.message,
+  });
+
+  async function onSubmit(values: z.infer<typeof appointmentFormSchema>) {
     mutate({
-      name: values.name,
-      description: values.description,
-      duration: _.parseInt(values.duration),
-      price: values.price,
-      clinicID: (values.clinicID || 0).toString(),
+      clinicID: values.clinicID,
+      clinicScheduleID: values.scheduleID,
+      customerID: values.customerID,
+      dentistID: values.dentistID,
+      serviceID: values.serviceID,
+      appointmentDate: values.appointmentDate,
+      appointmentTime: moment(values.appointmentTime, "HH:mm").toISOString(),
+      status: values.status,
     });
   }
 
@@ -176,100 +278,292 @@ export default function ServiceAddDialog({
               className="space-y-8 pt-4"
             >
               <div className="flex flex-col gap-2">
+                {customers.length > 0 && (
+                  <FormField
+                    control={form.control}
+                    name="customerID"
+                    render={({ field }) => (
+                      <FormItem className="mt-4">
+                        <MyInputSelect
+                          props={{
+                            path: "customerID",
+                            value: selectedCustomer?.customerID,
+                            valueDisplay: selectedCustomer?.name,
+                            placeholderText: "Select Customer",
+                            label: "Customer",
+                            items: customers.map((c) => ({
+                              value: c.customerID,
+                              text: c.name,
+                            })),
+                          }}
+                          updateFormData={({ path, value }: any) => {
+                            form.setValue("customerID", value);
+                            setSelectedCustomer(
+                              customers.find((c) => c.customerID === value)
+                            );
+                          }}
+                        />
+
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
+                {clinics.length > 0 && (
+                  <FormField
+                    control={form.control}
+                    name="clinicID"
+                    render={({ field }) => (
+                      <FormItem className="mt-4">
+                        <MyInputSelect
+                          props={{
+                            path: "clinicID",
+                            value: selectedClinic?.clinicID,
+                            valueDisplay: selectedClinic?.name,
+                            placeholderText: "Select Clinic",
+                            label: "Clinic",
+                            items: clinics.map((clinic) => ({
+                              value: clinic.clinicID,
+                              text: clinic.name,
+                            })),
+                          }}
+                          updateFormData={({ path, value }: any) => {
+                            form.setValue("clinicID", value);
+                            setSelectedClinic(
+                              clinics.find(
+                                (clinic) => clinic.clinicID === value
+                              )
+                            );
+                            setSelectedDentist(undefined);
+                            setSelectedService(undefined);
+                            setSelectedSchedule(undefined);
+                          }}
+                        />
+
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
+                {dentists.length > 0 && (
+                  <FormField
+                    control={form.control}
+                    name="dentistID"
+                    render={({ field }) => (
+                      <FormItem className="mt-4">
+                        <MyInputSelect
+                          props={{
+                            path: "dentistID",
+                            value: selectedDentist?.dentistId,
+                            valueDisplay: selectedDentist?.name,
+                            placeholderText: "Select Dentist",
+                            label: "Dentist",
+                            items: dentists
+                              .filter(
+                                (d) =>
+                                  _.parseInt(
+                                    selectedClinic?.clinicID || "0"
+                                  ) === d.clinicID
+                              )
+                              .map((dentist) => ({
+                                value: dentist.dentistId,
+                                text: dentist.name,
+                              })),
+                          }}
+                          updateFormData={({ path, value }: any) => {
+                            form.setValue("dentistID", value);
+                            setSelectedDentist(
+                              dentists.find(
+                                (dentist) => dentist.dentistId === value
+                              )
+                            );
+                          }}
+                        />
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
+                {services.length > 0 && (
+                  <FormField
+                    control={form.control}
+                    name="serviceID"
+                    render={({ field }) => (
+                      <FormItem className="mt-4">
+                        <MyInputSelect
+                          props={{
+                            path: "serviceID",
+                            value: selectedService?.serviceID,
+                            valueDisplay: selectedService?.name,
+                            placeholderText: "Select Service",
+                            label: "Service",
+                            items: services
+                              .filter((s) => {
+                                // console.log(
+                                //   s.clinicID,
+                                //   selectedClinic?.clinicID,
+                                //   s.clinicID ===
+                                //     (selectedClinic?.clinicID || "0")
+                                // );
+                                return (
+                                  s.clinicID ===
+                                  (selectedClinic?.clinicID || "0")
+                                );
+                              })
+                              .map((service) => ({
+                                value: service.serviceID,
+                                text: service.name,
+                              })),
+                          }}
+                          updateFormData={({ path, value }: any) => {
+                            form.setValue("serviceID", value);
+                            setSelectedService(
+                              services.find(
+                                (service) => service.serviceID === value
+                              )
+                            );
+                          }}
+                        />
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
                 <FormField
                   control={form.control}
-                  name="clinicID"
+                  name="appointmentDate"
                   render={({ field }) => (
                     <FormItem className="mt-4">
-                      {/* <FormLabel>Clinic</FormLabel> */}
-                      <MyInputSelect
-                        props={{
-                          path: "clinicID",
-                          value: selectedClinic?.clinicID,
-                          valueDisplay: selectedClinic?.name,
-                          placeholderText: "Select Clinic",
-                          label: "Clinic",
-                          items: clinics?.map((clinic: any) => ({
-                            value: clinic.clinicID,
-                            text: clinic.name,
-                          })),
-                        }}
-                        updateFormData={({
-                          path,
-                          value,
-                        }: {
-                          path: string;
-                          value: any;
-                        }) => {
-                          form.setValue("clinicID", value);
-                          setSelectedClinic(
-                            clinics.find((clinic) => clinic.clinicID === value)
-                          );
+                      <FormLabel>Date</FormLabel>
+                      <Input
+                        {...field}
+                        value={selectedDate}
+                        type="date"
+                        onChange={(e) => {
+                          setSelectedDate(e.target.value);
+                          setSelectedSchedule(undefined);
+                          form.setValue("appointmentDate", e.target.value);
                         }}
                       />
                       <FormMessage />
                     </FormItem>
                   )}
                 />
+                {schedules.length > 0 && (
+                  <FormField
+                    control={form.control}
+                    name="scheduleID"
+                    render={({ field }) => (
+                      <FormItem className="mt-4">
+                        <MyInputSelect
+                          props={{
+                            path: "scheduleID",
+                            value: selectedSchedule?.scheduleID,
+                            valueDisplay: selectedSchedule
+                              ? `${selectedSchedule?.dayOfWeek} - ${moment(
+                                  selectedSchedule?.openingTime
+                                ).format("HH:mm")} - ${moment(
+                                  selectedSchedule?.closingTime
+                                ).format("HH:mm")}`
+                              : "Select Schedule",
+                            placeholderText: "Select Schedule",
+                            label: "Schedule",
+                            items: schedules
+                              .filter((sche) => {
+                                console.log(
+                                  sche.clinicID,
+                                  selectedClinic?.clinicID
+                                );
+                                return (
+                                  sche.clinicID ===
+                                  _.parseInt(selectedClinic?.clinicID || "0")
+                                );
+                              })
+                              .filter((sche) => {
+                                return (
+                                  sche.dayOfWeek ===
+                                  dayArray[moment(selectedDate).day()]
+                                );
+                              })
+                              .map((schedule) => ({
+                                value: schedule.scheduleID,
+                                text: `${schedule?.dayOfWeek} - ${moment(
+                                  schedule?.openingTime
+                                ).format("HH:mm")} - ${moment(
+                                  schedule?.closingTime
+                                ).format("HH:mm")}`,
+                              })),
+                          }}
+                          updateFormData={({ path, value }: any) => {
+                            form.setValue("scheduleID", value);
+                            setSelectedSchedule(
+                              schedules.find(
+                                (schedule) => schedule.scheduleID === value
+                              )
+                            );
+                            form.setValue(
+                              "appointmentTime",
+                              moment(
+                                schedules.find(
+                                  (schedule) => schedule.scheduleID === value
+                                )?.openingTime
+                              ).format("HH:mm")
+                            );
+                          }}
+                        />
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
                 <FormField
                   control={form.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem className="mt-2">
-                      <FormLabel>Tên dịch vụ</FormLabel>
-                      <Input placeholder="Service Name" {...field} />
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="description"
-                  render={({ field }) => (
-                    <FormItem className="mt-2">
-                      <FormLabel>Mô tả</FormLabel>
-                      <Textarea placeholder="Description" {...field} />
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="duration"
+                  name="appointmentTime"
                   render={({ field }) => (
                     <FormItem className="mt-4">
-                      <FormLabel>Thời gian (phút)</FormLabel>
-                      <Input type="number" placeholder="Duration" {...field} />
+                      <FormLabel>Time</FormLabel>
+                      <Input {...field} type="time" />
                       <FormMessage />
                     </FormItem>
                   )}
                 />
                 <FormField
                   control={form.control}
-                  name="price"
+                  name="status"
                   render={({ field }) => (
                     <FormItem className="mt-4">
-                      <FormLabel>Giá</FormLabel>
-                      <MyPriceInput
-                        min={0}
-                        max={1000000000}
-                        defaultValue={0}
-                        value={field.value}
-                        setValue={(value) => form.setValue("price", value)}
-                      ></MyPriceInput>
+                      <FormLabel>Status</FormLabel>
+                      <Select
+                        onValueChange={(value) =>
+                          form.setValue("status", value)
+                        }
+                        defaultValue={field.value.toString()}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select Status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {[
+                            { text: "Scheduled", value: "Scheduled" },
+                            { text: "Completed", value: "Paid" },
+                            { text: "Cancelled", value: "Cancelled" },
+                          ].map(({ text, value }) => (
+                            <SelectItem key={value} value={value}>
+                              {text}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
               </div>
               <DialogFooter>
-                <Button
-                  type="submit"
-                  className="text-shade-1-100% dark:text-shade-2-100% dark:bg-shade-1-100%"
-                >
-                  Thêm
+                <Button type="button" onClick={() => setDialogOpenState(false)}>
+                  Cancel
                 </Button>
+                <Button type="submit">{buttonTitle}</Button>
               </DialogFooter>
             </form>
           </Form>

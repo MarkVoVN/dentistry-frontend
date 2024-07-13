@@ -12,19 +12,17 @@ export type AppointmentCreateModel = {
 };
 
 export type AppointmentModel = AppointmentCreateModel & {
-  id?: string,
+  id?: string;
   appointmentID: number;
 
-  // customerName: string,
-  // dentistName: string,
-  // serviceName: string,
-  // address: string,
-  // phoneNumber: string
-}  
-
+  customerName?: string;
+  dentistName?: string;
+  serviceName?: string;
+  address?: string;
+  phoneNumber?: string;
+};
 
 const BASE_URL = "/appointments";
-
 
 export type AppointmentQuery = {
   OrderBy?: string;

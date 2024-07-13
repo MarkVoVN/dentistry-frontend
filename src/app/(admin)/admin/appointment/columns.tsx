@@ -8,91 +8,49 @@ export const columns: (ColumnDef<AppointmentModel> & {
   show?: boolean;
   accessorKey?: string;
 })[] = [
-  {
-    accessorKey: "appointmentID",
-    header: "Appointment ID",
-    cell: ({ row }) => {
-      const appointment = row.original;
-
-      return (
-        <div className="flex items-center gap-2">
-          <p className="text-neutral-8 text-[14px] not-italic leading-[normal] whitespace-nowrap">
-            {appointment.appointmentID}
-          </p>
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: "customerID",
-    header: "Customer ID",
-    cell: ({ row }) => {
-      const appointment = row.original;
-
-      return (
-        <div className="flex items-center gap-2">
-          <p className="text-neutral-8 text-[14px] not-italic leading-[normal] whitespace-nowrap">
-            {appointment.customerID}
-          </p>
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: "clinicScheduleID",
-    header: "Clinic Schedule ID",
-    cell: ({ row }) => {
-      const appointment = row.original;
-
-      return (
-        <div className="flex items-center gap-2">
-          <p className="text-neutral-8 text-[14px] not-italic leading-[normal] whitespace-nowrap">
-            {appointment.clinicScheduleID}
-          </p>
-        </div>
-      );
-    },
-  },
   // {
-  //   accessorKey: "customerName",
-  //   header: "Customer Name",
+  //   accessorKey: "appointmentID",
+  //   header: "Appointment ID",
   //   cell: ({ row }) => {
   //     const appointment = row.original;
 
   //     return (
   //       <div className="flex items-center gap-2">
   //         <p className="text-neutral-8 text-[14px] not-italic leading-[normal] whitespace-nowrap">
-  //           {appointment.customerName}
+  //           {appointment.appointmentID}
   //         </p>
   //       </div>
   //     );
   //   },
   // },
+  {
+    accessorKey: "customerName",
+    header: "Customer ",
+    cell: ({ row }) => {
+      const appointment = row.original;
+
+      return (
+        <div className="flex flex-col  gap-2">
+          <p className="text-neutral-8 text-[14px] not-italic leading-[normal] whitespace-nowrap">
+            {appointment?.customerName}
+          </p>
+          <p className="text-neutral-8 text-[14px] not-italic leading-[normal] whitespace-nowrap">
+            {appointment?.phoneNumber}
+          </p>
+        </div>
+      );
+    },
+  },
   // {
-  //   accessorKey: "address",
-  //   header: "Address",
+  //   accessorKey: "clinicScheduleID",
+  //   header: "Clinic Schedule ID",
   //   cell: ({ row }) => {
   //     const appointment = row.original;
 
   //     return (
   //       <div className="flex items-center gap-2">
   //         <p className="text-neutral-8 text-[14px] not-italic leading-[normal] whitespace-nowrap">
-  //           {appointment.address}
-  //         </p>
-  //       </div>
-  //     );
-  //   },
-  // },
-  // {
-  //   accessorKey: "phoneNumber",
-  //   header: "Phone Number",
-  //   cell: ({ row }) => {
-  //     const appointment = row.original;
-
-  //     return (
-  //       <div className="flex items-center gap-2">
-  //         <p className="text-neutral-8 text-[14px] not-italic leading-[normal] whitespace-nowrap">
-  //           {appointment.phoneNumber}
+  //           {appointment.clinicScheduleID}
   //         </p>
   //       </div>
   //     );
@@ -100,44 +58,29 @@ export const columns: (ColumnDef<AppointmentModel> & {
   // },
   {
     accessorKey: "dentistID",
-    header: "Dentist ID",
+    header: "Dentist",
     cell: ({ row }) => {
       const appointment = row.original;
 
       return (
         <div className="flex items-center gap-2">
           <p className="text-neutral-8 text-[14px] not-italic leading-[normal] whitespace-nowrap">
-            {appointment.dentistID}
+            {appointment.dentistName}
           </p>
         </div>
       );
     },
   },
-  // {
-  //   accessorKey: "dentistName",
-  //   header: "Dentist Name",
-  //   cell: ({ row }) => {
-  //     const appointment = row.original;
-
-  //     return (
-  //       <div className="flex items-center gap-2">
-  //         <p className="text-neutral-8 text-[14px] not-italic leading-[normal] whitespace-nowrap">
-  //           {appointment.dentistName}
-  //         </p>
-  //       </div>
-  //     );
-  //   },
-  // },
   {
     accessorKey: "serviceID",
-    header: "Service ID",
+    header: "Service",
     cell: ({ row }) => {
       const appointment = row.original;
 
       return (
         <div className="flex items-center gap-2">
           <p className="text-neutral-8 text-[14px] not-italic leading-[normal] whitespace-nowrap">
-            {appointment.serviceID}
+            {appointment.serviceName}
           </p>
         </div>
       );

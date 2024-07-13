@@ -23,7 +23,6 @@ import { Row } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
-
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AppointmentModel, deleteAppointment } from "@/lib/api/appointmentAPI";
 import AppointmentUpdateDialog from "./update-dialog";
@@ -41,9 +40,9 @@ export function ActionsDropdown({
   const [isAlertOpen, setIsAlertOpen] = useState<boolean>(false);
 
   const defaultValues = {
-    id: row?.original?.id || "",
+    appointmentID: row?.original?.appointmentID || 0,
     clinicID: row.original.clinicID || 0, // Change to 0 to match type
-    clinicScheduleID: row.original.clinicScheduleID || 0, // Added if needed
+    scheduleID: row.original.clinicScheduleID || 0, // Added if needed
     customerID: row.original.customerID || 0, // Added if needed
     dentistID: row.original.dentistID || 0, // Added if needed
     serviceID: row.original.serviceID || 0, // Added if needed
@@ -51,6 +50,8 @@ export function ActionsDropdown({
     appointmentTime: row.original.appointmentTime || "", // Added if needed
     status: row.original.status || "", // Added if needed
   };
+
+  // console.log(defaultValues);
   const queryClient = useQueryClient();
 
   const {
@@ -93,8 +94,8 @@ export function ActionsDropdown({
       </DropdownMenuContent>
       <AppointmentUpdateDialog
         title="Update AppointmendeleteAppointment"
-        isOpen={isOpen}
-        setIsOpen={setIsOpen}
+        open={isOpen}
+        onOpenChange={setIsOpen}
         submitFunction={() => {}}
         defaultValues={defaultValues}
       />
