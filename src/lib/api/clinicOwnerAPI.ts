@@ -8,6 +8,7 @@ export type ClinicOwnerCreateModel = {
   status: boolean;
   clinicID: string;
   clinicDto?: ClinicModel;
+  clinicName?: string;
 };
 
 export type ClinicOwnerModel = ClinicOwnerCreateModel & {
@@ -29,12 +30,14 @@ export const getClinicOwnerById = (id: string) => {
   });
 };
 
-export const createClinicOwner = (data: ClinicOwnerCreateModel) => {
+export const createClinicOwner = (
+  data: ClinicOwnerCreateModel & { password: string; username: string }
+) => {
   console.log(data);
-  
+
   return request({
     method: "POST",
-    url: `/clinicOwner`,
+    url: `/account/register-clinicowner`,
     data,
   });
 };
@@ -43,10 +46,7 @@ export const updateClinicOwner = (data: ClinicOwnerModel) => {
   console.log(data);
   return request({
     method: "PUT",
-    url: `/clinicOwner/${data.id}`,
-    params: {
-      id: data.id,
-    },
+    url: `/clinicOwner/${data.ownerID}`,
     data,
   });
 };

@@ -43,13 +43,14 @@ export function ActionsDropdown({
 
   const defaultValues = {
     id: row?.original?.id || "",
+    ownerID: row?.original?.ownerID ?? 0,
     name: row.original.name || "",
     phoneNumber: row.original.phoneNumber || "",
     email: row.original.email || "",
     clinicId: row.original.clinicID || "",
     status: row.original.status || false,
   };
-  
+
   const queryClient = useQueryClient();
 
   const {
@@ -61,7 +62,9 @@ export function ActionsDropdown({
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["clinicOwners"] });
 
-      toast.success("Delete clinic owner " + row.original.name + " thành công!");
+      toast.success(
+        "Delete clinic owner " + row.original.name + " thành công!"
+      );
       setIsOpen(false);
     },
     onError: (error) => {
