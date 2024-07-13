@@ -23,6 +23,7 @@ const ChatComponent: React.FC = () => {
   const [messages, setMessages] = useState<MessageModel[]>([]);
   const [connection, setConnection] = useState<HubConnection | null>(null);
   const [userId, setUserId] = useState("");
+  const [role, setRole] = useState<string>("");
   const [receiverId, setReceiverId] = useState("");
   const [open, setOpen] = useState(false);
   const [dentist, setDentist] = useState<DentistModel | null>(null);
@@ -36,18 +37,22 @@ const ChatComponent: React.FC = () => {
         decoded[
           "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"
         ];
+      const role =
+        decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
       setUserId(userId);
+      setRole(role);
     }
   }, []);
-
+console.log(role);
   useEffect(() => {
-    if (!userId) return;
-    const req = getReceivers(userId);
+    if (!userId && !role) return;
+   
+    const req = getReceivers(userId, role);
     req.then((res) => {
       setReceivers(res.data);
       console.log(res.data);
     });
-  }, [userId, receiverId]);
+  }, [userId, receiverId, role]);
 
   useEffect(() => {
     const req = getMessagesById(userId, receiverId);
