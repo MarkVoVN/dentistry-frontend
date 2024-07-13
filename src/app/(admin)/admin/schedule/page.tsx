@@ -4,11 +4,15 @@ import React, { useEffect, useState } from "react";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { useErrorNotification } from "@/hooks/useErrorNotification";
 import { useQuery } from "@tanstack/react-query";
-import { ClinicScheduleCreateModel, ClinicScheduleModel, fetchClinicScheduleList } from "@/lib/api/clinicScheduleAPI";
+import { ClinicScheduleModel, fetchClinicScheduleList } from "@/lib/api/clinicScheduleAPI";
 import DataCalendar from "./calendar";
 
 export default function ClinicScheduleManagementPage() {
-  const [itemList, setItemList] = useState<ClinicScheduleCreateModel[]>([]);
+  // const searchParams = useSearchParams();
+  // const clinicID = searchParams.get('clinicID');
+  const clinicID = "1";
+
+  const [itemList, setItemList] = useState<ClinicScheduleModel[]>([]);
   
   const {
     data: req_data,
@@ -27,6 +31,11 @@ export default function ClinicScheduleManagementPage() {
       setItemList(clinicSchedules);
     }
   }, [isSuccess, req_data]);
+
+  useEffect(() => {
+    // Log itemList whenever it changes
+    console.log("***itemList updated: ", itemList);
+  }, [itemList]);
 
   useErrorNotification({
     isError: isError,

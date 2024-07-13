@@ -1,43 +1,77 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import moment from "moment";
-import { convertToHHMMSS } from "@/lib/utils";
+import { convertToDate, convertToHHMMSS } from "@/lib/utils";
 import { Calendar, SlotInfo, View, Views, momentLocalizer } from "react-big-calendar";
-import { ClinicScheduleCreateModel } from "@/lib/api/clinicScheduleAPI";
+import { ClinicScheduleCreateModel, ClinicScheduleModel } from "@/lib/api/clinicScheduleAPI";
 import "react-big-calendar/lib/css/react-big-calendar.css";
+import ClinicAddDialog from "./component/create-dialog";
+import ClinicUpdateDialog from "./component/update-dialog";
 
 moment.locale("en-GB");
 const localizer = momentLocalizer(moment);
 
 type DataCalendarProps = {
-    itemList: ClinicScheduleCreateModel[];
-    setItemList: React.Dispatch<React.SetStateAction<ClinicScheduleCreateModel[]>>;
-  };
+    itemList: ClinicScheduleModel[];
+    setItemList: React.Dispatch<React.SetStateAction<ClinicScheduleModel[]>>;
+};
 
 const DataCalendar: React.FC<DataCalendarProps> = ({ itemList, setItemList }) => {
+  const [newSchedule, setNewSchedule] = useState<ClinicScheduleCreateModel>();
   const [view, setView] = useState<View>(Views.MONTH);
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isUpdModalOpen, setIsUpdModalOpen] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState(null);
+  
   const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+  const events = itemList.map((item) => {
+    console.log(item.openingHours);
+    
+    return {
+      id: item.scheduleId,
+      title: item.dayOfWeek === "Working hour" ? "Working hour" : item.dayOfWeek,
+      start: convertToDate(item.openingHours),
+      end: convertToDate(item.closingHours)
+    };
+  });
+
+  useEffect(() => {
+    // Log itemList whenever it changes
+    console.log("***itemList updated: ", itemList);
+    console.log("***eventsList updated: ", events);
+  }, [events]);
+
+  useEffect(() => {
+    // Log newSchedule newSchedule it changes
+    console.log("***newSchedule updated: ", events);
+  }, [newSchedule]);
 
   const handleSelect = (slot: SlotInfo) => {
     const title = window.prompt("New Event name");
-    const newItem: ClinicScheduleCreateModel = {
-      clinicId: "1",
-      dayOfWeek: days[slot.start.getDay() - 1],
-      slotDuration: "15",
-      openingHours: convertToHHMMSS(slot.start.getHours() + ":" + slot.start.getMinutes() + ":" + slot.start.getSeconds()),
-      closingHours: convertToHHMMSS(slot.end.getHours() + ":" + slot.end.getMinutes() + ":" + slot.end.getSeconds()),
-      maxPatientsPerSlot: 3,
-    }
+    if (!title) return;
 
-    if (title)
-    setItemList([
-      ...itemList,
-      { ...newItem}
-    ]);
-    console.log(newItem);
-    console.log(itemList);
+    const newItem: ClinicScheduleCreateModel = {
+      clinicId: '1',
+      dayOfWeek: days[slot.start.getDay() - 1],
+      slotDuration: '',
+      openingHours: convertToHHMMSS(slot.start),
+      closingHours: convertToHHMMSS(slot.end),
+      maxPatientsPerSlot: 0,
+    };
+
+    setNewSchedule(newItem);
+
+    // TODO: Delete this
+    setItemList((prevList) => {
+      const updatedList = [...prevList, newItem];
+      console.log(updatedList);
+
+      return updatedList;
+    });
+
+    setIsUpdModalOpen(true);
   };
 
   const handleViewChange = (newView: View) => {
@@ -48,22 +82,42 @@ const DataCalendar: React.FC<DataCalendarProps> = ({ itemList, setItemList }) =>
     setCurrentDate(newDate);
   };
 
+  const handleSelectEvent = (event: any) => {
+    setSelectedEvent(event);
+    setIsAddModalOpen(true);
+  };
+
   return (
     <Calendar
-        views={["month", "work_week"]}
-        selectable
-        localizer={localizer}
-        view={view}
-        date={currentDate}
-        onView={handleViewChange}
-        onNavigate={handleNavigate}
-        style={{ height: "100vh" }}
-        onSelectEvent={(event: any) => alert(event.title)}
-        onSelectSlot={(slot) => {
-          console.log("slot select: ", slot);
-          handleSelect(slot);
-        }}
-      />
+      views={["month", "work_week"]}
+      selectable
+      localizer={localizer}
+      view={view}
+      date={currentDate}
+      events={events}
+      style={{ height: "100vh" }}
+      onView={handleViewChange}
+      onNavigate={handleNavigate}
+      onSelectEvent={handleSelectEvent}
+      onSelectSlot={(slot) => {
+        console.log("slot select: ", slot.start);
+        handleSelect(slot);
+      }}
+    >
+      <ClinicAddDialog 
+        title="Add Clinic Schedule"
+        buttonTitle="Add Clinic Schedule"
+        submitFunction={() => {}}
+        defaultValues={newSchedule}
+        open={isAddModalOpen} 
+        onOpenChange={setIsAddModalOpen} />
+
+      {/* <ClinicUpdateDialog 
+        submitFunction={undefined} 
+        isOpen={isUpdModalOpen} 
+        setIsOpen={setIsUpdModalOpen}
+        defaultValues={}/> */}
+    </Calendar>
   );
 }
 
