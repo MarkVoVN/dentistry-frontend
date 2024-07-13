@@ -1,0 +1,128 @@
+"use client";
+
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
+import { DialogClose } from "@radix-ui/react-dialog";
+import { DotsHorizontalIcon } from "@radix-ui/react-icons";
+import { Row } from "@tanstack/react-table";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+
+
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { AppointmentModel, deleteAppointment } from "@/lib/api/appointmentAPI";
+import AppointmentUpdateDialog from "./update-dialog";
+
+export function ActionsDropdown({
+  row,
+}: {
+  row: Row<
+    AppointmentModel & {
+      id?: string;
+    }
+  >;
+}) {
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isAlertOpen, setIsAlertOpen] = useState<boolean>(false);
+
+  const defaultValues = {
+    id: row?.original?.id || "",
+    clinicID: row.original.clinicID || 0, // Change to 0 to match type
+    clinicScheduleID: row.original.clinicScheduleID || 0, // Added if needed
+    customerID: row.original.customerID || 0, // Added if needed
+    dentistID: row.original.dentistID || 0, // Added if needed
+    serviceID: row.original.serviceID || 0, // Added if needed
+    appointmentDate: row.original.appointmentDate || "", // Added if needed
+    appointmentTime: row.original.appointmentTime || "", // Added if needed
+    status: row.original.status || "", // Added if needed
+  };
+  const queryClient = useQueryClient();
+
+  const {
+    mutate,
+    status,
+    error: mutateError,
+  } = useMutation({
+    mutationFn: deleteAppointment,
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["services"] });
+
+      toast.success("Delete appointment " + row.original.id + " thành công!");
+      setIsOpen(false);
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+
+  const handleDelete = () => {
+    mutate(row?.original?.id ?? "");
+  };
+
+  return (
+    <DropdownMenu modal={false}>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" size="icon">
+          <DotsHorizontalIcon className="w-5 h-5" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent sideOffset={5} alignOffset={-5}>
+        <DropdownMenuGroup>
+          <DropdownMenuItem onSelect={() => setIsOpen(true)}>
+            Sửa thông tin
+          </DropdownMenuItem>
+          <DropdownMenuItem onSelect={() => setIsAlertOpen(true)}>
+            Xóa
+          </DropdownMenuItem>
+        </DropdownMenuGroup>
+      </DropdownMenuContent>
+      <AppointmentUpdateDialog
+        title="Update AppointmendeleteAppointment"
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        submitFunction={() => {}}
+        defaultValues={defaultValues}
+      />
+      <AlertDelete
+        isAlertOpen={isAlertOpen}
+        setIsAlertOpen={setIsAlertOpen}
+        handleDelete={handleDelete}
+      />
+    </DropdownMenu>
+  );
+}
+
+const AlertDelete = ({ isAlertOpen, setIsAlertOpen, handleDelete }: any) => (
+  <Dialog open={isAlertOpen} onOpenChange={setIsAlertOpen}>
+    <DialogContent>
+      <DialogHeader>
+        <DialogTitle>Are you absolutely sure?</DialogTitle>
+        <DialogDescription>
+          This action cannot be undone. This will permanently delete your
+          account and remove your data from our servers.
+        </DialogDescription>
+      </DialogHeader>
+      <DialogFooter>
+        <DialogClose>Cancel</DialogClose>
+        <Button variant="destructive" onClick={handleDelete}>
+          Continue
+        </Button>
+      </DialogFooter>
+    </DialogContent>
+  </Dialog>
+);
