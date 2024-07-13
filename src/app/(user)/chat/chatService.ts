@@ -16,14 +16,15 @@ const useSignalRChat = () => {
   const [messages, setMessages] = useState<MessageModel[]>([]);
   const [connection, setConnection] = useState<HubConnection | null>(null);
   const [userId, setUserId] = useState("");
-  const [receiverId, setReceiverId] = useState(
-    localStorage.getItem("receiverId") || ""
-  );
+  const [receiverId, setReceiverId] = useState("");
   const [open, setOpen] = useState(false);
   const [dentist, setDentist] = useState<DentistModel | null>(null);
   const [receivers, setReceivers] = useState<ReceiverModel[]>([]);
   const [receiverName, setReceiverName] = useState("");
 
+  useEffect(() => {
+    setReceiverId(localStorage.getItem("receiverId") || "");
+  }, []);
   useEffect(() => {
     if (!userId && !receiverId) return;
     const req = getMessagesById(userId, receiverId);

@@ -59,11 +59,12 @@ const ChatComponent: React.FC = () => {
                 <Button
                   variant="ghost"
                   size="lg"
-                  onClick={() => handleSetReceiver(user.id, user.name)}
+                  onClick={() => {
+                    localStorage.setItem("receiverId", receiverId!);
+                    handleSetReceiver(user.id, user.name);
+                  }}
                   className={`w-full ${
-                    receiverId === user.id
-                      ? "bg-secondary-200"
-                      : "bg-gray-300"
+                    receiverId === user.id ? "bg-secondary-200" : "bg-gray-300"
                   }`}
                 >
                   {user.name}
@@ -127,7 +128,6 @@ const ChatComponent: React.FC = () => {
               size="sm"
               onClick={() => {
                 handleSendMessage();
-                localStorage.setItem("receiverId", receiverId);
               }}
               disabled={!receiverId || newMessage.length === 0}
             >
