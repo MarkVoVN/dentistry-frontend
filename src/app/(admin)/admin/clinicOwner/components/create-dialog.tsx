@@ -43,6 +43,12 @@ const formSchema = z.object({
   email: z.string().email({
     message: "Email không hợp lệ",
   }),
+  username: z.string().min(2, {
+    message: "Username phải có ít nhất 2 ký tự",
+  }),
+  password: z.string().min(8, {
+    message: "Mật khẩu phải có ít nhất 8 ký tự",
+  }),
   clinicID: z.number(),
   status: z.boolean().optional(),
 });
@@ -65,6 +71,7 @@ export default function ClinicOwnerAddDialog({
     name: string;
     phoneNumber: string;
     email: string;
+    username: string;
     clinicId: string;
     status: boolean;
   };
@@ -82,7 +89,13 @@ export default function ClinicOwnerAddDialog({
     onOpenChange?.(state);
   };
 
-  const {data: clinics, isLoading, error, isError, isSuccess} = useQuery({
+  const {
+    data: clinics,
+    isLoading,
+    error,
+    isError,
+    isSuccess,
+  } = useQuery({
     queryKey: ["clinics"],
     queryFn: fetchClinicList,
   });
@@ -106,16 +119,14 @@ export default function ClinicOwnerAddDialog({
       name: defaultValues?.name || "",
       phoneNumber: defaultValues?.phoneNumber || "",
       email: defaultValues?.email || "",
+      username: defaultValues?.username || "",
       status: defaultValues?.status || true,
+      password: "",
     },
   });
 
   //watch
-  const watchFields = form.watch([
-    "name",
-    "phoneNumber",
-    "email",
-  ]);
+  const watchFields = form.watch(["name", "phoneNumber", "email"]);
 
   const queryClient = useQueryClient();
 
@@ -145,7 +156,9 @@ export default function ClinicOwnerAddDialog({
       name: values.name || "",
       phoneNumber: values.phoneNumber || "",
       email: values.email || "",
+      username: values.username || "",
       status: values.status || false,
+      password: values.password || "",
       clinicID: (values.clinicID || 0).toString(),
     });
   }
@@ -209,6 +222,37 @@ export default function ClinicOwnerAddDialog({
                       </FormItem>
                     )}
                   />
+                  <FormField
+                    control={form.control}
+                    name="username"
+                    render={({ field }) => (
+                      <FormItem className="mt-2">
+                        <FormLabel>Username</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Username" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="password"
+                    render={({ field }) => (
+                      <FormItem className="mt-2">
+                        <FormLabel>Password</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="password"
+                            placeholder="Password"
+                            {...field}
+                            autoComplete="new-password"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                 </div>
                 <div>
                   {/* TODO: select clinic */}
@@ -239,7 +283,9 @@ export default function ClinicOwnerAddDialog({
                           }) => {
                             form.setValue("clinicID", value);
                             setSelectedClinic(
-                              clinicList.find((clinic) => clinic.clinicID === value)
+                              clinicList.find(
+                                (clinic) => clinic.clinicID === value
+                              )
                             );
                           }}
                         />
