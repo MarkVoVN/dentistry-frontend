@@ -20,18 +20,18 @@ import {
 import { DialogClose } from "@radix-ui/react-dialog";
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 import { Row } from "@tanstack/react-table";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import toast from "react-hot-toast";
 
-import ClinicUpdateDialog from "./update-dialog";
-import { ClinicModel, deleteClinic } from "@/lib/api/clinicAPI";
+import ClinicOwnerUpdateDialog from "./update-dialog";
+import { ClinicOwnerModel, deleteClinicOwner } from "@/lib/api/clinicOwnerAPI";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export function ActionsDropdown({
   row,
 }: {
   row: Row<
-    ClinicModel & {
+    ClinicOwnerModel & {
       createdAt: any;
       updatedAt: any;
       id: string;
@@ -44,15 +44,12 @@ export function ActionsDropdown({
   const defaultValues = {
     id: row?.original?.id || "",
     name: row.original.name || "",
-    address: row.original.address || "",
     phoneNumber: row.original.phoneNumber || "",
     email: row.original.email || "",
-    openingHours: row.original.openingHours || "",
-    closingHours: row.original.closingHours || "",
-    image: row.original.image || "",
+    clinicId: row.original.clinicID || "",
     status: row.original.status || false,
   };
-
+  
   const queryClient = useQueryClient();
 
   const {
@@ -60,11 +57,11 @@ export function ActionsDropdown({
     status,
     error: mutateError,
   } = useMutation({
-    mutationFn: deleteClinic,
+    mutationFn: deleteClinicOwner,
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ["clinics"] });
+      queryClient.invalidateQueries({ queryKey: ["clinicOwners"] });
 
-      toast.success("Xóa phòng khám " + row.original.name + " thành công!");
+      toast.success("Delete clinic owner " + row.original.name + " thành công!");
       setIsOpen(false);
     },
     onError: (error) => {
@@ -93,8 +90,8 @@ export function ActionsDropdown({
           </DropdownMenuItem>
         </DropdownMenuGroup>
       </DropdownMenuContent>
-      <ClinicUpdateDialog
-        title="Sửa phòng khám"
+      <ClinicOwnerUpdateDialog
+        title="Sửa nhân viên"
         isOpen={isOpen}
         setIsOpen={setIsOpen}
         submitFunction={() => {}}

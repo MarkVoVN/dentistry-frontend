@@ -202,13 +202,13 @@ export default function SearchPage() {
                     Dentists
                   </Typography>
 
-                  <Link
+                  {/* <Link
                     href="/search"
                     className="flex flex-row items-center text-secondary-900"
                   >
                     View all
                     <ArrowRight className="ml-2" width={20} height={20} />
-                  </Link>
+                  </Link> */}
                 </div>
 
                 <div className="flex flex-row gap-4 m-4 overflow-y-auto">
@@ -223,6 +223,11 @@ export default function SearchPage() {
                         name={dentist.name}
                         clinic={dentist.clinic}
                         image={dentist.image}
+                        handleBookNow={() =>
+                          router.push(
+                            `/clinics/${dentist.clinic.clinicID}?dentistId=${dentist.dentistId}`
+                          )
+                        }
                       />
                     )
                   )}
@@ -237,13 +242,13 @@ export default function SearchPage() {
                     Services
                   </Typography>
 
-                  <Link
+                  {/* <Link
                     href="/search"
                     className="flex flex-row items-center text-secondary-900"
                   >
                     View all
                     <ArrowRight className="ml-2" width={20} height={20} />
-                  </Link>
+                  </Link> */}
                 </div>
 
                 <div className="flex flex-col ">
@@ -258,12 +263,28 @@ export default function SearchPage() {
                         name={service.name}
                         clinic={service.clinicDto}
                         fee={service.price}
+                        handleBookNow={() =>
+                          router.push(
+                            `/clinics/${service.clinicDto.clinicID}?serviceId=${service.serviceID}`
+                          )
+                        }
                       />
                     )
                   )}
                 </div>
               </div>
             )}
+          {searchResult?.count.All === 0 && (
+            <div className="flex flex-row justify-center py-24">
+              <Typography
+                headingElement="h2"
+                headingStyle={"h4"}
+                className="text-neutral-6 italic"
+              >
+                No results found. Please try a different keyword.
+              </Typography>
+            </div>
+          )}
         </section>
       </div>
     </main>
