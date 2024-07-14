@@ -3,10 +3,13 @@ import Link from "next/link";
 import Image from "next/image";
 import { LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
+import jwt, { JwtPayload } from "jsonwebtoken";
 
 const DropdownUser = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const router = useRouter();
+  const [username, setUsername] = useState("");
+  const [role, setRole] = useState("");
 
   const handleLogout = () => {
     const accessToken = localStorage.getItem("accessToken");
@@ -17,7 +20,22 @@ const DropdownUser = () => {
 
     router.push("/login");
   };
+  useEffect(() => {
+    try {
+      const accessToken = localStorage.getItem("accessToken");
+      if (accessToken == null) throw new Error("accessToken not found");
+      const decoded = jwt.decode(accessToken) as JwtPayload;
+      const name =
+        decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"];
+      const role =
+        decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
 
+      setRole(role);
+      setUsername(name);
+    } catch (err) {
+      router.push("/login");
+    }
+  }, []);
   const trigger = useRef<any>(null);
   const dropdown = useRef<any>(null);
 
@@ -57,9 +75,9 @@ const DropdownUser = () => {
       >
         <span className="hidden text-right lg:block">
           <span className="block text-sm font-medium text-black dark:text-white">
-            John Doe
+            {username}
           </span>
-          <span className="block text-xs">Admin</span>
+          <span className="block text-xs">{role}</span>
         </span>
 
         <span className="h-12 w-12 rounded-full bg-[#CECFD7] p-2">

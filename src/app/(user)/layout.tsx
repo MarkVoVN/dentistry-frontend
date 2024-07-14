@@ -1,3 +1,4 @@
+"use client";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 
@@ -8,21 +9,36 @@ import QueryProvider from "@/components/provider/QueryProvider";
 import { Toaster } from "react-hot-toast";
 import Footer from "@/components/shared/Footer";
 import { GlobalStoreProvider } from "@/lib/store/global/provider";
-import { Suspense } from "react";
-
+import { Suspense, useEffect } from "react";
+import jwt, { JwtPayload } from "jsonwebtoken";
+import { useRouter } from "next/navigation";
 // const inter = Inter({ subsets: ["latin"] });
 
-export const metadata: Metadata = {
-  title: "Dentistry",
-  description: "Make appointments with the best dentists in the world.",
-};
+// export const metadata: Metadata = {
+//   title: "Dentistry",
+//   description: "Make appointments with the best dentists in the world.",
+// };
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  
+  const router = useRouter();
+
+  useEffect(() => {
+    try {
+      const accessToken = localStorage.getItem("accessToken");
+      if (accessToken == null) throw new Error("accessToken not found");
+      const decoded = jwt.decode(accessToken) as JwtPayload;
+      const role =
+        decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+     
+      if (role !== "Customer") {
+        router.push("/login");
+      }
+    } catch (err) {}
+  }, []);
   return (
     <html lang="en">
       <body className={"absolute w-[100vw]"}>

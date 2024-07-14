@@ -8,6 +8,9 @@ export type CustomerModel = {
   phoneNumber: string;
   address: string;
   gender: string;
+  customerID: string;
+  image? : string;
+  status: string;
 };
 export const fetchCustomerList = () => {
   return request({

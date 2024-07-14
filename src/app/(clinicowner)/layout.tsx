@@ -34,7 +34,7 @@ export default function RootLayout({
       const role =
         decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
       const exp = decoded["exp"];
-      if (role === "Dentist") {
+      if (role === "ClinicOwner") {
         setIsClinicOwner(true);
       }
       setLoading(false);

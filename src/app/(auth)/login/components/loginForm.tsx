@@ -65,8 +65,12 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
         decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
       const exp = decoded["exp"];
 
-      if (role === "admin") {
+      if (role === "Admin") {
         router.push("/admin");
+      } else if (role === "ClinicOwner") {
+        router.push("/clinicowner/clinic");
+      } else if (role === "Dentist") {
+        router.push("/dentist/appointment");
       } else {
         router.push("/");
       }

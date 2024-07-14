@@ -1,20 +1,10 @@
 import { Button } from "@/components/ui/button";
 import {
   ArrowLeftCircleIcon,
-  ComputerIcon,
   Hospital,
   Laptop,
   CalendarDays,
-  Layers,
-  LayoutDashboard,
-  LayoutDashboardIcon,
-  MenuSquare,
-  Search,
-  Settings,
-  Sparkles,
   Stethoscope,
-  StickyNote,
-  TagIcon,
   UserIcon,
   Pill,
   Contact,
@@ -25,6 +15,14 @@ import { usePathname } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 
 interface SidebarProps {
+  sidebarStructure: {
+    title: string;
+    items: {
+      name: string;
+      link: string;
+      icon: React.ReactElement;
+    }[];
+  }[];
   sidebarOpen: boolean;
   setSidebarOpen: (arg: boolean) => void;
 }
@@ -84,7 +82,7 @@ const sidebarStructure: {
   },
 ];
 
-const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
+const Sidebar = ({ sidebarOpen, setSidebarOpen, sidebarStructure }: SidebarProps) => {
   const pathname = usePathname();
 
   const trigger = useRef<any>(null);
