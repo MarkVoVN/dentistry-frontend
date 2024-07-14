@@ -3,15 +3,66 @@
 import React, { useEffect, useState } from "react";
 import { DataTable } from "./data-table";
 import AppointmentAddDialog from "./components/create-dialog"; // Adjust import as needed
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useErrorNotification } from "@/hooks/useErrorNotification";
 import { columns } from "./columns";
-import { AppointmentModel, getAppointmentList } from "@/lib/api/appointmentAPI";
+import {
+  AppointmentModel,
+  AppointmentQuery,
+  getAppointmentList,
+  queryAppointment,
+} from "@/lib/api/appointmentAPI";
+import jwt, { JwtPayload } from "jsonwebtoken";
+import useLocalStorage from "@/hooks/useLocalStorage";
+import _, { set } from "lodash";
+import { getDentistById } from "@/lib/api/dentistAPI";
+import toast from "react-hot-toast";
 
 export default function AppointmentManagementPage() {
   const [itemList, setItemList] = useState<AppointmentModel[]>([]); // Initialize with AppointmentModel type
-
+  const [query, setQuery] = useState<AppointmentQuery>({ DentistID: "0" });
   const queryClient = useQueryClient();
+  const [local_dentistId, setLocal_dentistId] = useLocalStorage<string>(
+    "dentistId",
+    "0"
+  );
+  const [local_clinicId, setLocal_clinicId] = useLocalStorage<number>(
+    "clinicId",
+    0
+  );
+
+  useEffect(() => {
+    try {
+      const accessToken = localStorage.getItem("accessToken");
+      if (accessToken == null) throw new Error("accessToken not found");
+      const decoded = jwt.decode(accessToken) as JwtPayload;
+      const dentistId =
+        decoded[
+          "http://schemas.microsoft.com/ws/2008/06/identity/claims/primarysid"
+        ];
+
+      setLocal_dentistId(dentistId);
+      mutate(dentistId);
+
+      setQuery({ ...query, DentistID: dentistId });
+    } catch (err) {}
+  }, []);
+
+  const {
+    mutate,
+    status,
+    error: mutateError,
+  } = useMutation({
+    mutationFn: getDentistById,
+    onSuccess: (res, variables) => {
+      console.log("success", res.data.clinicID);
+      const { clinicID } = res.data;
+      setLocal_clinicId(clinicID);
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
 
   const {
     data: req_data,
@@ -19,7 +70,10 @@ export default function AppointmentManagementPage() {
     error,
     isError,
     isSuccess,
-  } = useQuery({ queryKey: ["appointments"], queryFn: getAppointmentList }); // Adjust queryKey and queryFn as per appointment API
+  } = useQuery({
+    queryKey: ["appointments", query],
+    queryFn: () => queryAppointment(query),
+  });
 
   useEffect(() => {
     if (isSuccess && req_data) {
@@ -57,6 +111,10 @@ export default function AppointmentManagementPage() {
           <AppointmentAddDialog
             title="Add Appointment"
             buttonTitle="Add Appointment"
+            defaultValues={{
+              clinicID: local_clinicId,
+              dentistID: _.parseInt(local_dentistId),
+            }}
             submitFunction={() => {}}
           />
         </div>

@@ -581,10 +581,16 @@ export default function AppointmentUpdateDialog({
                 />
               </div>
               <DialogFooter>
-                <Button type="button" onClick={() => onOpenChange(false)}>
+                <Button
+                  type="button"
+                  variant={"outline"}
+                  onClick={() => onOpenChange(false)}
+                >
                   Cancel
                 </Button>
-                <Button type="submit">{buttonTitle}</Button>
+                <Button type="submit" variant={"outline"}>
+                  {buttonTitle}
+                </Button>
               </DialogFooter>
             </form>
           </Form>

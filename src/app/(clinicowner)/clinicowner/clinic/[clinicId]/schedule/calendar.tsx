@@ -31,7 +31,7 @@ const days = [
 export default function WeekCalendar({ ClinicID, setSelectedSchedule }: any) {
   const [schedules, setSchedules] = useState<ClinicScheduleModel[]>([]);
   const [query, setQuery] = useState<ClinicScheduleQuery>({
-    ClinicID: ClinicID,
+    ClinicID: ClinicID ?? 2,
   });
 
   const {

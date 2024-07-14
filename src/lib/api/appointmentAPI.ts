@@ -29,6 +29,7 @@ export type AppointmentQuery = {
   OrderBy?: string;
   SearchTerm?: string;
   ClinicID?: string;
+  DentistID?: string;
   PageNumber?: number;
   PageSize?: number;
   CustomerID?: string;

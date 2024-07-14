@@ -40,6 +40,7 @@ import {
 } from "@/components/ui/select";
 import moment from "moment";
 import { fetchCustomerList } from "@/lib/api/customerAPI";
+import useLocalStorage from "@/hooks/useLocalStorage";
 
 const dayArray = [
   "Sunday",
@@ -78,14 +79,14 @@ export default function AppointmentAddDialog({
   description?: string;
   buttonTitle?: string;
   defaultValues?: {
-    clinicID: number;
-    customerID: number;
-    dentistID: number;
-    serviceID: number;
-    scheduleID: number;
-    appointmentDate: string;
-    appointmentTime: string;
-    status: string;
+    clinicID?: number;
+    customerID?: number;
+    dentistID?: number;
+    serviceID?: number;
+    scheduleID?: number;
+    appointmentDate?: string;
+    appointmentTime?: string;
+    status?: string;
   };
   submitFunction: any;
   open?: boolean;
@@ -116,8 +117,8 @@ export default function AppointmentAddDialog({
   const form = useForm<z.infer<typeof appointmentFormSchema>>({
     resolver: zodResolver(appointmentFormSchema),
     defaultValues: {
-      clinicID: defaultValues?.clinicID || 0,
-      dentistID: defaultValues?.dentistID || 0,
+      clinicID: defaultValues?.clinicID,
+      dentistID: defaultValues?.dentistID,
       serviceID: defaultValues?.serviceID || 0,
       scheduleID: defaultValues?.scheduleID || 0,
       appointmentDate: defaultValues?.appointmentDate || "",
@@ -125,6 +126,18 @@ export default function AppointmentAddDialog({
       status: defaultValues?.status || "Scheduled",
     },
   });
+
+  // console.log("dentistId", local_dentistId);
+
+  // const [local_dentistId, setLocal_dentistId] = useLocalStorage<number>(
+  //   "dentistId",
+  //   0
+  // );
+  // const [local_clinicId, setLocal_clinicId] = useLocalStorage<number>(
+  //   "clinicId",
+  //   0
+  // );
+  // console.log("clinicId", local_clinicId);
 
   const queryClient = useQueryClient();
 
@@ -210,12 +223,22 @@ export default function AppointmentAddDialog({
   useEffect(() => {
     if (isSuccessClinics && clinicData) {
       setClinics(clinicData.data);
+      setSelectedClinic(
+        clinicData.data.find(
+          (c: ClinicModel) => c.clinicID == defaultValues?.clinicID?.toString()
+        )
+      );
     }
   }, [isSuccessClinics]);
 
   useEffect(() => {
     if (isSuccessDentists && dentistData) {
       setDentists(dentistData.data);
+      setSelectedDentist(
+        dentistData.data.find(
+          (c: any) => c.dentistId == defaultValues?.dentistID
+        )
+      );
     }
   }, [isSuccessDentists]);
 
@@ -322,10 +345,11 @@ export default function AppointmentAddDialog({
                             valueDisplay: selectedClinic?.name,
                             placeholderText: "Select Clinic",
                             label: "Clinic",
-                            items: clinics.map((clinic) => ({
-                              value: clinic.clinicID,
-                              text: clinic.name,
-                            })),
+                            // items: clinics.map((clinic) => ({
+                            //   value: clinic.clinicID,
+                            //   text: clinic.name,
+                            // })),
+                            readonly: true,
                           }}
                           updateFormData={({ path, value }: any) => {
                             form.setValue("clinicID", value);
@@ -355,20 +379,23 @@ export default function AppointmentAddDialog({
                           props={{
                             path: "dentistID",
                             value: selectedDentist?.dentistId,
+                            // value: local_dentistId,
                             valueDisplay: selectedDentist?.name,
                             placeholderText: "Select Dentist",
                             label: "Dentist",
-                            items: dentists
-                              .filter(
-                                (d) =>
-                                  _.parseInt(
-                                    selectedClinic?.clinicID || "0"
-                                  ) === d.clinicID
-                              )
-                              .map((dentist) => ({
-                                value: dentist.dentistId,
-                                text: dentist.name,
-                              })),
+                            readonly: true,
+
+                            // items: dentists
+                            //   .filter(
+                            //     (d) =>
+                            //       _.parseInt(
+                            //         selectedClinic?.clinicID || "0"
+                            //       ) === d.clinicID
+                            //   )
+                            //   .map((dentist) => ({
+                            //     value: dentist.dentistId,
+                            //     text: dentist.name,
+                            //   })),
                           }}
                           updateFormData={({ path, value }: any) => {
                             form.setValue("dentistID", value);
@@ -470,10 +497,6 @@ export default function AppointmentAddDialog({
                             label: "Schedule",
                             items: schedules
                               .filter((sche) => {
-                                console.log(
-                                  sche.clinicID,
-                                  selectedClinic?.clinicID
-                                );
                                 return (
                                   sche.clinicID ===
                                   _.parseInt(selectedClinic?.clinicID || "0")
@@ -560,10 +583,16 @@ export default function AppointmentAddDialog({
                 />
               </div>
               <DialogFooter>
-                <Button type="button" onClick={() => setDialogOpenState(false)}>
+                <Button
+                  type="button"
+                  variant={"outline"}
+                  onClick={() => setDialogOpenState(false)}
+                >
                   Cancel
                 </Button>
-                <Button type="submit">{buttonTitle}</Button>
+                <Button type="submit" variant={"outline"}>
+                  {buttonTitle}
+                </Button>
               </DialogFooter>
             </form>
           </Form>
