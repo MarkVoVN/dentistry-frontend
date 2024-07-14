@@ -3,7 +3,6 @@ import { request } from "../utils/axios.config";
 
 export type TreatmentPlanCreateModel = {
   customerID: number;
-
   dentistID: number;
   startDate: string;
   endDate?: string;
@@ -16,6 +15,10 @@ export type TreatmentPlanCreateModel = {
 export type TreatmentPlanModel = TreatmentPlanCreateModel & {
   id?: string;
   planID: number;
+  dentistPhoneNumber?: string;
+  dentistName?: string;
+  clinicPhoneNumber?: string;
+  clinicName?: string;
 };
 
 export type TreatmentPlanQuery = {

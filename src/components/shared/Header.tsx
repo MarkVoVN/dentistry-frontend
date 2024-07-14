@@ -99,14 +99,8 @@ function Header({
             <NavigationMenuTrigger>Book Appointment</NavigationMenuTrigger>
             <NavigationMenuContent className="text-secondary hover:text-secondary">
               <ul className="grid gap-3 p-3 py-5 md:w-[300px]  ">
-                <ListItem href="/clinic" title="Clinics">
+                <ListItem href="/clinics" title="Clinics">
                   View available clinics
-                </ListItem>
-                <ListItem href="/dentist" title="Dentists">
-                  View available dentists
-                </ListItem>
-                <ListItem href="/service" title="Services">
-                  View availalbe services
                 </ListItem>
               </ul>
             </NavigationMenuContent>
@@ -173,7 +167,10 @@ function Header({
                       {currentUser.email}
                     </Typography>
                   </div>
-                  <DropdownMenuItem className="w-full flex flex-row gap-2 p-2 items-center justify-start text-sm rounded hover:bg-neutral-1 hover:cursor-pointer">
+                  <DropdownMenuItem
+                    onClick={() => router.push("/profile")}
+                    className="w-full flex flex-row gap-2 p-2 items-center justify-start text-sm rounded hover:bg-neutral-1 hover:cursor-pointer"
+                  >
                     <User2Icon className="w-4 h-4" />
                     Profile
                   </DropdownMenuItem>
