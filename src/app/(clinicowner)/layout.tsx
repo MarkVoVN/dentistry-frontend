@@ -1,0 +1,123 @@
+"use client";
+import QueryProvider from "@/components/provider/QueryProvider";
+import { GlobalStoreProvider } from "@/lib/store/global/provider";
+import "@/styles/globals.css";
+import { Toaster } from "react-hot-toast";
+
+// import { refreshToken } from "@/lib/api/authenAPI";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+
+import jwt, { JwtPayload } from "jsonwebtoken";
+import Loader from "./clinicowner/components/loader";
+import Sidebar from "./clinicowner/components/Sidebar";
+import Header from "./clinicowner/components/Header";
+import Image from "next/image";
+import { Typography } from "@/components/typography";
+import { Button } from "@/components/ui/button";
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const [loading, setLoading] = useState<boolean>(true);
+  const [isClinicOwner, setIsClinicOwner] = useState(false);
+  const router = useRouter();
+
+  useEffect(() => {
+    try {
+      const accessToken = localStorage.getItem("accessToken");
+      if (accessToken == null) throw new Error("accessToken not found");
+      const decoded = jwt.decode(accessToken) as JwtPayload;
+      const role =
+        decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+      const exp = decoded["exp"];
+      if (role === "Dentist") {
+        setIsClinicOwner(true);
+      }
+      setLoading(false);
+    } catch (err) {
+      router.push("/login");
+    }
+  }, []);
+
+  return (
+    <html lang="en">
+      <body suppressHydrationWarning={true}>
+        <QueryProvider>
+          <GlobalStoreProvider>
+            <Toaster
+              position="bottom-right"
+              containerStyle={{
+                zIndex: "60 !important",
+              }}
+              containerClassName="react-hot-toast-container z-[60]"
+              toastOptions={{
+                className: "react-hot-toast z-60",
+                style: {
+                  zIndex: "60 !important",
+                },
+              }}
+              reverseOrder={false}
+            />
+            <div className="bg-neutral-2 dark:bg-[#57606b]">
+              {loading ? (
+                <Loader />
+              ) : (
+                <div className="flex h-screen overflow-hidden">
+                  {isClinicOwner ? (
+                    <>
+                      <Sidebar
+                        sidebarOpen={sidebarOpen}
+                        setSidebarOpen={setSidebarOpen}
+                      />
+
+                      <div className="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden">
+                        <Header
+                          sidebarOpen={sidebarOpen}
+                          setSidebarOpen={setSidebarOpen}
+                        />
+                        <main>
+                          <div className="mx-auto max-w-screen-2xl p-2 sm:p-4 md:p-6 2xl:p-10 dark:text-shade-1-100% text-[#1C2434]">
+                            {children}
+                          </div>
+                        </main>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="flex flex-col justify-center gap-6 h-[calc(100vh-350px-64px)] ">
+                      <div className="flex flex-col gap-6  p-10">
+                        <Image
+                          src={"/401.svg"}
+                          alt={"dentistry logo"}
+                          width={300}
+                          height={300}
+                        />
+                        <Typography
+                          headingElement="h2"
+                          headingStyle={"h4"}
+                          className="text-secondary-900 font-bold"
+                        >
+                          You are currently not logged in.
+                        </Typography>
+                        <Button
+                          className=""
+                          variant={"outline"}
+                          onClick={() => router.push("/login")}
+                        >
+                          Login
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </GlobalStoreProvider>
+        </QueryProvider>
+      </body>
+    </html>
+  );
+}
