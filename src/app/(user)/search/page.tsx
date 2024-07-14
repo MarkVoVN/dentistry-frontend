@@ -220,6 +220,7 @@ export default function SearchPage() {
                       <DentistCard
                         key={index}
                         id={index}
+                        dentist={dentist}
                         name={dentist.name}
                         clinic={dentist.clinic}
                         image={dentist.image}

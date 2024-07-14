@@ -3,21 +3,34 @@ import { Typography } from "@/components/typography";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ClinicModel } from "@/lib/api/clinicAPI";
+import { DentistModel } from "@/lib/api/dentistAPI";
 import { MapPinIcon, SquareUserIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
+import useSignalRChat from "../chat/chatService";
 
 export default function DentistCard({
   id,
+  dentist,
   name,
   clinic,
   image,
   handleBookNow,
 }: {
   id: number;
+  dentist: DentistModel;
   name: string;
   clinic: ClinicModel;
   image?: string;
   handleBookNow: () => void;
 }) {
+  const router = useRouter();
+  const { setDentist, setReceiverId } = useSignalRChat();
+  const handleMessage = () => {
+    setReceiverId(dentist.id!);
+    setDentist(dentist);
+    localStorage.setItem("receiverId", dentist.id!);
+    router.push("/chat");
+  };
   return (
     <div className="flex flex-col gap-4 min-w-[260px] border-2 border-neutral-3 hover:border-secondary-500 rounded-xl">
       <div className="flex flex-col items-center justify-center">
@@ -58,15 +71,26 @@ export default function DentistCard({
             </Typography>
           </div>
         </div>
-        <Button
-          onClick={() => {
-            handleBookNow();
-          }}
-          variant={"outline"}
-          className="w-full text-secondary px-4 rounded-full"
-        >
-          Book Now
-        </Button>
+        <div className="flex flex-row gap-2">
+          <Button
+            onClick={() => {
+              handleBookNow();
+            }}
+            variant={"outline"}
+            className="w-full text-secondary px-4 rounded-full"
+          >
+            Book Now
+          </Button>
+          <Button
+            variant={"outline"}
+            onClick={() => {
+              handleMessage();
+            }}
+            className="w-full text-secondary px-4 rounded-full"
+          >
+            Message
+          </Button>
+        </div>
       </div>
     </div>
   );
