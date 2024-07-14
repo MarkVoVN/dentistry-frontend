@@ -35,7 +35,7 @@ export const columns: (ColumnDef<AppointmentModel> & {
             {appointment?.customerName}
           </p>
           <p className="text-neutral-8 text-[14px] not-italic leading-[normal] whitespace-nowrap">
-            {appointment?.phoneNumber}
+            {appointment?.clinicPhoneNumber}
           </p>
         </div>
       );

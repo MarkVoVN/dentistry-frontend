@@ -21,8 +21,8 @@ export default function CustomerAppointments({
       <div className="text-xl font-bold mb-4">Appointments</div>
       {appointments.length > 0 ? (
         <ul className="space-y-4">
-          {appointments.map((appointment) => (
-            <div className="flex flex-col bg-shade-1-100% rounded-xl shadow-lg">
+          {appointments.map((appointment, key) => (
+            <div key={key} className="flex flex-col bg-shade-1-100% rounded-xl shadow-lg">
               <div className="flex flex-row justify-between px-4 py-2 bg-secondary-600 text-shade-1-100%  rounded-t-xl">
                 <Typography headingElement="h2" headingStyle={"h6"}>
                   Appointment Info

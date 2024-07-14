@@ -14,7 +14,7 @@ export type AppointmentCreateModel = {
 export type AppointmentModel = AppointmentCreateModel & {
   id?: string;
   appointmentID: number;
-  clinicName: string;
+  clinicName?: string;
   customerName?: string;
   dentistName?: string;
   serviceName?: string;

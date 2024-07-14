@@ -23,8 +23,11 @@ export default function CustomerTreatments({ treatments }: TreatmentProps) {
       <div className="text-xl font-bold mb-4">Treatments</div>
       {treatments.length > 0 ? (
         <ul className="space-y-4">
-          {treatments.map((treatment) => (
-            <div className="flex flex-col bg-shade-1-100% rounded-xl shadow-lg">
+          {treatments.map((treatment, key) => (
+            <div
+              key={key}
+              className="flex flex-col bg-shade-1-100% rounded-xl shadow-lg"
+            >
               <div className="flex flex-row justify-between px-4 py-2 bg-[#9EE67E] text-shade-1-100%  rounded-t-xl">
                 <Typography headingElement="h2" headingStyle={"h6"}>
                   Treatment Information
