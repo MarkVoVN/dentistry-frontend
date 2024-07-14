@@ -29,12 +29,12 @@ export default function Profile() {
         ];
       setProfileId(userId);
       mutate({
-        // CustomerID: userId
-        CustomerID: undefined,
+        CustomerID: userId
+        // CustomerID: undefined,
       });
       mutateTreatment({
-        // CustomerID: userId
-        CustomerID: undefined,
+        CustomerID: userId
+        // CustomerID: undefined,
       });
     }
   }, []);
