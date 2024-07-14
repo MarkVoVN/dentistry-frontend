@@ -26,9 +26,12 @@ import { X } from "lucide-react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import * as z from "zod";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useErrorNotification } from "@/hooks/useErrorNotification";
 import { updateClinicOwner } from "@/lib/api/clinicOwnerAPI";
+import { MyInputSelect } from "@/components/myinput";
+import { ClinicModel, fetchClinicList } from "@/lib/api/clinicAPI";
+import { useEffect, useState } from "react";
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -54,7 +57,7 @@ export default function ClinicOwnerUpdateDialog({
   title?: string;
   description?: string;
   defaultValues?: {
-    id: string;
+    ownerID: number;
     name: string;
     phoneNumber: string;
     email: string;
@@ -76,6 +79,39 @@ export default function ClinicOwnerUpdateDialog({
     },
   });
 
+  const [clinicList, setClinicList] = useState<ClinicModel[]>([]);
+
+  const [selectedClinic, setSelectedClinic] = useState<ClinicModel>();
+
+  const {
+    data: clinics,
+    isLoading,
+    error,
+    isError,
+    isSuccess,
+  } = useQuery({
+    queryKey: ["clinics"],
+    queryFn: fetchClinicList,
+  });
+
+  useEffect(() => {
+    if (isSuccess && clinics) {
+      const { data, pagination } = clinics;
+      setClinicList(data);
+
+      const selClinic =
+        data.find(
+          (clinic: ClinicModel) => clinic.clinicID === defaultValues?.clinicId
+        ) ?? data[0];
+      setSelectedClinic(selClinic);
+    }
+  }, [isSuccess]);
+
+  useErrorNotification({
+    isError,
+    title: error?.message,
+  });
+
   const queryClient = useQueryClient();
 
   const {
@@ -87,7 +123,9 @@ export default function ClinicOwnerUpdateDialog({
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["clinicOwners"] });
 
-      toast.success("Sửa thông tin nhân viên " + variables.name + " thành công!");
+      toast.success(
+        "Sửa thông tin nhân viên " + variables.name + " thành công!"
+      );
       setIsOpen(false);
     },
   });
@@ -99,6 +137,7 @@ export default function ClinicOwnerUpdateDialog({
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     mutate({
+      ownerID: defaultValues?.ownerID,
       name: values.name || "",
       phoneNumber: values.phoneNumber || "",
       email: values.email || "",
@@ -165,6 +204,43 @@ export default function ClinicOwnerUpdateDialog({
                         <FormControl>
                           <Input placeholder="Email" {...field} />
                         </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="clinicId"
+                    render={({ field }) => (
+                      <FormItem className="mt-4">
+                        {/* <FormLabel>Clinic</FormLabel> */}
+                        <MyInputSelect
+                          props={{
+                            path: "clinicId",
+                            value: selectedClinic?.clinicID,
+                            valueDisplay: selectedClinic?.name,
+                            placeholderText: "Select Clinic",
+                            label: "Clinic",
+                            items: clinicList?.map((clinic: any) => ({
+                              value: clinic.clinicID,
+                              text: clinic.name,
+                            })),
+                          }}
+                          updateFormData={({
+                            path,
+                            value,
+                          }: {
+                            path: string;
+                            value: any;
+                          }) => {
+                            form.setValue("clinicId", value.toString());
+                            setSelectedClinic(
+                              clinicList.find(
+                                (clinic) => clinic.clinicID === value
+                              )
+                            );
+                          }}
+                        />
                         <FormMessage />
                       </FormItem>
                     )}

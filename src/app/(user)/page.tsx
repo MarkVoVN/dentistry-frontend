@@ -15,7 +15,7 @@ export default async function Home() {
       <HydrationBoundary state={dehydratedState}>
         <HeroSection />
         <CallToActionSection />
-        <FeatureHighlightSection />\
+        <FeatureHighlightSection />
       </HydrationBoundary>
     </main>
   );

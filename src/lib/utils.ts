@@ -1,6 +1,7 @@
 import slugify from "@sindresorhus/slugify";
 import { type ClassValue, clsx } from "clsx";
 import numeral from "numeral";
+import { SlotInfo } from "react-big-calendar";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
@@ -64,17 +65,25 @@ export function formatTime(dateTimeStr: string) {
 }
 
 // string -> HH:MM:SS
-export function convertToHHMMSS(timeString: string) {
-  const [hours, minutes, seconds] = timeString.split(':').map(Number);
-  
+export function convertToHHMMSS(time: Date) {
   const pad = (num: number) => num.toString().padStart(2, '0');
   
-  const formattedHours = pad(hours);
-  const formattedMinutes = pad(minutes);
-  const formattedSeconds = pad(seconds);
+  const formattedHours = pad(time.getHours());
+  const formattedMinutes = pad(time.getMinutes());
+  const formattedSeconds = pad(time.getSeconds());
   
-  return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
+  return `${time.getFullYear()}-${time.getMonth()}-${time.getDate()}T${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
 };
+
+export function convertToDate(dataString: string) {
+  console.log("Input dataString:", dataString);
+
+  // const [dates, times] = dataString.split('T').map(String);
+  // const [year, month, date] = dates.split('-').map(Number);
+  // const [hours, minutes, seconds] = times.split(':').map(Number);
+
+  return new Date();
+}
 
 export function convertHHmmToISO(timeString: string) {
   const [hours, minutes] = timeString.split(":").map(Number);
