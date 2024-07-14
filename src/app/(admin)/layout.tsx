@@ -11,7 +11,9 @@ import Header from "./admin/components/Header";
 import Sidebar from "./admin/components/Sidebar";
 import Loader from "./admin/components/loader";
 import jwt, { JwtPayload } from "jsonwebtoken";
-
+import Image from "next/image";
+import { Typography } from "@/components/typography";
+import { Button } from "@/components/ui/button";
 export default function RootLayout({
   children,
 }: {
@@ -20,7 +22,7 @@ export default function RootLayout({
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const [loading, setLoading] = useState<boolean>(true);
-
+  const [isAdmin, setIsAdmin] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -31,7 +33,9 @@ export default function RootLayout({
       const role =
         decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
       const exp = decoded["exp"];
-
+      if (role === "Admin") {
+        setIsAdmin(true);
+      }
       setLoading(false);
     } catch (err) {
       router.push("/login");
@@ -62,22 +66,51 @@ export default function RootLayout({
                 <Loader />
               ) : (
                 <div className="flex h-screen overflow-hidden">
-                  <Sidebar
-                    sidebarOpen={sidebarOpen}
-                    setSidebarOpen={setSidebarOpen}
-                  />
+                  {isAdmin ? (
+                    <>
+                      <Sidebar
+                        sidebarOpen={sidebarOpen}
+                        setSidebarOpen={setSidebarOpen}
+                      />
 
-                  <div className="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden">
-                    <Header
-                      sidebarOpen={sidebarOpen}
-                      setSidebarOpen={setSidebarOpen}
-                    />
-                    <main>
-                      <div className="mx-auto max-w-screen-2xl p-2 sm:p-4 md:p-6 2xl:p-10 dark:text-shade-1-100% text-[#1C2434]">
-                        {children}
+                      <div className="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden">
+                        <Header
+                          sidebarOpen={sidebarOpen}
+                          setSidebarOpen={setSidebarOpen}
+                        />
+                        <main>
+                          <div className="mx-auto max-w-screen-2xl p-2 sm:p-4 md:p-6 2xl:p-10 dark:text-shade-1-100% text-[#1C2434]">
+                            {children}
+                          </div>
+                        </main>
                       </div>
-                    </main>
-                  </div>
+                    </>
+                  ) : (
+                    <div className="flex flex-col justify-center gap-6 h-[calc(100vh-350px-64px)] ">
+                      <div className="flex flex-col gap-6  p-10">
+                        <Image
+                          src={"/401.svg"}
+                          alt={"dentistry logo"}
+                          width={300}
+                          height={300}
+                        />
+                        <Typography
+                          headingElement="h2"
+                          headingStyle={"h4"}
+                          className="text-secondary-900 font-bold"
+                        >
+                          You are currently not logged in.
+                        </Typography>
+                        <Button
+                          className=""
+                          variant={"outline"}
+                          onClick={() => router.push("/login")}
+                        >
+                          Login
+                        </Button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
