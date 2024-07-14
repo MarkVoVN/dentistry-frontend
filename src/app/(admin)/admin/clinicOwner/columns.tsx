@@ -65,7 +65,7 @@ export const columns: (ColumnDef<
       return (
         <div className="flex items-center gap-2">
           <p className="text-neutral-8 text-[14px] not-italic leading-[normal] whitespace-nowrap">
-            {clinicOwner.clinicDto?.name}
+            {clinicOwner.clinicName}
           </p>
         </div>
       );

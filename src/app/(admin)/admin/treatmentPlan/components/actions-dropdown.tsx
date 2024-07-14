@@ -23,17 +23,18 @@ import { Row } from "@tanstack/react-table";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
-import ClinicOwnerUpdateDialog from "./update-dialog";
-import { ClinicOwnerModel, deleteClinicOwner } from "@/lib/api/clinicOwnerAPI";
+import {
+  TreatmentPlanModel,
+  deleteTreatmentPlan,
+} from "@/lib/api/treatmentPlanAPI"; // Update with your API
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import TreatmentPlanUpdateDialog from "./update-dialog";
 
 export function ActionsDropdown({
   row,
 }: {
   row: Row<
-    ClinicOwnerModel & {
-      createdAt: any;
-      updatedAt: any;
+    TreatmentPlanModel & {
       id: string;
     }
   >;
@@ -42,14 +43,18 @@ export function ActionsDropdown({
   const [isAlertOpen, setIsAlertOpen] = useState<boolean>(false);
 
   const defaultValues = {
-    id: row?.original?.id || "",
-    ownerID: row?.original?.ownerID ?? 0,
-    name: row.original.name || "",
-    phoneNumber: row.original.phoneNumber || "",
-    email: row.original.email || "",
-    clinicId: row.original.clinicID || "",
-    status: row.original.status || false,
+    planID: row?.original?.planID,
+    customerID: row.original.customerID,
+    dentistID: row.original.dentistID,
+    startDate: row.original.startDate,
+    endDate: row.original.endDate ?? undefined,
+    description: row.original.description,
+    nextAppointmentDate: row.original.nextAppointmentDate ?? undefined,
+    status: row.original.status,
+    paymentStatus: row.original.paymentStatus,
   };
+
+  console.log(row.original?.planID);
 
   const queryClient = useQueryClient();
 
@@ -58,14 +63,15 @@ export function ActionsDropdown({
     status,
     error: mutateError,
   } = useMutation({
-    mutationFn: deleteClinicOwner,
+    mutationFn: deleteTreatmentPlan,
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ["clinicOwners"] });
+      queryClient.invalidateQueries({ queryKey: ["treatmentPlans"] });
 
       toast.success(
-        "Delete clinic owner " + row.original.name + " thành công!"
+        "Delete treatment plan " + row.original.planID + " thành công!"
       );
       setIsOpen(false);
+      setIsAlertOpen(false);
     },
     onError: (error) => {
       toast.error(error.message);
@@ -73,7 +79,7 @@ export function ActionsDropdown({
   });
 
   const handleDelete = () => {
-    mutate(row?.original?.id);
+    mutate(row?.original?.planID.toString());
   };
 
   return (
@@ -93,10 +99,11 @@ export function ActionsDropdown({
           </DropdownMenuItem>
         </DropdownMenuGroup>
       </DropdownMenuContent>
-      <ClinicOwnerUpdateDialog
-        title="Sửa nhân viên"
-        isOpen={isOpen}
-        setIsOpen={setIsOpen}
+      <TreatmentPlanUpdateDialog
+        title="Update Treatment Plan"
+        buttonTitle="Update Treatment Plan"
+        open={isOpen}
+        onOpenChange={setIsOpen}
         submitFunction={() => {}}
         defaultValues={defaultValues}
       />
@@ -115,8 +122,8 @@ const AlertDelete = ({ isAlertOpen, setIsAlertOpen, handleDelete }: any) => (
       <DialogHeader>
         <DialogTitle>Are you absolutely sure?</DialogTitle>
         <DialogDescription>
-          This action cannot be undone. This will permanently delete your
-          account and remove your data from our servers.
+          This action cannot be undone. This will permanently delete the
+          treatment plan and remove its data from our servers.
         </DialogDescription>
       </DialogHeader>
       <DialogFooter>
