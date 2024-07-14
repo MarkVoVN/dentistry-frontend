@@ -26,6 +26,7 @@ import toast from "react-hot-toast";
 import ClinicUpdateDialog from "./update-dialog";
 import { ClinicModel, deleteClinic } from "@/lib/api/clinicAPI";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 
 export function ActionsDropdown({
   row,
@@ -38,6 +39,7 @@ export function ActionsDropdown({
     }
   >;
 }) {
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isAlertOpen, setIsAlertOpen] = useState<boolean>(false);
 
@@ -87,6 +89,13 @@ export function ActionsDropdown({
         <DropdownMenuGroup>
           <DropdownMenuItem onSelect={() => setIsOpen(true)}>
             Sửa thông tin
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onSelect={() =>
+              router.push(`/admin/clinic/${row.original.clinicID}/schedule`)
+            }
+          >
+            Xem lịch hoạt động
           </DropdownMenuItem>
           <DropdownMenuItem onSelect={() => setIsAlertOpen(true)}>
             Xóa

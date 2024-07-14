@@ -2,20 +2,40 @@ import { request } from "../utils/axios.config";
 export type ClinicScheduleCreateModel = {
   clinicId: string;
   dayOfWeek: string;
-  slotDuration: string;
-  openingHours: string;
-  closingHours: string;
+  slotDuration: number;
+  openingTime: string;
+  closingTime: string;
   maxPatientsPerSlot: number;
 };
 export type ClinicScheduleModel = ClinicScheduleCreateModel & {
   id?: string;
-  scheduleId?: string;
+  scheduleID: string;
+};
+
+export type ClinicScheduleQuery = {
+  OrderBy?: string;
+  Date?: string;
+  SearchTerm?: string;
+  ClinicID?: number;
+  ViewType?: "available" | "unavailable";
+  PageNumber?: number;
+  PageSize?: number;
 };
 
 export const fetchClinicScheduleList = () => {
   return request({
     method: "GET",
     url: `/clinicSchedule`,
+  });
+};
+
+export const queryClinicScheduleList = (query: ClinicScheduleQuery) => {
+  return request({
+    method: "GET",
+    url: `/clinicSchedule`,
+    params: {
+      ...query,
+    },
   });
 };
 
@@ -35,12 +55,12 @@ export const createClinicSchedule = (data: ClinicScheduleCreateModel) => {
 };
 
 export const updateClinicSchedule = (data: ClinicScheduleModel) => {
-  console.log(data);
+  // console.log(data);
   return request({
     method: "PUT",
-    url: `/clinicSchedule`,
+    url: `/clinicSchedule/${data.scheduleID}`,
     params: {
-      id: data.id,
+      id: data.scheduleID,
     },
     data,
   });
