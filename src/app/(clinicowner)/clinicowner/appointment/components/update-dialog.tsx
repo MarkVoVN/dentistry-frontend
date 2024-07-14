@@ -346,10 +346,10 @@ export default function AppointmentUpdateDialog({
                             valueDisplay: selectedClinic?.name,
                             placeholderText: "Select Clinic",
                             label: "Clinic",
-                            items: clinics.map((clinic) => ({
-                              value: clinic.clinicID,
-                              text: clinic.name,
-                            })),
+                            // items: clinics.map((clinic) => ({
+                            //   value: clinic.clinicID,
+                            //   text: clinic.name,
+                            // })),
                           }}
                           updateFormData={({ path, value }: any) => {
                             form.setValue("clinicID", value);

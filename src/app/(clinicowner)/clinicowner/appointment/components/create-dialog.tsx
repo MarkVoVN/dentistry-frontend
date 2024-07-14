@@ -78,14 +78,14 @@ export default function AppointmentAddDialog({
   description?: string;
   buttonTitle?: string;
   defaultValues?: {
-    clinicID: number;
-    customerID: number;
-    dentistID: number;
-    serviceID: number;
-    scheduleID: number;
-    appointmentDate: string;
-    appointmentTime: string;
-    status: string;
+    clinicID?: number;
+    customerID?: number;
+    dentistID?: number;
+    serviceID?: number;
+    scheduleID?: number;
+    appointmentDate?: string;
+    appointmentTime?: string;
+    status?: string;
   };
   submitFunction: any;
   open?: boolean;
@@ -210,6 +210,11 @@ export default function AppointmentAddDialog({
   useEffect(() => {
     if (isSuccessClinics && clinicData) {
       setClinics(clinicData.data);
+      setSelectedClinic(
+        clinicData.data.find(
+          (c: ClinicModel) => c.clinicID == defaultValues?.clinicID?.toString()
+        )
+      );
     }
   }, [isSuccessClinics]);
 
@@ -322,10 +327,10 @@ export default function AppointmentAddDialog({
                             valueDisplay: selectedClinic?.name,
                             placeholderText: "Select Clinic",
                             label: "Clinic",
-                            items: clinics.map((clinic) => ({
-                              value: clinic.clinicID,
-                              text: clinic.name,
-                            })),
+                            // items: clinics.map((clinic) => ({
+                            //   value: clinic.clinicID,
+                            //   text: clinic.name,
+                            // })),
                           }}
                           updateFormData={({ path, value }: any) => {
                             form.setValue("clinicID", value);
@@ -470,10 +475,6 @@ export default function AppointmentAddDialog({
                             label: "Schedule",
                             items: schedules
                               .filter((sche) => {
-                                console.log(
-                                  sche.clinicID,
-                                  selectedClinic?.clinicID
-                                );
                                 return (
                                   sche.clinicID ===
                                   _.parseInt(selectedClinic?.clinicID || "0")
