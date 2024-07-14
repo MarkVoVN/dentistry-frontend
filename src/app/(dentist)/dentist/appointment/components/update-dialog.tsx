@@ -346,10 +346,10 @@ export default function AppointmentUpdateDialog({
                             valueDisplay: selectedClinic?.name,
                             placeholderText: "Select Clinic",
                             label: "Clinic",
-                            items: clinics.map((clinic) => ({
-                              value: clinic.clinicID,
-                              text: clinic.name,
-                            })),
+                            // items: clinics.map((clinic) => ({
+                            //   value: clinic.clinicID,
+                            //   text: clinic.name,
+                            // })),
                           }}
                           updateFormData={({ path, value }: any) => {
                             form.setValue("clinicID", value);
@@ -382,17 +382,17 @@ export default function AppointmentUpdateDialog({
                             valueDisplay: selectedDentist?.name,
                             placeholderText: "Select Dentist",
                             label: "Dentist",
-                            items: dentists
-                              .filter(
-                                (d) =>
-                                  _.parseInt(
-                                    selectedClinic?.clinicID || "0"
-                                  ) === d.clinicID
-                              )
-                              .map((dentist) => ({
-                                value: dentist.dentistId,
-                                text: dentist.name,
-                              })),
+                            // items: dentists
+                            //   .filter(
+                            //     (d) =>
+                            //       _.parseInt(
+                            //         selectedClinic?.clinicID || "0"
+                            //       ) === d.clinicID
+                            //   )
+                            //   .map((dentist) => ({
+                            //     value: dentist.dentistId,
+                            //     text: dentist.name,
+                            //   })),
                           }}
                           updateFormData={({ path, value }: any) => {
                             form.setValue("dentistID", value);
@@ -581,10 +581,16 @@ export default function AppointmentUpdateDialog({
                 />
               </div>
               <DialogFooter>
-                <Button type="button" onClick={() => onOpenChange(false)}>
+                <Button
+                  type="button"
+                  variant={"outline"}
+                  onClick={() => onOpenChange(false)}
+                >
                   Cancel
                 </Button>
-                <Button type="submit">{buttonTitle}</Button>
+                <Button type="submit" variant={"outline"}>
+                  {buttonTitle}
+                </Button>
               </DialogFooter>
             </form>
           </Form>

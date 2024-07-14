@@ -13,11 +13,7 @@ import Sidebar from "./dentist/components/Sidebar";
 import Header from "./dentist/components/Header";
 import Loader from "./dentist/components/loader";
 import MessageButton from "../(user)/components/MessageButton";
-import {
-  CalendarDays,
-  Stethoscope,
-  Pill,
-} from "lucide-react";
+import { CalendarDays, Stethoscope, Pill } from "lucide-react";
 const sidebarStructure: {
   title: string;
   items: {
