@@ -177,8 +177,6 @@ export default function DentistAddDialog({
     }
   }, [isClinicLoading, clinicData]);
 
-  console.log(clinics);
-
   const queryClient = useQueryClient();
 
   const {
