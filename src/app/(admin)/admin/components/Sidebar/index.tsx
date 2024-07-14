@@ -17,6 +17,7 @@ import {
   TagIcon,
   UserIcon,
   Pill,
+  Contact,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -73,6 +74,11 @@ const sidebarStructure: {
         name: "Appointment",
         link: "/admin/appointment",
         icon: <CalendarDays />,
+      },
+      {
+        name: "Dentists",
+        link: "/admin/dentist",
+        icon: <Contact />,
       },
     ],
   },

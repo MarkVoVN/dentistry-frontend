@@ -83,15 +83,17 @@ export const columns: (ColumnDef<DentistModel> & {
     },
   },
   {
-    accessorKey: "specialization",
-    header: "Specialization",
+    accessorKey: "status",
+    header: "Status",
     cell: ({ row }) => {
       const dentist = row.original;
 
       return (
         <div className="flex items-center gap-2">
           <p className="text-neutral-8 text-[14px] not-italic leading-[normal] whitespace-nowrap">
-            {dentist.status ? "Được phép hành nghề" : "Không được phép hành nghề"}
+            {dentist.status
+              ? "Được phép hành nghề"
+              : "Không được phép hành nghề"}
           </p>
         </div>
       );

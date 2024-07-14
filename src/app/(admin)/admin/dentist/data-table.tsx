@@ -28,6 +28,8 @@ import {
 import { DataTablePagination } from "../components/table/data-table-pagination";
 import { DataTableToolbar } from "./data-table-toolbar";
 import { DebouncedInput, Filter } from "./filter";
+import { Arrow } from "@radix-ui/react-dropdown-menu";
+import { ArrowDownIcon, ArrowUpIcon } from "lucide-react";
 
 interface DataTableProps<TData, TValue> {
   columns: (ColumnDef<TData, TValue> & {
@@ -93,8 +95,8 @@ export function DataTable<TData, TValue>({
                           <div
                             {...{
                               className: header.column.getCanSort()
-                                ? "cursor-pointer select-none"
-                                : "",
+                                ? "flex flex-row items-center cursor-pointer select-none"
+                                : "flex flex-row items-center",
                               onClick: header.column.getToggleSortingHandler(),
                             }}
                           >
@@ -103,8 +105,8 @@ export function DataTable<TData, TValue>({
                               header.getContext()
                             )}
                             {{
-                              asc: " 🔼",
-                              desc: " 🔽",
+                              asc: <ArrowUpIcon className="ml-2 h-4 w-4" />,
+                              desc: <ArrowDownIcon className="ml-2 h-4 w-4" />,
                             }[header.column.getIsSorted() as string] ?? null}
                           </div>
                           {/* {header.column.getCanFilter() &&
