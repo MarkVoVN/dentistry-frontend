@@ -55,7 +55,7 @@ const useSignalRChat = () => {
 
   useEffect(() => {
     const newConnection = new signalR.HubConnectionBuilder()
-      .withUrl(`${process.env.NEXT_PUBLIC_BASE_URL}chatHub`)
+      .withUrl(`https://dentistry.api.markvoit.id.vn/chatHub`, {})
       .build();
     setConnection(newConnection);
   }, []);
