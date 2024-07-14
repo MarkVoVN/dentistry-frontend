@@ -7,6 +7,15 @@ export const loginUser = (data: { username: string; password: string }) => {
     data,
   });
 };
+
+export const registerUser = (data: { username: string; email: string; password: string }) => {  
+  return request({
+    method: "POST",
+    url: `/account/register-customer`,
+    data,
+  });
+};
+
 export const refreshToken = async (refreshToken: string) => {
   return await request({
     method: "POST",

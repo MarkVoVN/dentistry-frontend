@@ -11,6 +11,9 @@ type AppointmentCreateModel = {
   status: string;
 };
 
+export type AppointmentModel = {
+
+};
 const BASE_URL = "/appointments";
 
 export const createAppointment = (data: AppointmentCreateModel) => {
