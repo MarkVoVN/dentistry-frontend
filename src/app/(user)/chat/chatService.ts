@@ -55,7 +55,7 @@ const useSignalRChat = () => {
 
   useEffect(() => {
     const newConnection = new signalR.HubConnectionBuilder()
-      .withUrl(`http://localhost:3000/chatHub`)
+      .withUrl(`${process.env.NEXT_PUBLIC_BASE_URL}chatHub`)
       .build();
     setConnection(newConnection);
   }, []);

@@ -40,15 +40,15 @@ export function ActionsDropdown({
   const [isAlertOpen, setIsAlertOpen] = useState<boolean>(false);
 
   const defaultValues = {
-    id: row?.original?.id || "",
+    dentistId: row?.original?.dentistId || 0,
     name: row.original.name || "",
-    username: row.original?.username || "",
+    // username: row.original?.username || "",
     email: row.original?.email || "",
-    password: row.original?.password || "",
+    // password: row.original?.password || "",
     phoneNumber: row.original?.phoneNumber || "",
     specialization: row.original?.specialization || "",
     image: row.original?.image || "",
-    clinicID: row.original.clinicID || 0,
+    clinicID: (row.original.clinicID || 0).toString(),
     status: row.original.status || true,
   };
 
@@ -94,8 +94,8 @@ export function ActionsDropdown({
       </DropdownMenuContent>
       <DentistUpdateDialog
         title="Update Dentist"
-        isOpen={isOpen}
-        setIsOpen={setIsOpen}
+        open={isOpen}
+        onOpenChange={setIsOpen}
         submitFunction={() => {}}
         defaultValues={defaultValues}
       />
