@@ -26,8 +26,6 @@ export default function DentistCard({
   const router = useRouter();
   const { setDentist, setReceiverId } = useSignalRChat();
   const handleMessage = () => {
-    setReceiverId(dentist.id!);
-    setDentist(dentist);
     localStorage.setItem("receiverId", dentist.id!);
     router.push("/chat");
   };

@@ -5,12 +5,11 @@ export type DentistCreateModel = {
   clinicID: number;
   email: string;
   image: string;
-  username: string;
+  // username: string;
   name: string;
   phoneNumber: string;
   specialization: string;
   status?: boolean;
-  password: string,
 };
 
 export type DentistModel = DentistCreateModel & {
@@ -18,11 +17,13 @@ export type DentistModel = DentistCreateModel & {
   dentistId: number;
 };
 
-export type DentistUpdateModel = Pick<DentistModel, 'id' | 'name' | 'phoneNumber' | 'email' | 'specialization' | 'status'> & {
+export type DentistUpdateModel = Pick<
+  DentistModel,
+  "id" | "name" | "phoneNumber" | "email" | "specialization" | "status"
+> & {
   id?: string;
   dentistId: number;
-};;
-
+};
 
 export type DentistQuery = {
   OrderBy?: string;
@@ -48,7 +49,9 @@ export const getDentistById = (id: string) => {
   });
 };
 
-export const createDentist = (data: DentistCreateModel) => {
+export const createDentist = (
+  data: DentistCreateModel & { password: string; username: string }
+) => {
   return request({
     method: "POST",
     url: `/Account/register-dentist`,
@@ -57,10 +60,12 @@ export const createDentist = (data: DentistCreateModel) => {
 };
 
 export const updateDentist = (data: DentistModel) => {
-  console.log("data: ", data)
   return request({
     method: "PUT",
-    url: `${BASE_URL}/${data.dentistId}`,
+    url: `${BASE_URL}`,
+    params: {
+      id: data.dentistId,
+    },
     data,
   });
 };

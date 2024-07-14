@@ -26,6 +26,7 @@ import toast from "react-hot-toast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AppointmentModel, deleteAppointment } from "@/lib/api/appointmentAPI";
 import AppointmentUpdateDialog from "./update-dialog";
+import { useRouter } from "next/navigation";
 
 export function ActionsDropdown({
   row,
@@ -74,6 +75,12 @@ export function ActionsDropdown({
   const handleDelete = () => {
     mutate(row?.original?.id ?? "");
   };
+  const router = useRouter();
+
+  const handleOpenChat = () => {
+    localStorage.setItem("receiverId", row.original.customerID.toString());
+    router.push("/chat");
+  };
 
   return (
     <DropdownMenu modal={false}>
@@ -87,6 +94,12 @@ export function ActionsDropdown({
           <DropdownMenuItem onSelect={() => setIsOpen(true)}>
             Sửa thông tin
           </DropdownMenuItem>
+          {row.original.customerID && (
+            <DropdownMenuItem onSelect={() => handleOpenChat()}>
+              Mở chat
+            </DropdownMenuItem>
+          )}
+
           <DropdownMenuItem onSelect={() => setIsAlertOpen(true)}>
             Xóa
           </DropdownMenuItem>
