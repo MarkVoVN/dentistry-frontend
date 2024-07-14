@@ -5,6 +5,7 @@ import React from "react";
 import HeroSection from "./components/HeroSection";
 import CallToActionSection from "./components/CallToActionSection";
 import FeatureHighlightSection from "./components/FeatureHighlight";
+import MessageButton from "./components/MessageButton";
 
 export default async function Home() {
   const queryClient = getQueryClient();
@@ -16,6 +17,7 @@ export default async function Home() {
         <HeroSection />
         <CallToActionSection />
         <FeatureHighlightSection />
+        <MessageButton />
       </HydrationBoundary>
     </main>
   );
