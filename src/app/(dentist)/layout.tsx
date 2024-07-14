@@ -12,6 +12,7 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 import Sidebar from "./dentist/components/Sidebar";
 import Header from "./dentist/components/Header";
 import Loader from "./dentist/components/loader";
+import MessageButton from "../(user)/components/MessageButton";
 
 export default function RootLayout({
   children,
@@ -92,6 +93,7 @@ export default function RootLayout({
             </div>
           </GlobalStoreProvider>
         </QueryProvider>
+        <MessageButton />
       </body>
     </html>
   );
