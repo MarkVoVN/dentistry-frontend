@@ -69,6 +69,11 @@ const sidebarStructure: {
         link: "/admin/treatmentPlan",
         icon: <Pill />,
       },
+      {
+        name: "Appointment",
+        link: "/admin/appointment",
+        icon: <CalendarDays />,
+      },
     ],
   },
 ];
