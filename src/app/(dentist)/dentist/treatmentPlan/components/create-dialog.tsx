@@ -71,14 +71,14 @@ export default function TreatmentPlanAddDialog({
   description?: string;
   buttonTitle?: string;
   defaultValues?: {
-    customerID: number;
-    dentistID: number;
-    startDate: string;
+    customerID?: number;
+    dentistID?: number;
+    startDate?: string;
     endDate?: string;
-    description: string;
+    description?: string;
     nextAppointmentDate?: string;
-    status: string;
-    paymentStatus: string;
+    status?: string;
+    paymentStatus?: string;
   };
   submitFunction: any;
   open?: boolean;
@@ -243,6 +243,7 @@ export default function TreatmentPlanAddDialog({
                               form.setValue("dentistID", Number(value))
                             }
                             defaultValue={field.value?.toString()}
+                            disabled={true}
                           >
                             <SelectTrigger>
                               <SelectValue placeholder="Select Dentist" />

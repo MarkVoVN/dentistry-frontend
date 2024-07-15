@@ -8,6 +8,7 @@ import {
   UserIcon,
   Pill,
   Contact,
+  MessageCircleMore,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -15,14 +16,14 @@ import { usePathname } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 
 interface SidebarProps {
-  sidebarStructure: {
-    title: string;
-    items: {
-      name: string;
-      link: string;
-      icon: React.ReactElement;
-    }[];
-  }[];
+  // sidebarStructure: {
+  //   title: string;
+  //   items: {
+  //     name: string;
+  //     link: string;
+  //     icon: React.ReactElement;
+  //   }[];
+  // }[];
   sidebarOpen: boolean;
   setSidebarOpen: (arg: boolean) => void;
 }
@@ -39,50 +40,30 @@ const sidebarStructure: {
     title: "MANAGEMNT",
     items: [
       {
-        name: "Customer",
-        link: "/admin/customer",
-        icon: <UserIcon />,
-      },
-      {
-        name: "Clinic",
-        link: "/admin/clinic",
-        icon: <Hospital />,
-      },
-      {
-        name: "Clinic Owner",
-        link: "/admin/clinicOwner",
-        icon: <Laptop />,
-      },
-      {
         name: "Clinic Schedule",
-        link: "/admin/schedule",
+        link: "/dentist/schedule",
         icon: <CalendarDays />,
       },
       {
-        name: "Services",
-        link: "/admin/service",
-        icon: <Stethoscope />,
-      },
-      {
         name: "Treatment Plan",
-        link: "/admin/treatmentPlan",
+        link: "/dentist/treatmentPlan",
         icon: <Pill />,
       },
       {
         name: "Appointment",
-        link: "/admin/appointment",
+        link: "/dentist/appointment",
         icon: <CalendarDays />,
       },
       {
-        name: "Dentists",
-        link: "/admin/dentist",
-        icon: <Contact />,
+        name: "Chat",
+        link: "/dentist/chat",
+        icon: <MessageCircleMore />,
       },
     ],
   },
 ];
 
-const Sidebar = ({ sidebarOpen, setSidebarOpen, sidebarStructure }: SidebarProps) => {
+const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
   const pathname = usePathname();
 
   const trigger = useRef<any>(null);

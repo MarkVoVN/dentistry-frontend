@@ -3,6 +3,12 @@ import { formatDateTime, formatTime } from "@/lib/utils";
 import { ActionsDropdown } from "./components/actions-dropdown";
 import { TreatmentPlanModel } from "@/lib/api/treatmentPlanAPI";
 import moment from "moment";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export const columns: (ColumnDef<TreatmentPlanModel> & {
   show?: boolean;
@@ -10,34 +16,34 @@ export const columns: (ColumnDef<TreatmentPlanModel> & {
 })[] = [
   {
     accessorKey: "customerID",
-    header: "Customer ID",
+    header: "Customer",
     cell: ({ row }) => {
       const treatmentPlan = row.original;
 
       return (
         <div className="flex items-center gap-2">
           <h3 className="text-neutral-8 text-[14px] not-italic leading-[normal] whitespace-nowrap">
-            {treatmentPlan.customerID}
+            {treatmentPlan.customer?.name ?? "N/A"}
           </h3>
         </div>
       );
     },
   },
-  {
-    accessorKey: "dentistID",
-    header: "Dentist ID",
-    cell: ({ row }) => {
-      const treatmentPlan = row.original;
+  // {
+  //   accessorKey: "dentistID",
+  //   header: "Dentist ID",
+  //   cell: ({ row }) => {
+  //     const treatmentPlan = row.original;
 
-      return (
-        <div className="flex items-center gap-2">
-          <p className="text-neutral-8 text-[14px] not-italic leading-[normal] whitespace-nowrap">
-            {treatmentPlan.dentistID}
-          </p>
-        </div>
-      );
-    },
-  },
+  //     return (
+  //       <div className="flex items-center gap-2">
+  //         <p className="text-neutral-8 text-[14px] not-italic leading-[normal] whitespace-nowrap">
+  //           {treatmentPlan.dentistID}
+  //         </p>
+  //       </div>
+  //     );
+  //   },
+  // },
   {
     accessorKey: "startDate",
     header: "Start Date",
@@ -78,9 +84,20 @@ export const columns: (ColumnDef<TreatmentPlanModel> & {
 
       return (
         <div className="flex items-center gap-2">
-          <p className="text-neutral-8 text-[14px] not-italic leading-[normal] whitespace-nowrap">
-            {treatmentPlan.description}
-          </p>
+          <TooltipProvider>
+            <Tooltip delayDuration={700}>
+              <TooltipTrigger asChild>
+                <p className="text-neutral-8 text-[14px] not-italic leading-[normal] whitespace-nowrap max-w-[270px] truncate cursor-default hover:shadow-sm">
+                  {treatmentPlan.description}
+                </p>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p className="text-neutral-8 text-[14px] not-italic leading-[normal] whitespace-nowrap ">
+                  {treatmentPlan.description}
+                </p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
       );
     },

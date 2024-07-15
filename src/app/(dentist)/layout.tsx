@@ -13,36 +13,14 @@ import Sidebar from "./dentist/components/Sidebar";
 import Header from "./dentist/components/Header";
 import Loader from "./dentist/components/loader";
 import MessageButton from "../(user)/components/MessageButton";
-import { CalendarDays, Stethoscope, Pill } from "lucide-react";
-const sidebarStructure: {
-  title: string;
-  items: {
-    name: string;
-    link: string;
-    icon: React.ReactElement;
-  }[];
-}[] = [
-  {
-    title: "MANAGEMNT",
-    items: [
-      {
-        name: "Clinic Schedule",
-        link: "/dentist/schedule",
-        icon: <CalendarDays />,
-      },
-      {
-        name: "Treatment Plan",
-        link: "/dentist/treatmentPlan",
-        icon: <Pill />,
-      },
-      {
-        name: "Appointment",
-        link: "/dentist/appointment",
-        icon: <CalendarDays />,
-      },
-    ],
-  },
-];
+import {
+  CalendarDays,
+  Stethoscope,
+  Pill,
+  MessageCircle,
+  MessageCircleMore,
+} from "lucide-react";
+
 export default function RootLayout({
   children,
 }: {
@@ -100,7 +78,6 @@ export default function RootLayout({
                       <Sidebar
                         sidebarOpen={sidebarOpen}
                         setSidebarOpen={setSidebarOpen}
-                        sidebarStructure={sidebarStructure}
                       />
 
                       <div className="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden">
@@ -123,7 +100,7 @@ export default function RootLayout({
             </div>
           </GlobalStoreProvider>
         </QueryProvider>
-        <MessageButton />
+        {/* <MessageButton /> */}
       </body>
     </html>
   );

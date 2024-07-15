@@ -1,4 +1,6 @@
 import { request } from "../utils/axios.config";
+import { CustomerModel } from "./customerAPI";
+import { DentistModel } from "./dentistAPI";
 // import { ClinicModel } from "./clinicAPI";
 
 export type TreatmentPlanCreateModel = {
@@ -19,6 +21,8 @@ export type TreatmentPlanModel = TreatmentPlanCreateModel & {
   dentistName?: string;
   clinicPhoneNumber?: string;
   clinicName?: string;
+  customer?: CustomerModel;
+  dentist?: DentistModel;
 };
 
 export type TreatmentPlanQuery = {

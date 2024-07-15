@@ -27,6 +27,9 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AppointmentModel, deleteAppointment } from "@/lib/api/appointmentAPI";
 import AppointmentUpdateDialog from "./update-dialog";
 import { useRouter } from "next/navigation";
+import TreatmentPlanAddDialog from "../../treatmentPlan/components/create-dialog";
+import _ from "lodash";
+import useLocalStorage from "@/hooks/useLocalStorage";
 
 export function ActionsDropdown({
   row,
@@ -39,6 +42,13 @@ export function ActionsDropdown({
 }) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isAlertOpen, setIsAlertOpen] = useState<boolean>(false);
+  const [isCreateTreatmentPlanOpen, setIsCreateTreatmentPlanOpen] =
+    useState<boolean>(false);
+
+  const [local_dentistId, setLocal_dentistId] = useLocalStorage<string>(
+    "dentistId",
+    "0"
+  );
 
   const defaultValues = {
     appointmentID: row?.original?.appointmentID || 0,
@@ -99,12 +109,29 @@ export function ActionsDropdown({
               Mở chat
             </DropdownMenuItem>
           )}
+          <DropdownMenuItem onSelect={() => setIsCreateTreatmentPlanOpen(true)}>
+            Tạo lộ trình điều trị
+          </DropdownMenuItem>
 
           <DropdownMenuItem onSelect={() => setIsAlertOpen(true)}>
             Xóa
           </DropdownMenuItem>
         </DropdownMenuGroup>
       </DropdownMenuContent>
+      {isCreateTreatmentPlanOpen && (
+        <TreatmentPlanAddDialog
+          hideTrigger={true}
+          title="Add Treatment Plan"
+          buttonTitle="Add Treatment Plan"
+          open={true}
+          onOpenChange={setIsCreateTreatmentPlanOpen}
+          defaultValues={{
+            dentistID: _.parseInt(local_dentistId),
+            customerID: row.original.customerID,
+          }}
+          submitFunction={() => {}}
+        />
+      )}
       <AppointmentUpdateDialog
         title="Update AppointmendeleteAppointment"
         open={isOpen}
