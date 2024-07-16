@@ -1,5 +1,16 @@
 import { request } from "../utils/axios.config";
 
+export type SpecificUser = {
+  customerID?: string;
+  dentistID?: string;
+  name?: string;
+  email?: string;
+  phoneNumber?: string;
+  dateOfBirth?: string;
+  address?: string;
+  gender?: string;
+  clinicID?: string;
+};
 export const loginUser = (data: { username: string; password: string }) => {
   return request({
     method: "POST",
@@ -8,7 +19,11 @@ export const loginUser = (data: { username: string; password: string }) => {
   });
 };
 
-export const registerUser = (data: { username: string; email: string; password: string }) => {  
+export const registerUser = (data: {
+  username: string;
+  email: string;
+  password: string;
+}) => {
   return request({
     method: "POST",
     url: `/account/register-customer`,

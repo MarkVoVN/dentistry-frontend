@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import useSignalRChat from "./chatService";
 import { Typography } from "@/components/ui/typography";
 import { cn } from "@/lib/utils";
+import { CircleUser } from "lucide-react";
 
 const ChatComponent: React.FC = () => {
   const [open, setOpen] = useState(false);
@@ -51,7 +52,7 @@ const ChatComponent: React.FC = () => {
         setOpen={setOpen}
         setDentist={setDentist}
       />
-      <div className="flex h-[80vh] bg-shade-1-100% p-4 rounded-xl container mx-auto">
+      <div className="flex h-[85vh] bg-shade-1-100% p-4 rounded-xl   mx-auto">
         {/* Left Column: List of users */}
         <aside className="w-1/4 border-r pr-4">
           <h2 className="text-lg font-semibold my-2 ">Chats</h2>
@@ -64,10 +65,18 @@ const ChatComponent: React.FC = () => {
                     handleSetReceiver(user.id, user.name);
                   }}
                   className={cn(
-                    "w-full py-2 px-4 rounded-lg",
+                    "w-full py-2 px-4 rounded-lg flex items-center",
                     receiverId === user.id ? "bg-secondary-200" : "bg-gray-300"
                   )}
                 >
+                  {user.image ? (
+                    <img
+                      src={user.image}
+                      className="w-5 h-5  object-cover rounded-lg mr-4"
+                    />
+                  ) : (
+                    <CircleUser className="w-5 h-5 text-shade-2-100% mr-4" />
+                  )}
                   <Typography
                     headingElement="p"
                     headingStyle={"body"}

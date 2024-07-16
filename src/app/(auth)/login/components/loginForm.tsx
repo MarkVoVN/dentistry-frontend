@@ -17,13 +17,16 @@ import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { object, z } from "zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { loginUser } from "@/lib/api/userAPI";
+import { loginUser, SpecificUser } from "@/lib/api/userAPI";
 import { useErrorNotification } from "@/hooks/useErrorNotification";
 
 import jwt, { JwtPayload } from "jsonwebtoken";
 import toast from "react-hot-toast";
+import useLocalStorage from "@/hooks/useLocalStorage";
+import { CustomerModel } from "@/lib/api/customerAPI";
+import { DentistModel } from "@/lib/api/dentistAPI";
 
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
@@ -50,6 +53,11 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
     },
   });
 
+  const [currentUser, setCurrentUser] = useLocalStorage<SpecificUser>(
+    "currentUser",
+    {}
+  );
+ 
   const {
     mutate,
     status,
@@ -57,7 +65,10 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
   } = useMutation({
     mutationFn: loginUser,
     onSuccess: (res, variables) => {
-      const { email, token } = res.data;
+      const { email, token, specificUser } = res.data;
+      console.log(res);
+      // localStorage.setItem("currentUser", specificUser);
+      setCurrentUser(specificUser);
 
       localStorage.setItem("accessToken", token);
       const decoded = jwt.decode(token) as JwtPayload;

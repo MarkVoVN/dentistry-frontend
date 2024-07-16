@@ -18,7 +18,13 @@ export default function Profile() {
   const [currentUser, setCurrentUser] = useState<CustomerModel>();
   const [appointments, setAppointments] = useState<AppointmentModel[]>([]);
   const [treatments, setTreatments] = useState<TreatmentPlanModel[]>([]);
+  const [specificUser, setSpecificUser] = useState<any>(null);
 
+  useEffect(() => {
+    const u = localStorage.getItem("currentUser");
+    setSpecificUser(u);
+    console.log("Current User", u);
+  }, []);
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
     if (token) {
@@ -29,11 +35,11 @@ export default function Profile() {
         ];
       setProfileId(userId);
       mutate({
-        CustomerID: userId
+        CustomerID: userId,
         // CustomerID: undefined,
       });
       mutateTreatment({
-        CustomerID: userId
+        CustomerID: userId,
         // CustomerID: undefined,
       });
     }
@@ -65,7 +71,6 @@ export default function Profile() {
       toast.error(error.message);
     },
   });
-  console.log(treatments);
   useEffect(() => {
     if (!currentUser && !profileId) return;
     getCustomerById(profileId!).then((res) => {
