@@ -7,6 +7,9 @@ import { Button } from "@/components/ui/button";
 
 import { Input } from "@/components/ui/input";
 import useSignalRChat from "./chatService";
+import { cn } from "@/lib/utils";
+import { Typography } from "@/components/typography";
+import { CircleUser } from "lucide-react";
 
 const ChatComponent: React.FC = () => {
   const [open, setOpen] = useState(false);
@@ -49,26 +52,40 @@ const ChatComponent: React.FC = () => {
         setOpen={setOpen}
         setDentist={setDentist}
       />
-      <div className="flex h-[calc(100vh-64px)] container mx-auto">
+      <div className="flex h-[80vh] bg-shade-1-100% p-4 m-8 rounded-xl container mx-auto shadow-md">
         {/* Left Column: List of users */}
         <aside className="w-1/4 border-r ">
           <h2 className="text-lg font-semibold mt-2">Messages</h2>
           <ul className="space-y-0">
             {receivers.map((user) => (
               <li key={user.id}>
-                <Button
-                  variant="ghost"
-                  size="lg"
+                <div
                   onClick={() => {
                     localStorage.setItem("receiverId", receiverId!);
                     handleSetReceiver(user.id, user.name);
                   }}
-                  className={`w-full text-left ${
+                  className={cn(
+                    "w-full py-2 px-4 rounded-lg flex items-center",
                     receiverId === user.id ? "bg-secondary-200" : "bg-gray-300"
-                  }`}
+                  )}
                 >
-                  {user.name}
-                </Button>
+                  {user.image ? (
+                    <img
+                      src={user.image}
+                      className="w-5 h-5  object-cover rounded-lg mr-4"
+                    />
+                  ) : (
+                    <CircleUser className="w-5 h-5 text-shade-2-100% mr-4" />
+                  )}
+
+                  <Typography
+                    headingElement="p"
+                    headingStyle={"body"}
+                    className="w-full"
+                  >
+                    {user.name}
+                  </Typography>
+                </div>
               </li>
             ))}
           </ul>
