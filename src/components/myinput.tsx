@@ -273,6 +273,8 @@ export const MyInputSelect = ({
     dropBoxText,
     imageRootProps,
     imageInputProps,
+
+    readonly,
   } = props;
 
   return (
@@ -293,7 +295,7 @@ export const MyInputSelect = ({
         {label}
       </Label>
 
-      <DropdownMenu>
+      <DropdownMenu open={readonly ? true : undefined}>
         <DropdownMenuTrigger
           className={twMerge(
             "h-10 border-[1px] border-neutral-3 rounded-md p-2 px-3 text-left flex flex-row justify-between items-center",

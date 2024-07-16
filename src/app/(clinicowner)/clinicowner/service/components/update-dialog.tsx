@@ -192,6 +192,7 @@ export default function ServiceUpdateDialog({
                             value: clinic.clinicID,
                             text: clinic.name,
                           })),
+                          readonly: true,
                         }}
                         updateFormData={({
                           path,

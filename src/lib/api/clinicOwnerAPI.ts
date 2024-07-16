@@ -26,7 +26,7 @@ export const fetchClinicOwnerList = () => {
 export const getClinicOwnerById = (id: string) => {
   return request({
     method: "GET",
-    url: `/clinicOwner/getById/${id}`,
+    url: `/clinicOwner/${id}`,
   });
 };
 

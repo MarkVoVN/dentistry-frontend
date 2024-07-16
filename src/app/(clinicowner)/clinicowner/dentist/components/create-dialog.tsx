@@ -92,16 +92,16 @@ export default function DentistAddDialog({
   description?: string;
   buttonTitle?: string;
   defaultValues?: {
-    id: string;
-    name: string;
-    phoneNumber: string;
-    email: string;
-    username: string;
-    specialization: string;
-    clinicID: string;
-    password: string;
-    image: string;
-    status: boolean;
+    id?: string;
+    name?: string;
+    phoneNumber?: string;
+    email?: string;
+    username?: string;
+    specialization?: string;
+    clinicID?: string;
+    password?: string;
+    image?: string;
+    status?: boolean;
   };
   submitFunction: any;
   open?: boolean;
@@ -172,8 +172,12 @@ export default function DentistAddDialog({
 
   useEffect(() => {
     if (!isClinicLoading && clinicData) {
-      // const { data, pagination } = clinicData;
       setClinics(clinicData.data);
+      setSelectedClinic(
+        clinicData.data.find(
+          (clinic: ClinicModel) => clinic.clinicID == defaultValues?.clinicID
+        )
+      );
     }
   }, [isClinicLoading, clinicData]);
 
@@ -371,6 +375,7 @@ export default function DentistAddDialog({
                                   value: clinic.clinicID,
                                   text: clinic.name,
                                 })),
+                                readonly: true,
                               }}
                               updateFormData={({
                                 path,
@@ -428,15 +433,19 @@ export default function DentistAddDialog({
                 </div>
               </div>
               <DialogFooter className="space-x-2">
-                <Button type="submit" onClick={form.handleSubmit(onSubmit)}>
-                  Tạo bác sĩ
-                </Button>
                 <Button
                   type="button"
                   variant="outline"
                   onClick={() => setDialogOpenState(false)}
                 >
-                  Hủy
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  variant={"outline"}
+                  onClick={form.handleSubmit(onSubmit)}
+                >
+                  Add Dentist
                 </Button>
               </DialogFooter>
             </form>

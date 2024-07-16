@@ -19,19 +19,19 @@ import { useEffect, useState } from "react";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 
 const days = [
-  "Sunday",
   "Monday",
   "Tuesday",
   "Wednesday",
   "Thursday",
   "Friday",
   "Saturday",
+  "Sunday",
 ];
 
 export default function WeekCalendar({ ClinicID, setSelectedSchedule }: any) {
   const [schedules, setSchedules] = useState<ClinicScheduleModel[]>([]);
   const [query, setQuery] = useState<ClinicScheduleQuery>({
-    ClinicID: ClinicID ?? 2,
+    ClinicID: ClinicID,
   });
 
   const {
@@ -53,7 +53,7 @@ export default function WeekCalendar({ ClinicID, setSelectedSchedule }: any) {
 
   const times: string[] = [];
   const startTime = moment("00:00", "HH:mm");
-  const endTime = moment("24:00", "HH:mm");
+  const endTime = moment("23:30", "HH:mm");
 
   while (startTime.isSameOrBefore(endTime)) {
     times.push(startTime.format("HH:mm"));

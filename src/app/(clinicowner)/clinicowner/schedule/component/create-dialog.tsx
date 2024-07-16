@@ -74,11 +74,11 @@ export default function ClinicScheduleAddDialog({
   buttonTitle?: string;
   defaultValues?: {
     clinicId: number;
-    dayOfWeek: string;
-    slotDuration: number;
-    openingTime: string;
-    closingTime: string;
-    maxPatientsPerSlot: number;
+    dayOfWeek?: string;
+    slotDuration?: number;
+    openingTime?: string;
+    closingTime?: string;
+    maxPatientsPerSlot?: number;
   };
   submitFunction: any;
   open?: boolean;

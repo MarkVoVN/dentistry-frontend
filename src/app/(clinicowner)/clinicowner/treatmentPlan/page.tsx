@@ -1,22 +1,53 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { DataTable } from "./data-table";
-import { ServiceModel, getServiceList } from "@/lib/api/serviceAPI"; // Update import paths
-import ServiceAddDialog from "./components/create-dialog"; // Adjust import as needed
-import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useErrorNotification } from "@/hooks/useErrorNotification";
-import { columns } from "./columns";
+import useLocalStorage from "@/hooks/useLocalStorage";
+import { getClinicOwnerById } from "@/lib/api/clinicOwnerAPI";
 import {
-  getTreatmentPlanList,
+  queryTreatmentPlan,
   TreatmentPlanModel,
 } from "@/lib/api/treatmentPlanAPI";
-import TreatmentPlanAddDialog from "./components/create-dialog";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import jwt, { JwtPayload } from "jsonwebtoken";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import { columns } from "./columns";
+import { DataTable } from "./data-table";
 
 export default function ServiceManagementPage() {
   const [itemList, setItemList] = useState<TreatmentPlanModel[]>([]); // Initialize with ServiceModel type
+  const [clinicId, setClinicId] = useLocalStorage<string>("ClinicID", "0");
 
   const queryClient = useQueryClient();
+
+  useEffect(() => {
+    try {
+      const accessToken = localStorage.getItem("accessToken");
+      if (accessToken == null) throw new Error("accessToken not found");
+      const decoded = jwt.decode(accessToken) as JwtPayload;
+      const coID =
+        decoded[
+          "http://schemas.microsoft.com/ws/2008/06/identity/claims/primarysid"
+        ];
+
+      mutate(coID);
+    } catch (err) {}
+  }, []);
+
+  const {
+    mutate,
+    status,
+    error: mutateError,
+  } = useMutation({
+    mutationFn: getClinicOwnerById,
+    onSuccess: (res, variables) => {
+      const { clinicID } = res.data;
+      setClinicId(clinicID);
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
 
   const {
     data: req_data,
@@ -24,7 +55,10 @@ export default function ServiceManagementPage() {
     error,
     isError,
     isSuccess,
-  } = useQuery({ queryKey: ["treatmentPlans"], queryFn: getTreatmentPlanList }); // Adjust queryKey and queryFn as per service API
+  } = useQuery({
+    queryKey: ["treatmentPlans", clinicId],
+    queryFn: () => queryTreatmentPlan({ ClinicID: clinicId }),
+  }); // Adjust queryKey and queryFn as per service API
 
   useEffect(() => {
     if (isSuccess && req_data) {
@@ -56,11 +90,14 @@ export default function ServiceManagementPage() {
           </p>
         </div>
         <div>
-          <TreatmentPlanAddDialog
+          {/* <TreatmentPlanAddDialog
             title="Add Treatment Plan"
             buttonTitle="Add Treatment Plan"
             submitFunction={() => {}}
-          />
+            defaultValues={{
+              clinicID: clinicId,
+            }}
+          /> */}
         </div>
       </div>
       <DataTable columns={columns} data={itemList} />

@@ -28,23 +28,18 @@ const sidebarStructure: {
   }[];
 }[] = [
   {
-    title: "MANAGEMNT",
+    title: "CLINIC OPERATIONS",
     items: [
-      {
-        name: "Customer",
-        link: "/clinicowner/customer",
-        icon: <UserIcon />,
-      },
       {
         name: "Clinic",
         link: "/clinicowner/clinic",
         icon: <Hospital />,
       },
-      {
-        name: "Clinic Owner",
-        link: "/clinicowner/clinicOwner",
-        icon: <Laptop />,
-      },
+      // {
+      //   name: "Clinic Owner",
+      //   link: "/clinicowner/clinicOwner",
+      //   icon: <Laptop />,
+      // },
       {
         name: "Clinic Schedule",
         link: "/clinicowner/schedule",
@@ -55,20 +50,31 @@ const sidebarStructure: {
         link: "/clinicowner/service",
         icon: <Stethoscope />,
       },
+
       {
-        name: "Treatment Plan",
-        link: "/clinicowner/treatmentPlan",
-        icon: <Pill />,
+        name: "Dentists",
+        link: "/clinicowner/dentist",
+        icon: <Contact />,
       },
+    ],
+  },
+  {
+    title: "PATIENT MANAGEMENT",
+    items: [
       {
         name: "Appointment",
         link: "/clinicowner/appointment",
         icon: <CalendarDays />,
       },
       {
-        name: "Dentists",
-        link: "/clinicowner/dentist",
-        icon: <Contact />,
+        name: "Treatment Plan",
+        link: "/clinicowner/treatmentPlan",
+        icon: <Pill />,
+      },
+      {
+        name: "Customer",
+        link: "/clinicowner/customer",
+        icon: <UserIcon />,
       },
     ],
   },
