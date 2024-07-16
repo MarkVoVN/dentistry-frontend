@@ -28,8 +28,16 @@ import { ClinicModel, fetchClinicList } from "@/lib/api/clinicAPI";
 
 import { MyInputSelect, MyPriceInput } from "@/components/myinput";
 import _ from "lodash";
-import { DentistModel, getDentistList } from "@/lib/api/dentistAPI";
-import { getServiceList, ServiceModel } from "@/lib/api/serviceAPI";
+import {
+  DentistModel,
+  getDentistList,
+  queryDentist,
+} from "@/lib/api/dentistAPI";
+import {
+  getServiceList,
+  queryService,
+  ServiceModel,
+} from "@/lib/api/serviceAPI";
 import { getScheduleList, ScheduleModel } from "@/lib/api/scheduleAPI";
 import {
   Select,
@@ -39,7 +47,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import moment from "moment";
-import { fetchCustomerList } from "@/lib/api/customerAPI";
+import { fetchCustomerList, queryCustomer } from "@/lib/api/customerAPI";
+import { queryClinicScheduleList } from "@/lib/api/clinicScheduleAPI";
 
 const dayArray = [
   "Sunday",
@@ -78,14 +87,14 @@ export default function AppointmentAddDialog({
   description?: string;
   buttonTitle?: string;
   defaultValues?: {
-    clinicID: number;
-    customerID: number;
-    dentistID: number;
-    serviceID: number;
-    scheduleID: number;
-    appointmentDate: string;
-    appointmentTime: string;
-    status: string;
+    clinicID?: number;
+    customerID?: number;
+    dentistID?: number;
+    serviceID?: number;
+    scheduleID?: number;
+    appointmentDate?: string;
+    appointmentTime?: string;
+    status?: string;
   };
   submitFunction: any;
   open?: boolean;
@@ -164,8 +173,9 @@ export default function AppointmentAddDialog({
     isError: isErrorDentists,
     isSuccess: isSuccessDentists,
   } = useQuery({
-    queryKey: ["dentists"],
-    queryFn: getDentistList,
+    queryKey: ["dentists", defaultValues?.clinicID],
+    queryFn: () =>
+      queryDentist({ ClinicID: defaultValues?.clinicID?.toString() }),
   });
 
   const {
@@ -175,8 +185,9 @@ export default function AppointmentAddDialog({
     isError: isErrorServices,
     isSuccess: isSuccessServices,
   } = useQuery({
-    queryKey: ["services"],
-    queryFn: getServiceList,
+    queryKey: ["services", defaultValues?.clinicID],
+    queryFn: () =>
+      queryService({ ClinicID: defaultValues?.clinicID?.toString() }),
   });
 
   const {
@@ -186,8 +197,9 @@ export default function AppointmentAddDialog({
     isError: isErrorSchedules,
     isSuccess: isSuccessSchedules,
   } = useQuery({
-    queryKey: ["schedules"],
-    queryFn: getScheduleList,
+    queryKey: ["schedules", defaultValues?.clinicID],
+    queryFn: () =>
+      queryClinicScheduleList({ ClinicID: defaultValues?.clinicID }),
   });
 
   const {
@@ -197,8 +209,9 @@ export default function AppointmentAddDialog({
     error: customerError,
     isError: isErrorCustomer,
   } = useQuery({
-    queryKey: ["customers"],
-    queryFn: fetchCustomerList,
+    queryKey: ["customers", defaultValues?.clinicID],
+    queryFn: () =>
+      queryCustomer({ ClinicID: defaultValues?.clinicID?.toString() }),
   });
 
   useEffect(() => {
@@ -210,6 +223,12 @@ export default function AppointmentAddDialog({
   useEffect(() => {
     if (isSuccessClinics && clinicData) {
       setClinics(clinicData.data);
+      setSelectedClinic(
+        clinicData.data.find(
+          (clinic: ClinicModel) =>
+            clinic.clinicID == defaultValues?.clinicID?.toString()
+        )
+      );
     }
   }, [isSuccessClinics]);
 

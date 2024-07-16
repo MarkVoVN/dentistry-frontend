@@ -70,10 +70,11 @@ export default function ServiceAddDialog({
   description?: string;
   buttonTitle?: string;
   defaultValues?: {
-    name: string;
-    description: string;
-    duration: number;
-    price: number;
+    clinicID?: string;
+    name?: string;
+    description?: string;
+    duration?: number;
+    price?: number;
   };
   submitFunction: any;
   open?: boolean;
@@ -95,6 +96,7 @@ export default function ServiceAddDialog({
   const form = useForm<z.infer<typeof serviceFormSchema>>({
     resolver: zodResolver(serviceFormSchema),
     defaultValues: {
+      clinicID: _.parseInt(defaultValues?.clinicID || "0"),
       name: defaultValues?.name || "",
       description: defaultValues?.description || "",
       duration: (defaultValues?.duration || 30).toString(),
@@ -139,6 +141,11 @@ export default function ServiceAddDialog({
     if (isSuccess && req_data) {
       const { data, pagination } = req_data;
       setClinics(data);
+      setSelectedClinic(
+        data.find(
+          (clinic: ClinicModel) => clinic.clinicID == defaultValues?.clinicID
+        )
+      );
     }
   }, [isSuccess]);
 
@@ -193,6 +200,7 @@ export default function ServiceAddDialog({
                             value: clinic.clinicID,
                             text: clinic.name,
                           })),
+                          readonly: true,
                         }}
                         updateFormData={({
                           path,

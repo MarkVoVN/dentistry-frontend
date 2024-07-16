@@ -382,6 +382,7 @@ export default function DentistUpdateDialog({
                                   value: clinic.clinicID,
                                   text: clinic.name,
                                 })),
+                                readonly: true,
                               }}
                               updateFormData={({
                                 path,

@@ -2,16 +2,56 @@
 
 import React, { useEffect, useState } from "react";
 import { DataTable } from "./data-table";
-import AppointmentAddDialog from "./components/create-dialog"; // Adjust import as needed
+import AppointmentAddDialog from "./components/create-dialog";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useErrorNotification } from "@/hooks/useErrorNotification";
 import { columns } from "./columns";
-import { AppointmentModel, getAppointmentList } from "@/lib/api/appointmentAPI";
+import {
+  AppointmentModel,
+  getAppointmentList,
+  queryAppointment,
+} from "@/lib/api/appointmentAPI";
+import jwt, { JwtPayload } from "jsonwebtoken";
+import { useMutation } from "@tanstack/react-query";
+import { getClinicOwnerById } from "@/lib/api/clinicOwnerAPI";
+import toast from "react-hot-toast";
+import useLocalStorage from "@/hooks/useLocalStorage";
+import _ from "lodash";
 
 export default function AppointmentManagementPage() {
-  const [itemList, setItemList] = useState<AppointmentModel[]>([]); // Initialize with AppointmentModel type
+  const [itemList, setItemList] = useState<AppointmentModel[]>([]);
+  const [clinicId, setClinicId] = useLocalStorage<string>("ClinicID", "0");
 
   const queryClient = useQueryClient();
+
+  useEffect(() => {
+    try {
+      const accessToken = localStorage.getItem("accessToken");
+      if (accessToken == null) throw new Error("accessToken not found");
+      const decoded = jwt.decode(accessToken) as JwtPayload;
+      const coID =
+        decoded[
+          "http://schemas.microsoft.com/ws/2008/06/identity/claims/primarysid"
+        ];
+
+      mutate(coID);
+    } catch (err) {}
+  }, []);
+
+  const {
+    mutate,
+    status,
+    error: mutateError,
+  } = useMutation({
+    mutationFn: getClinicOwnerById,
+    onSuccess: (res, variables) => {
+      const { clinicID } = res.data;
+      setClinicId(clinicID);
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
 
   const {
     data: req_data,
@@ -19,7 +59,10 @@ export default function AppointmentManagementPage() {
     error,
     isError,
     isSuccess,
-  } = useQuery({ queryKey: ["appointments"], queryFn: getAppointmentList }); // Adjust queryKey and queryFn as per appointment API
+  } = useQuery({
+    queryKey: ["appointments", clinicId],
+    queryFn: () => queryAppointment({ ClinicID: clinicId }),
+  });
 
   useEffect(() => {
     if (isSuccess && req_data) {
@@ -38,7 +81,7 @@ export default function AppointmentManagementPage() {
   });
 
   const refetch = () => {
-    queryClient.invalidateQueries({ queryKey: ["appointments"] }); // Adjust queryKey
+    queryClient.invalidateQueries({ queryKey: ["appointments"] });
   };
 
   return (
@@ -58,6 +101,9 @@ export default function AppointmentManagementPage() {
             title="Add Appointment"
             buttonTitle="Add Appointment"
             submitFunction={() => {}}
+            defaultValues={{
+              clinicID: _.parseInt(clinicId ?? "0"),
+            }}
           />
         </div>
       </div>
