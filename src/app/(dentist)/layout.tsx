@@ -27,15 +27,6 @@ export default function RootLayout({
 
   useEffect(() => {
     try {
-      const accessToken = localStorage.getItem("accessToken");
-      if (accessToken == null) throw new Error("accessToken not found");
-      const decoded = jwt.decode(accessToken) as JwtPayload;
-      const role =
-        decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
-      const exp = decoded["exp"];
-      if (role === "Dentist") {
-        setIsDentist(true);
-      }
       setLoading(false);
     } catch (err) {
       router.push("/login");
@@ -66,28 +57,22 @@ export default function RootLayout({
                 <Loader />
               ) : (
                 <div className="flex h-screen overflow-hidden">
-                  {isDentist ? (
-                    <>
-                      <Sidebar
-                        sidebarOpen={sidebarOpen}
-                        setSidebarOpen={setSidebarOpen}
-                      />
+                  <Sidebar
+                    sidebarOpen={sidebarOpen}
+                    setSidebarOpen={setSidebarOpen}
+                  />
 
-                      <div className="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden">
-                        <Header
-                          sidebarOpen={sidebarOpen}
-                          setSidebarOpen={setSidebarOpen}
-                        />
-                        <main>
-                          <div className="mx-auto max-w-screen-2xl p-2 sm:p-4 md:p-6 2xl:p-10 dark:text-shade-1-100% text-[#1C2434]">
-                            {children}
-                          </div>
-                        </main>
+                  <div className="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden">
+                    <Header
+                      sidebarOpen={sidebarOpen}
+                      setSidebarOpen={setSidebarOpen}
+                    />
+                    <main>
+                      <div className="mx-auto max-w-screen-2xl p-2 sm:p-4 md:p-6 2xl:p-10 dark:text-shade-1-100% text-[#1C2434]">
+                        {children}
                       </div>
-                    </>
-                  ) : (
-                    <>You are not authorized to access this page.</>
-                  )}
+                    </main>
+                  </div>
                 </div>
               )}
             </div>

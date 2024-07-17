@@ -30,10 +30,9 @@ export function middleware(request: NextRequest) {
     } catch (err) {
       return NextResponse.redirect(new URL("/login", request.url));
     }
-  } else {
-    return NextResponse.redirect(new URL("/login", request.url));
   }
 }
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|.*\\.png$).*)"],
-};
+  matcher: ['/((?!api|_next/static|_next/image|.*\\.(?:png|jpg|jpeg|gif|svg)$).*)'],
+}
+
