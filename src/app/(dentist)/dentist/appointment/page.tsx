@@ -17,6 +17,7 @@ import useLocalStorage from "@/hooks/useLocalStorage";
 import _, { set } from "lodash";
 import { getDentistById } from "@/lib/api/dentistAPI";
 import toast from "react-hot-toast";
+import DataTableSkeleton from "@/components/dataTableSkelenton";
 
 export default function AppointmentManagementPage() {
   const [itemList, setItemList] = useState<AppointmentModel[]>([]); // Initialize with AppointmentModel type
@@ -119,7 +120,11 @@ export default function AppointmentManagementPage() {
           /> */}
         </div>
       </div>
-      <DataTable columns={columns} data={itemList} />
+      {isLoading ? (
+        <DataTableSkeleton columns={columns.length} rows={10} />
+      ) : (
+        <DataTable columns={columns} data={itemList} />
+      )}
     </div>
   );
 }

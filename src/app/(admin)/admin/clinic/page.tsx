@@ -7,6 +7,7 @@ import ClinicAddDialog from "./components/create-dialog";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useErrorNotification } from "@/hooks/useErrorNotification";
 import { columns } from "./columns";
+import DataTableSkeleton from "@/components/dataTableSkelenton";
 
 export default function ClinicManagementPage() {
   const [itemList, setItemList] = useState([]);
@@ -64,7 +65,11 @@ export default function ClinicManagementPage() {
           />
         </div>
       </div>
-      <DataTable columns={columns} data={itemList} />
+      {isLoading ? (
+        <DataTableSkeleton columns={columns.length} rows={10} />
+      ) : (
+        <DataTable columns={columns} data={itemList} />
+      )}
     </div>
   );
 }

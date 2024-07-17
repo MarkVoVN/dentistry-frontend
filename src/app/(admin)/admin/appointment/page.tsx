@@ -7,6 +7,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useErrorNotification } from "@/hooks/useErrorNotification";
 import { columns } from "./columns";
 import { AppointmentModel, getAppointmentList } from "@/lib/api/appointmentAPI";
+import DataTableSkeleton from "@/components/dataTableSkelenton";
 
 export default function AppointmentManagementPage() {
   const [itemList, setItemList] = useState<AppointmentModel[]>([]); // Initialize with AppointmentModel type
@@ -61,7 +62,11 @@ export default function AppointmentManagementPage() {
           />
         </div>
       </div>
-      <DataTable columns={columns} data={itemList} />
+      {isLoading ? (
+        <DataTableSkeleton columns={columns.length} rows={10} />
+      ) : (
+        <DataTable columns={columns} data={itemList} />
+      )}
     </div>
   );
 }

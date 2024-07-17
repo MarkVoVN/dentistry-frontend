@@ -17,6 +17,7 @@ import { getClinicOwnerById } from "@/lib/api/clinicOwnerAPI";
 import toast from "react-hot-toast";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import _ from "lodash";
+import DataTableSkeleton from "@/components/dataTableSkelenton";
 
 export default function AppointmentManagementPage() {
   const [itemList, setItemList] = useState<AppointmentModel[]>([]);
@@ -107,7 +108,11 @@ export default function AppointmentManagementPage() {
           />
         </div>
       </div>
-      <DataTable columns={columns} data={itemList} />
+      {isLoading ? (
+        <DataTableSkeleton columns={columns.length} rows={10} />
+      ) : (
+        <DataTable columns={columns} data={itemList} />
+      )}
     </div>
   );
 }

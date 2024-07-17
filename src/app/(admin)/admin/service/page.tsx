@@ -7,6 +7,7 @@ import ServiceAddDialog from "./components/create-dialog"; // Adjust import as n
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useErrorNotification } from "@/hooks/useErrorNotification";
 import { columns } from "./columns";
+import DataTableSkeleton from "@/components/dataTableSkelenton";
 
 export default function ServiceManagementPage() {
   const [itemList, setItemList] = useState<ServiceModel[]>([]); // Initialize with ServiceModel type
@@ -61,7 +62,11 @@ export default function ServiceManagementPage() {
           />
         </div>
       </div>
-      <DataTable columns={columns} data={itemList} />
+      {isLoading ? (
+        <DataTableSkeleton columns={columns.length} rows={10} />
+      ) : (
+        <DataTable columns={columns} data={itemList} />
+      )}
     </div>
   );
 }

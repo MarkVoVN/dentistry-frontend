@@ -17,6 +17,7 @@ import { useMutation } from "@tanstack/react-query";
 import { getClinicOwnerById } from "@/lib/api/clinicOwnerAPI";
 import toast from "react-hot-toast";
 import useLocalStorage from "@/hooks/useLocalStorage";
+import DataTableSkeleton from "@/components/dataTableSkelenton";
 
 export default function DentistManagementPage() {
   const [itemList, setItemList] = useState<DentistModel[]>([]); // Initialize with DentistModel type
@@ -111,7 +112,11 @@ export default function DentistManagementPage() {
           />
         </div>
       </div>
-      <DataTable columns={columns} data={itemList} />
+      {isLoading ? (
+        <DataTableSkeleton columns={columns.length} rows={10} />
+      ) : (
+        <DataTable columns={columns} data={itemList} />
+      )}
     </div>
   );
 }

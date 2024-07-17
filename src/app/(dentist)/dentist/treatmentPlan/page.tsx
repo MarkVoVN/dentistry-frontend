@@ -21,6 +21,7 @@ import toast from "react-hot-toast";
 import { queryAppointment } from "@/lib/api/appointmentAPI";
 import _ from "lodash";
 import { Loader } from "lucide-react";
+import DataTableSkeleton from "@/components/dataTableSkelenton";
 
 export default function ServiceManagementPage() {
   const [itemList, setItemList] = useState<TreatmentPlanModel[]>([]);
@@ -117,7 +118,11 @@ export default function ServiceManagementPage() {
           />
         </div>
       </div>
-      <DataTable columns={columns} data={itemList} />
+      {isLoading ? (
+        <DataTableSkeleton columns={columns.length} rows={10} />
+      ) : (
+        <DataTable columns={columns} data={itemList} />
+      )}
     </div>
   );
 }

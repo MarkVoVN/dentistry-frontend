@@ -5,6 +5,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { DataTable } from "./data-table";
 import React, { useEffect, useState } from "react";
 import { columns } from "./columns";
+import DataTableSkeleton from "@/components/dataTableSkelenton";
 export default function CustomerPage() {
   const [itemList, setItemList] = useState([]);
 
@@ -24,7 +25,7 @@ export default function CustomerPage() {
   useEffect(() => {
     if (isSuccess && req_data) {
       const { data: customers, pagination } = req_data;
-      
+
       setItemList(customers);
     }
   }, [isSuccess, req_data]);
@@ -50,9 +51,12 @@ export default function CustomerPage() {
             <button onClick={refetch}>reset</button>
           </p>
         </div>
-        
       </div>
-      <DataTable columns={columns} data={itemList} />
+      {isLoading ? (
+        <DataTableSkeleton columns={columns.length} rows={10} />
+      ) : (
+        <DataTable columns={columns} data={itemList} />
+      )}
     </div>
   );
 }

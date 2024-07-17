@@ -157,7 +157,7 @@ export default function DentistAddDialog({
       phoneNumber: defaultValues?.phoneNumber || "",
       email: defaultValues?.email || "",
       specialization: defaultValues?.specialization || "",
-      clinicID: defaultValues?.clinicID || "",
+      clinicID: (defaultValues?.clinicID || "").toString(),
       password: defaultValues?.password || "",
       image: defaultValues?.image || "",
       status: defaultValues?.status || true,

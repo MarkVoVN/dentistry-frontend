@@ -7,6 +7,7 @@ import { useErrorNotification } from "@/hooks/useErrorNotification";
 import { columns } from "./columns";
 import { DentistModel, getDentistList } from "@/lib/api/dentistAPI";
 import DentistAddDialog from "./components/create-dialog";
+import DataTableSkeleton from "@/components/dataTableSkelenton";
 
 export default function DentistManagementPage() {
   const [itemList, setItemList] = useState<DentistModel[]>([]); // Initialize with DentistModel type
@@ -61,7 +62,11 @@ export default function DentistManagementPage() {
           />
         </div>
       </div>
-      <DataTable columns={columns} data={itemList} />
+      {isLoading ? (
+        <DataTableSkeleton columns={columns.length} rows={10} />
+      ) : (
+        <DataTable columns={columns} data={itemList} />
+      )}
     </div>
   );
 }

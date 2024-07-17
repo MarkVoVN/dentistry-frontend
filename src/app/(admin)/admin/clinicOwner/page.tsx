@@ -6,7 +6,11 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useErrorNotification } from "@/hooks/useErrorNotification";
 import { columns } from "./columns";
 import ClinicOwnerAddDialog from "./components/create-dialog";
-import { ClinicOwnerModel, fetchClinicOwnerList } from "@/lib/api/clinicOwnerAPI";
+import {
+  ClinicOwnerModel,
+  fetchClinicOwnerList,
+} from "@/lib/api/clinicOwnerAPI";
+import DataTableSkeleton from "@/components/dataTableSkelenton";
 
 export default function ClinicOwnerManagementPage() {
   const [itemList, setItemList] = useState([]);
@@ -34,7 +38,7 @@ export default function ClinicOwnerManagementPage() {
       setItemList(clinicOwners);
     }
   }, [isSuccess, req_data]);
-  
+
   useErrorNotification({
     isError: isError,
     title: error?.message,
@@ -64,7 +68,11 @@ export default function ClinicOwnerManagementPage() {
           />
         </div>
       </div>
-      <DataTable columns={columns} data={itemList} />
+      {isLoading ? (
+        <DataTableSkeleton columns={columns.length} rows={10} />
+      ) : (
+        <DataTable columns={columns} data={itemList} />
+      )}
     </div>
   );
 }

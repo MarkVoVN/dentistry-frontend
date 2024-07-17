@@ -13,6 +13,7 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { columns } from "./columns";
 import { DataTable } from "./data-table";
+import DataTableSkeleton from "@/components/dataTableSkelenton";
 
 export default function ServiceManagementPage() {
   const [itemList, setItemList] = useState<TreatmentPlanModel[]>([]); // Initialize with ServiceModel type
@@ -100,7 +101,11 @@ export default function ServiceManagementPage() {
           /> */}
         </div>
       </div>
-      <DataTable columns={columns} data={itemList} />
+      {isLoading ? (
+        <DataTableSkeleton columns={columns.length} rows={10} />
+      ) : (
+        <DataTable columns={columns} data={itemList} />
+      )}
     </div>
   );
 }

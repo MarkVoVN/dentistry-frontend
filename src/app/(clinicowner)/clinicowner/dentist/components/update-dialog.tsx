@@ -128,33 +128,34 @@ export default function DentistUpdateDialog({
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
 
-  const thumbs = defaultValues?.image
-    ? [defaultValues?.image].map((file: any) => (
-        <div key={file.name}>
-          <div className="bg-neutral-3">
-            <Image
-              src={defaultValues?.image}
-              width={500}
-              height={500}
-              alt="??"
-              className="object-cover w-full aspect-video "
-            />
+  const thumbs =
+    defaultValues?.image && selectedImages.length == 0
+      ? [defaultValues?.image].map((file: any) => (
+          <div key={file} className="w-full h-full">
+            <div className="bg-neutral-3">
+              <Image
+                src={defaultValues?.image}
+                width={500}
+                height={500}
+                alt="??"
+                className="object-cover w-full aspect-video "
+              />
+            </div>
           </div>
-        </div>
-      ))
-    : selectedImages.map((file: any) => (
-        <div key={file.name}>
-          <div>
-            <Image
-              src={file.preview}
-              width={500}
-              height={500}
-              alt="??"
-              className="object-cover w-full aspect-video "
-            />
+        ))
+      : selectedImages.map((file: any) => (
+          <div key={file.name} className="w-full h-full">
+            <div>
+              <Image
+                src={file.preview}
+                width={500}
+                height={500}
+                alt="??"
+                className="object-cover w-full aspect-video "
+              />
+            </div>
           </div>
-        </div>
-      ));
+        ));
 
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({

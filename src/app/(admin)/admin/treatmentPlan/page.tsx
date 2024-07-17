@@ -12,6 +12,7 @@ import {
   TreatmentPlanModel,
 } from "@/lib/api/treatmentPlanAPI";
 import TreatmentPlanAddDialog from "./components/create-dialog";
+import DataTableSkeleton from "@/components/dataTableSkelenton";
 
 export default function ServiceManagementPage() {
   const [itemList, setItemList] = useState<TreatmentPlanModel[]>([]); // Initialize with ServiceModel type
@@ -63,7 +64,11 @@ export default function ServiceManagementPage() {
           />
         </div>
       </div>
-      <DataTable columns={columns} data={itemList} />
+      {isLoading ? (
+        <DataTableSkeleton columns={columns.length} rows={10} />
+      ) : (
+        <DataTable columns={columns} data={itemList} />
+      )}
     </div>
   );
 }
