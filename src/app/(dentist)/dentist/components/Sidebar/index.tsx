@@ -9,6 +9,7 @@ import {
   Pill,
   Contact,
   MessageCircleMore,
+  UserSquare,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -58,6 +59,16 @@ const sidebarStructure: {
         name: "Chat",
         link: "/dentist/chat",
         icon: <MessageCircleMore />,
+      },
+    ],
+  },
+  {
+    title: "ACCOUNT",
+    items: [
+      {
+        name: "Profile",
+        link: "/dentist/profile",
+        icon: <UserSquare />,
       },
     ],
   },

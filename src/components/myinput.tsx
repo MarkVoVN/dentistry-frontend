@@ -295,12 +295,13 @@ export const MyInputSelect = ({
         {label}
       </Label>
 
-      <DropdownMenu open={readonly ? true : undefined}>
+      <DropdownMenu open={readonly ? false : undefined}>
         <DropdownMenuTrigger
           className={twMerge(
             "h-10 border-[1px] border-neutral-3 rounded-md p-2 px-3 text-left flex flex-row justify-between items-center",
             inputClassName ?? "",
-            errorMessage ? "border-error-2" : ""
+            errorMessage ? "border-error-2" : "",
+            readonly ? "cursor-default" : ""
           )}
         >
           <span>
@@ -308,7 +309,7 @@ export const MyInputSelect = ({
               ? value
               : valueDisplay ?? placeholderText}
           </span>
-          <ChevronDown width={16} height={16}></ChevronDown>
+          {readonly ? null : <ChevronDown width={16} height={16}></ChevronDown>}
         </DropdownMenuTrigger>
         <DropdownMenuContent
           className="min-w-[15vw] 2xl:min-w-[16vw] max-h-[50vh] overflow-y-auto"
