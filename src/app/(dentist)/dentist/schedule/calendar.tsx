@@ -14,6 +14,7 @@ import {
   queryClinicScheduleList,
 } from "@/lib/api/clinicScheduleAPI";
 import { useQuery } from "@tanstack/react-query";
+import { Loader } from "lucide-react";
 import moment from "moment";
 import { useEffect, useState } from "react";
 import "react-big-calendar/lib/css/react-big-calendar.css";
@@ -59,7 +60,7 @@ export default function WeekCalendar({ ClinicID, setSelectedSchedule }: any) {
     times.push(startTime.format("HH:mm"));
     startTime.add(30, "minutes");
   }
-
+  if (isLoadingSchedules) return <Loader />;
   return (
     <Table className="table-fixed w-full h-full border-collapse">
       <TableHeader>
