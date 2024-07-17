@@ -61,6 +61,7 @@ export function ActionsDropdown({
 
       toast.success("Delete service " + row.original.name + " thành công!");
       setIsOpen(false);
+      setIsAlertOpen(false);
     },
     onError: (error) => {
       toast.error(error.message);
