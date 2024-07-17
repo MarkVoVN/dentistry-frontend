@@ -1,4 +1,5 @@
 import { request } from "../utils/axios.config";
+import { NextRequest, NextResponse } from "next/server";
 
 export type SpecificUser = {
   customerID?: string;
@@ -12,13 +13,21 @@ export type SpecificUser = {
   clinicID?: string;
 };
 export const loginUser = (data: { username: string; password: string }) => {
+  // console.log("Next Request", NextRequest);
+ 
+
   return request({
     method: "POST",
     url: `/account/login`,
     data,
   });
 };
-
+export const getCurrentUser = () => {
+  return request({
+    method: "GET",
+    url: `/account/currentUser`,
+  });
+};
 export const registerUser = (data: {
   username: string;
   email: string;

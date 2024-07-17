@@ -9,9 +9,10 @@ import QueryProvider from "@/components/provider/QueryProvider";
 import { Toaster } from "react-hot-toast";
 import Footer from "@/components/shared/Footer";
 import { GlobalStoreProvider } from "@/lib/store/global/provider";
-import { Suspense, useEffect } from "react";
+import { Suspense, useEffect, useState } from "react";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { useRouter } from "next/navigation";
+import { getCurrentUser } from "@/lib/api/userAPI";
 // const inter = Inter({ subsets: ["latin"] });
 
 // export const metadata: Metadata = {
@@ -24,8 +25,9 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+ 
   const router = useRouter();
-
+ 
   useEffect(() => {
     try {
       const accessToken = localStorage.getItem("accessToken");
@@ -33,7 +35,7 @@ export default function RootLayout({
       const decoded = jwt.decode(accessToken) as JwtPayload;
       const role =
         decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
-     
+
       if (role !== "Customer") {
         router.push("/login");
       }

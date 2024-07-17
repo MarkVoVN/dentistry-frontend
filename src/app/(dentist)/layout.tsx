@@ -13,13 +13,6 @@ import Sidebar from "./dentist/components/Sidebar";
 import Header from "./dentist/components/Header";
 import Loader from "./dentist/components/loader";
 import MessageButton from "../(user)/components/MessageButton";
-import {
-  CalendarDays,
-  Stethoscope,
-  Pill,
-  MessageCircle,
-  MessageCircleMore,
-} from "lucide-react";
 
 export default function RootLayout({
   children,
