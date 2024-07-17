@@ -10,12 +10,11 @@ const DropdownUser = () => {
   const router = useRouter();
   const [username, setUsername] = useState("");
   const [role, setRole] = useState("");
-  
+
   const handleLogout = () => {
     console.log("Log out");
     const accessToken = localStorage.getItem("accessToken");
-    document.cookie =
-      "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     if (accessToken != null) {
       localStorage.removeItem("accessToken");
     }
