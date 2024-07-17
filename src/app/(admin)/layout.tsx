@@ -27,15 +27,15 @@ export default function RootLayout({
 
   useEffect(() => {
     try {
-      // const accessToken = localStorage.getItem("accessToken");
-      // if (accessToken == null) throw new Error("accessToken not found");
-      // const decoded = jwt.decode(accessToken) as JwtPayload;
-      // const role =
-      //   decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
-      // const exp = decoded["exp"];
-      // if (role === "Admin") {
-      //   setIsAdmin(true);
-      // }
+      const accessToken = localStorage.getItem("accessToken");
+      if (accessToken == null) throw new Error("accessToken not found");
+      const decoded = jwt.decode(accessToken) as JwtPayload;
+      const role =
+        decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+      const exp = decoded["exp"];
+      if (role === "Admin") {
+        setIsAdmin(true);
+      }
       setLoading(false);
     } catch (err) {
       router.push("/login");
@@ -66,24 +66,51 @@ export default function RootLayout({
                 <Loader />
               ) : (
                 <div className="flex h-screen overflow-hidden">
-                  <>
-                    <Sidebar
-                      sidebarOpen={sidebarOpen}
-                      setSidebarOpen={setSidebarOpen}
-                    />
-
-                    <div className="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden">
-                      <Header
+                  {isAdmin ? (
+                    <>
+                      <Sidebar
                         sidebarOpen={sidebarOpen}
                         setSidebarOpen={setSidebarOpen}
                       />
-                      <main>
-                        <div className="mx-auto max-w-screen-2xl p-2 sm:p-4 md:p-6 2xl:p-10 dark:text-shade-1-100% text-[#1C2434]">
-                          {children}
-                        </div>
-                      </main>
+
+                      <div className="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden">
+                        <Header
+                          sidebarOpen={sidebarOpen}
+                          setSidebarOpen={setSidebarOpen}
+                        />
+                        <main>
+                          <div className="mx-auto max-w-screen-2xl p-2 sm:p-4 md:p-6 2xl:p-10 dark:text-shade-1-100% text-[#1C2434]">
+                            {children}
+                          </div>
+                        </main>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="flex flex-col justify-center gap-6 h-[calc(100vh-350px-64px)] ">
+                      <div className="flex flex-col gap-6  p-10">
+                        <Image
+                          src={"/401.svg"}
+                          alt={"dentistry logo"}
+                          width={300}
+                          height={300}
+                        />
+                        <Typography
+                          headingElement="h2"
+                          headingStyle={"h4"}
+                          className="text-secondary-900 font-bold"
+                        >
+                          You are currently not logged in.
+                        </Typography>
+                        <Button
+                          className=""
+                          variant={"outline"}
+                          onClick={() => router.push("/login")}
+                        >
+                          Login
+                        </Button>
+                      </div>
                     </div>
-                  </>
+                  )}
                 </div>
               )}
             </div>
