@@ -1,9 +1,17 @@
 import { ColumnDef } from "@tanstack/react-table";
-import { formatDateTime, formatPriceToVND, formatTime } from "@/lib/utils";
+import { formatDateTime, formatTime } from "@/lib/utils";
+import Image from "next/image";
 import { ActionsDropdown } from "./components/actions-dropdown";
-import { ServiceModel } from "@/lib/api/serviceAPI";
+import { request } from "@/lib/utils/axios.config";
+import { ClinicModel } from "@/lib/api/clinicAPI";
+import { CustomerModel } from "@/lib/api/customerAPI";
 
-export const columns: (ColumnDef<ServiceModel> & {
+export const columns: (ColumnDef<
+  CustomerModel & {
+    createdAt: any;
+    updatedAt: any;
+  }
+> & {
   show?: boolean;
   accessorKey?: string;
 })[] = [
@@ -11,72 +19,96 @@ export const columns: (ColumnDef<ServiceModel> & {
     accessorKey: "name",
     header: "Name",
     cell: ({ row }) => {
-      const service = row.original;
+      const customer = row.original;
 
       return (
         <div className="flex items-center gap-2">
           <h3 className="text-neutral-8 text-[14px] not-italic leading-[normal] whitespace-nowrap">
-            {service.name}
+            {customer.name}
           </h3>
         </div>
       );
     },
   },
   {
-    accessorKey: "description",
-    header: "Description",
+    accessorKey: "address",
+    header: "Address",
     cell: ({ row }) => {
-      const service = row.original;
+      const customer = row.original;
 
       return (
         <div className="flex items-center gap-2">
           <p className="text-neutral-8 text-[14px] not-italic leading-[normal] whitespace-nowrap">
-            {service.description}
+            {customer.address}
           </p>
         </div>
       );
     },
   },
   {
-    accessorKey: "duration",
-    header: "Duration (mins)",
+    accessorKey: "phoneNumber",
+    header: "Phone Number",
     cell: ({ row }) => {
-      const service = row.original;
+      const customer = row.original;
 
       return (
         <div className="flex items-center gap-2">
           <p className="text-neutral-8 text-[14px] not-italic leading-[normal] whitespace-nowrap">
-            {service.duration}
+            {customer.phoneNumber}
           </p>
         </div>
       );
     },
   },
   {
-    accessorKey: "price",
-    header: "Price",
+    accessorKey: "email",
+    header: "Email",
     cell: ({ row }) => {
-      const service = row.original;
+      const customer = row.original;
 
       return (
         <div className="flex items-center gap-2">
           <p className="text-neutral-8 text-[14px] not-italic leading-[normal] whitespace-nowrap">
-            {formatPriceToVND(service.price)}
+            {customer.email}
           </p>
         </div>
       );
     },
   },
+
   {
-    accessorKey: "clinicID",
-    header: "Clinic",
+    accessorKey: "image",
+    header: "Thumbnail",
     cell: ({ row }) => {
-      const service = row.original;
+      const customer = row.original;
+
+      return (
+        <div className="h-[48px] aspect-video">
+          {customer?.image ? (
+            <Image
+              src={customer?.image}
+              alt={customer.name}
+              width={500}
+              height={4500}
+              className="w-full h-full object-cover p-0"
+            />
+          ) : (
+            "No Image Available"
+          )}
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "status",
+    header: "Status",
+    cell: ({ row }) => {
+      const customer = row.original;
 
       return (
         <div className="flex items-center gap-2">
           <p className="text-neutral-8 text-[14px] not-italic leading-[normal] whitespace-nowrap">
-            {service.clinicDto?.name || "N/A"}
+            {customer.status ? "Active" : "In Active"}
           </p>
         </div>
       );

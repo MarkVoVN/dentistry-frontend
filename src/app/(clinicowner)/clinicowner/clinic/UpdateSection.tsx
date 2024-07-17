@@ -38,25 +38,41 @@ import { useErrorNotification } from "@/hooks/useErrorNotification";
 import TimePicker from "react-time-picker";
 import "react-time-picker/dist/TimePicker.css";
 import { convertHHmmToISO, convertISOtoHHmm } from "@/lib/utils";
+import moment from "moment";
 
-const formSchema = z.object({
-  name: z.string().min(2, {
-    message: "Tên phòng khám phải có ít nhất 2 ký tự",
-  }),
-  address: z.string().min(5, {
-    message: "Địa chỉ phải có ít nhất 5 ký tự",
-  }),
-  phoneNumber: z.string().min(10, {
-    message: "Số điện thoại phải có ít nhất 10 ký tự",
-  }),
-  email: z.string().email({
-    message: "Email không hợp lệ",
-  }),
-  openingHours: z.string().optional(),
-  closingHours: z.string().optional(),
-  image: z.string().optional(),
-  status: z.boolean().optional(),
-});
+const formSchema = z
+  .object({
+    name: z.string().min(2, {
+      message: "Tên phòng khám phải có ít nhất 2 ký tự",
+    }),
+    address: z.string().min(5, {
+      message: "Địa chỉ phải có ít nhất 5 ký tự",
+    }),
+    phoneNumber: z.string().min(10, {
+      message: "Số điện thoại phải có ít nhất 10 ký tự",
+    }),
+    email: z.string().email({
+      message: "Email không hợp lệ",
+    }),
+    openingHours: z.string().optional(),
+    closingHours: z.string().optional(),
+    image: z.string().optional(),
+    status: z.boolean().optional(),
+  })
+  .refine(
+    (data) => {
+      if (data.openingHours && data.closingHours) {
+        const opening = moment(data.openingHours, "HH:mm");
+        const closing = moment(data.closingHours, "HH:mm");
+        return opening.isBefore(closing);
+      }
+      return true;
+    },
+    {
+      message: "Closing time must be after opening time",
+      path: ["closingHours"],
+    }
+  );
 
 export default function ClinicUpdateSection({
   title = "Title",
@@ -180,8 +196,12 @@ export default function ClinicUpdateSection({
       address: values.address || "",
       phoneNumber: values.phoneNumber || "",
       email: values.email || "",
-      openingHours: convertHHmmToISO(values.openingHours || ""),
-      closingHours: convertHHmmToISO(values.closingHours || ""),
+      openingHours: moment(
+        `1970-01-01T${values.openingHours}:00.000Z`
+      ).toISOString(),
+      closingHours: moment(
+        `1970-01-01T${values.closingHours}:00.000Z`
+      ).toISOString(),
       image: image || "",
       status: values.status || false,
     });

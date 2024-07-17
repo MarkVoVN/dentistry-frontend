@@ -37,6 +37,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useErrorNotification } from "@/hooks/useErrorNotification";
 import TimePicker from "react-time-picker";
 import "react-time-picker/dist/TimePicker.css";
+import moment from "moment";
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -184,8 +185,12 @@ export default function ClinicAddDialog({
       address: values.address || "",
       phoneNumber: values.phoneNumber || "",
       email: values.email || "",
-      openingHours: convertHHmmToISO(values.openingHours || ""),
-      closingHours: convertHHmmToISO(values.closingHours || ""),
+      openingHours: moment(
+        `1970-01-01T${values.openingHours}:00.000Z`
+      ).toISOString(),
+      closingHours: moment(
+        `1970-01-01T${values.closingHours}:00.000Z`
+      ).toISOString(),
       image: image[0] || "",
       status: values.status || false,
     });
