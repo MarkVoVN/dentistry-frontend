@@ -283,7 +283,9 @@ export default function AppointmentUpdateDialog({
       appointmentDate: moment(values.appointmentDate, "DD/MM/YYYY").format(
         "YYYY-MM-DD"
       ),
-      appointmentTime: moment(values.appointmentTime, "HH:mm").toISOString(),
+      appointmentTime: moment(
+        `1970-01-01T${values.appointmentTime}:00.000Z`
+      ).toISOString(),
       status: values.status,
     });
   }

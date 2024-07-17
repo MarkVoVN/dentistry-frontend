@@ -173,8 +173,12 @@ export default function ClinicScheduleAddDialog({
       clinicId: defaultValues?.clinicId.toString() ?? "",
       dayOfWeek: values.dayOfWeek,
       slotDuration: values.slotDuration,
-      openingTime: moment(values.openingTime, "HH:mm").toISOString(),
-      closingTime: moment(values.closingTime, "HH:mm").toISOString(),
+      openingTime: moment(
+        `1970-01-01T${values.openingTime}:00.000Z`
+      ).toISOString(),
+      closingTime: moment(
+        `1970-01-01T${values.closingTime}:00.000Z`
+      ).toISOString(),
       maxPatientsPerSlot: values.maxPatientsPerSlot,
     });
   }
