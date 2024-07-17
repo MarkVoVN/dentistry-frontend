@@ -111,6 +111,7 @@ const useSignalRChat = () => {
       if (connection && message.length > 0) {
         await createMessage(messageDto);
         await connection.send("SendMessage", message);
+        console.log("Message sent successfully");
       }
     } catch (error) {
       console.error("Error sending message:", error);
