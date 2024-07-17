@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export type SpecificUser = {
   customerID?: string;
-  dentistID?: string;
+  dentistId?: string;
   name?: string;
   email?: string;
   phoneNumber?: string;
@@ -11,10 +11,11 @@ export type SpecificUser = {
   address?: string;
   gender?: string;
   clinicID?: string;
+  ownerID?: string;
+  status?: boolean;
 };
 export const loginUser = (data: { username: string; password: string }) => {
   // console.log("Next Request", NextRequest);
- 
 
   return request({
     method: "POST",
@@ -36,6 +37,17 @@ export const registerUser = (data: {
   return request({
     method: "POST",
     url: `/account/register-customer`,
+    data,
+  });
+};
+
+export const resetPassword = (data: {
+  username: string;
+  newPassword: string;
+}) => {
+  return request({
+    method: "POST",
+    url: `/account/reset-password`,
     data,
   });
 };

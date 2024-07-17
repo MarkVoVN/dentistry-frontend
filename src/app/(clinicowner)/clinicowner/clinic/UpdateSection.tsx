@@ -194,7 +194,7 @@ export default function ClinicUpdateSection({
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 pt-4">
           <div className="flex flex-col gap-8">
-            <div id="left" className="w-1/3">
+            <div id="left" className="w-full">
               {/* image */}
               <span>Thêm ảnh</span>
               <div

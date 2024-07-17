@@ -1,23 +1,35 @@
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import firebaseServiceInstance from "./firebase-service";
+import axios from "axios";
 
 export const uploadMultiImages = async (selectedImages, fileRoute = "/") => {
-  const arrayOfLinkImages = await Promise.all(
-    selectedImages.map(async (image, index) => {
-      const imageRef = ref(firebaseServiceInstance.storage, "/images" + fileRoute + "/" +image.name);
-      return uploadBytes(imageRef, image).then(async () => {
-        // const downloadURL = await getDownloadURL(imageRef)
-        //! update images in firestore
-        // await updateDoc(firebaseServiceInstance.db, "images", {
-        //   images: arrayUnion(downloadURL)
-        // })
+  const accessToken = localStorage.getItem("accessToken");
 
-        //! update images in mongodb
-        // fake promise
-        return getDownloadURL(imageRef)
-      });
-    }
-  ))
+  const formData = new FormData();
+  selectedImages.forEach((file) => {
+    formData.append("files", file);
+  });
+  formData.append("fileRoute", fileRoute);
 
-  return arrayOfLinkImages
-}
+  const options = {
+    method: "POST",
+    url: "/api/upload-images",
+    data: formData,
+    headers: {
+      "Content-Type": "multipart/form-data",
+      Authorization: `Bearer ${accessToken}`,
+    },
+  };
+
+  try {
+    const response = await axios.post("/api/upload-images", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    console.log(response.data.images);
+    return response.data.images;
+  } catch (error) {
+    console.error("Error uploading images:", error);
+    return [];
+  }
+};
