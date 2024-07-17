@@ -125,7 +125,7 @@ export const columns: (ColumnDef<AppointmentModel> & {
       return (
         <div className="flex items-center gap-2">
           <p className="text-neutral-8 text-[14px] not-italic leading-[normal] whitespace-nowrap">
-            {moment(appointment.appointmentTime).format("DD-MM-YYYY hh:mm:ss")}
+            {moment(appointment.appointmentTime).format("HH:mm")}
           </p>
         </div>
       );

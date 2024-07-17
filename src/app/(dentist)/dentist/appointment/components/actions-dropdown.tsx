@@ -72,10 +72,10 @@ export function ActionsDropdown({
   } = useMutation({
     mutationFn: deleteAppointment,
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ["services"] });
+      queryClient.invalidateQueries({ queryKey: ["appointments"] });
 
       toast.success("Delete appointment " + row.original.id + " thành công!");
-      setIsOpen(false);
+      setIsAlertOpen(false);
     },
     onError: (error) => {
       toast.error(error.message);

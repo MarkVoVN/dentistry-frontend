@@ -50,6 +50,7 @@ import moment from "moment";
 import { fetchCustomerList, queryCustomer } from "@/lib/api/customerAPI";
 import { on } from "events";
 import { queryClinicScheduleList } from "@/lib/api/clinicScheduleAPI";
+import { LoaderCircle } from "lucide-react";
 
 const dayArray = [
   "Sunday",
@@ -74,7 +75,7 @@ const appointmentFormSchema = z.object({
 
 export default function AppointmentUpdateDialog({
   title = "Update Appointment",
-  buttonTitle = "Add",
+  buttonTitle = "Updated",
   description,
   defaultValues,
   submitFunction,
@@ -145,7 +146,7 @@ export default function AppointmentUpdateDialog({
     mutationFn: updateAppointment,
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["appointments"] });
-      toast.success("Appointment created successfully!");
+      toast.success("Appointment updated successfully!");
       onOpenChange(false);
     },
   });
@@ -603,8 +604,16 @@ export default function AppointmentUpdateDialog({
                 >
                   Cancel
                 </Button>
-                <Button type="submit" variant={"outline"}>
-                  {buttonTitle}
+                <Button
+                  type="submit"
+                  variant={"outline"}
+                  disabled={status === "pending"}
+                >
+                  {status === "pending" ? (
+                    <LoaderCircle className="h-4 w-4 animate-spin" />
+                  ) : (
+                    buttonTitle
+                  )}
                 </Button>
               </DialogFooter>
             </form>

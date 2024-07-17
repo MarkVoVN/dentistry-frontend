@@ -385,18 +385,17 @@ export default function CustomerUpdateDialog({
               </div>
               <DialogFooter className="mt-4">
                 <Button
-                  disabled={status === "pending"}
                   variant={"outline"}
                   onClick={(e) => {
                     e.preventDefault();
                     onSubmit(form.getValues());
                   }}
-                  className="relative"
+                  disabled={status === "pending"}
                 >
                   {status === "pending" ? (
                     <LoaderCircle className="h-4 w-4 animate-spin" />
                   ) : (
-                    "Cập nhật khách hàng"
+                    "Update Customer"
                   )}
                 </Button>
               </DialogFooter>

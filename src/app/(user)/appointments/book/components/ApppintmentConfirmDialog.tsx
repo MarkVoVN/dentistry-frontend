@@ -4,7 +4,7 @@ import { Typography } from "@/components/ui/typography";
 import { ClinicModel, getClinicById } from "@/lib/api/clinicAPI";
 import { useMutation, useQuery } from "@tanstack/react-query";
 
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { ImageWithFallbackWithIcon } from "@/components/ImageWithFallback";
@@ -149,6 +149,8 @@ export default function AppointmentConfirmDialog({
     title: service_error?.message,
   });
 
+  const router = useRouter();
+
   const {
     mutate,
     status,
@@ -156,9 +158,12 @@ export default function AppointmentConfirmDialog({
   } = useMutation({
     mutationFn: createAppointment,
     onSuccess: (_, variables) => {
-      toast.success("Create appointment successfully!");
+      toast.success(
+        "Create appointment successfully! You can view your appointment in the Profile page."
+      );
 
       setIsOpen(false);
+      router.push("/");
     },
     onError: (error) => {
       toast.error(error.message);

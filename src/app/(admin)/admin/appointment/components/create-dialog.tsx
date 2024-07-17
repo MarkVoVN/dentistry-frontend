@@ -40,6 +40,7 @@ import {
 } from "@/components/ui/select";
 import moment from "moment";
 import { fetchCustomerList } from "@/lib/api/customerAPI";
+import { LoaderCircle } from "lucide-react";
 
 const dayArray = [
   "Sunday",
@@ -569,8 +570,16 @@ export default function AppointmentAddDialog({
                 >
                   Cancel
                 </Button>
-                <Button type="submit" variant={"outline"}>
-                  {buttonTitle}
+                <Button
+                  type="submit"
+                  variant={"outline"}
+                  disabled={status === "pending"}
+                >
+                  {status === "pending" ? (
+                    <LoaderCircle className="h-4 w-4 animate-spin" />
+                  ) : (
+                    buttonTitle
+                  )}
                 </Button>
               </DialogFooter>
             </form>

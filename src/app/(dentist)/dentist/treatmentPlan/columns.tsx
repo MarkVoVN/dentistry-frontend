@@ -119,21 +119,21 @@ export const columns: (ColumnDef<TreatmentPlanModel> & {
       );
     },
   },
-  {
-    accessorKey: "status",
-    header: "Status",
-    cell: ({ row }) => {
-      const treatmentPlan = row.original;
+  // {
+  //   accessorKey: "status",
+  //   header: "Status",
+  //   cell: ({ row }) => {
+  //     const treatmentPlan = row.original;
 
-      return (
-        <div className="flex items-center gap-2">
-          <p className="text-neutral-8 text-[14px] not-italic leading-[normal] whitespace-nowrap">
-            {treatmentPlan.status}
-          </p>
-        </div>
-      );
-    },
-  },
+  //     return (
+  //       <div className="flex items-center gap-2">
+  //         <p className="text-neutral-8 text-[14px] not-italic leading-[normal] whitespace-nowrap">
+  //           {treatmentPlan.status}
+  //         </p>
+  //       </div>
+  //     );
+  //   },
+  // },
   {
     accessorKey: "paymentStatus",
     header: "Payment Status",

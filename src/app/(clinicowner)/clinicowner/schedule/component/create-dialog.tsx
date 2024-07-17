@@ -35,6 +35,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import _ from "lodash";
+import { LoaderCircle } from "lucide-react";
 
 const daysOfWeek = [
   "Sunday",
@@ -373,8 +374,16 @@ export default function ClinicScheduleAddDialog({
                 >
                   Cancel
                 </Button>
-                <Button type="submit" variant={"outline"}>
-                  {buttonTitle}
+                <Button
+                  type="submit"
+                  variant={"outline"}
+                  disabled={status === "pending"}
+                >
+                  {status === "pending" ? (
+                    <LoaderCircle className="h-4 w-4 animate-spin" />
+                  ) : (
+                    buttonTitle
+                  )}
                 </Button>
               </DialogFooter>
             </form>
