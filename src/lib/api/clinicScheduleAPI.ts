@@ -30,6 +30,7 @@ export const fetchClinicScheduleList = () => {
 };
 
 export const queryClinicScheduleList = (query: ClinicScheduleQuery) => {
+  console.log(query);
   return request({
     method: "GET",
     url: `/clinicSchedule`,

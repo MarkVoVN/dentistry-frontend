@@ -360,6 +360,7 @@ export default function ClinicScheduleAddDialog({
                             _.parseInt(e.target.value)
                           )
                         }
+                        min={1}
                       />
                       <FormMessage />
                     </FormItem>

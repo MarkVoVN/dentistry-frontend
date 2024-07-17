@@ -125,7 +125,7 @@ export default function ClinicScheduleUpdateDialog({
     mutationFn: updateClinicSchedule,
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["clinicSchedules"] });
-      console.log("1723817298371623");
+
       toast.success("Clinic Schedule created successfully!");
       onOpenChange(false);
     },
@@ -137,7 +137,6 @@ export default function ClinicScheduleUpdateDialog({
   });
 
   async function onSubmit(values: z.infer<typeof clinicScheduleFormSchema>) {
-    //TODO: fix moment parse HH:mm to ISO without timezone.
     mutate({
       scheduleID: defaultValues?.scheduleId ?? "",
       clinicId: values.clinicId.toString() ?? "",

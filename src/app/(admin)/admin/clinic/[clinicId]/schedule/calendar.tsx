@@ -28,10 +28,16 @@ const days = [
   "Sunday",
 ];
 
-export default function WeekCalendar({ ClinicID, setSelectedSchedule }: any) {
+export default function WeekCalendar({
+  ClinicID,
+  setSelectedSchedule,
+}: {
+  ClinicID: number;
+  setSelectedSchedule: any;
+}) {
   const [schedules, setSchedules] = useState<ClinicScheduleModel[]>([]);
   const [query, setQuery] = useState<ClinicScheduleQuery>({
-    ClinicID: ClinicID ?? 2,
+    ClinicID: ClinicID,
   });
 
   const {

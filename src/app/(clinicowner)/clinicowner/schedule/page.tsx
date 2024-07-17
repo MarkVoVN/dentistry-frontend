@@ -40,6 +40,7 @@ export default function ClinicScheduleManagementPage() {
     mutationFn: getClinicOwnerById,
     onSuccess: (res, variables) => {
       const { clinicID } = res.data;
+
       setClinicId(clinicID);
     },
     onError: (error) => {
@@ -77,11 +78,8 @@ export default function ClinicScheduleManagementPage() {
       )}
       {clinicId && (
         <WeekCalendar
-          clinicID={clinicId}
+          ClinicID={clinicId}
           setSelectedSchedule={setSelectedSchedule}
-          defaultValues={{
-            clinicId: clinicId,
-          }}
         />
       )}
     </div>

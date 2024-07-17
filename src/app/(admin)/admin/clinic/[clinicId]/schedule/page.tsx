@@ -38,14 +38,12 @@ export default function ClinicScheduleManagementPage({
           submitFunction={() => {}}
         />
       )}
-
-      <WeekCalendar
-        clinicID={clinicId}
-        setSelectedSchedule={setSelectedSchedule}
-        defaultValues={{
-          clinicId: clinicId,
-        }}
-      />
+      {clinicId && (
+        <WeekCalendar
+          ClinicID={clinicId}
+          setSelectedSchedule={setSelectedSchedule}
+        />
+      )}
     </div>
   );
 }

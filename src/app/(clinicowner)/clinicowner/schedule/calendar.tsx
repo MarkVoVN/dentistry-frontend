@@ -15,7 +15,7 @@ import {
 } from "@/lib/api/clinicScheduleAPI";
 import { useQuery } from "@tanstack/react-query";
 import moment from "moment";
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 
 const days = [
@@ -28,7 +28,13 @@ const days = [
   "Sunday",
 ];
 
-export default function WeekCalendar({ ClinicID, setSelectedSchedule }: any) {
+export default function WeekCalendar({
+  ClinicID,
+  setSelectedSchedule,
+}: {
+  ClinicID: number;
+  setSelectedSchedule: any;
+}) {
   const [schedules, setSchedules] = useState<ClinicScheduleModel[]>([]);
   const [query, setQuery] = useState<ClinicScheduleQuery>({
     ClinicID: ClinicID,
