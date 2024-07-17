@@ -8,6 +8,7 @@ import {
   UserIcon,
   Pill,
   Contact,
+  UserSquare,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -75,6 +76,16 @@ const sidebarStructure: {
         name: "Customer",
         link: "/clinicowner/customer",
         icon: <UserIcon />,
+      },
+    ],
+  },
+  {
+    title: "ACCOUNT",
+    items: [
+      {
+        name: "Profile",
+        link: "/clinicowner/profile",
+        icon: <UserSquare />,
       },
     ],
   },

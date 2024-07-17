@@ -70,33 +70,35 @@ export default function ClinicManagementPage() {
   });
 
   return (
-    <div className="bg-shade-1-100% p-4 rounded-[8px] space-y-4 text-shade-2-100%">
-      <div className="flex">
-        <div className="flex-1">
-          <h2 className="text-2xl font-bold tracking-tight">
-            Clinic Management
-          </h2>
+    <div className="flex justify-center ">
+      <div className="bg-shade-1-100% w-1/2 p-4 rounded-[8px] space-y-4 text-shade-2-100%">
+        <div className="flex">
+          <div className="flex-1">
+            <h2 className="text-2xl font-bold tracking-tight">
+              Clinic Management
+            </h2>
+          </div>
         </div>
+        {clinic && (
+          <ClinicUpdateSection
+            title="Sửa phòng khám"
+            isOpen={true}
+            setIsOpen={() => {}}
+            submitFunction={() => {}}
+            defaultValues={{
+              id: clinic?.clinicID || "",
+              name: clinic?.name || "",
+              address: clinic?.address || "",
+              phoneNumber: clinic?.phoneNumber || "",
+              email: clinic?.email || "",
+              openingHours: clinic?.openingHours || moment().toISOString(),
+              closingHours: clinic?.closingHours || moment().toISOString(),
+              image: clinic?.image || "",
+              status: clinic?.status || false,
+            }}
+          />
+        )}
       </div>
-      {clinic && (
-        <ClinicUpdateSection
-          title="Sửa phòng khám"
-          isOpen={true}
-          setIsOpen={() => {}}
-          submitFunction={() => {}}
-          defaultValues={{
-            id: clinic?.clinicID || "",
-            name: clinic?.name || "",
-            address: clinic?.address || "",
-            phoneNumber: clinic?.phoneNumber || "",
-            email: clinic?.email || "",
-            openingHours: clinic?.openingHours || moment().toISOString(),
-            closingHours: clinic?.closingHours || moment().toISOString(),
-            image: clinic?.image || "",
-            status: clinic?.status || false,
-          }}
-        />
-      )}
     </div>
   );
 }
