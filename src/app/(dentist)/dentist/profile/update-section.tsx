@@ -155,6 +155,8 @@ export default function DentistUpdateSection({
       toast.success("Cập nhật bác sĩ " + variables.name + " thành công!");
 
       onOpenChange(false);
+
+      submitFunction();
     },
   });
 

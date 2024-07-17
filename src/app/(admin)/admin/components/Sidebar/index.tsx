@@ -38,7 +38,7 @@ const sidebarStructure: {
   }[];
 }[] = [
   {
-    title: "MANAGEMNT",
+    title: "ACCOUNT MANAGEMENT",
     items: [
       {
         name: "Customer",
@@ -46,40 +46,45 @@ const sidebarStructure: {
         icon: <UserIcon />,
       },
       {
-        name: "Clinic",
-        link: "/admin/clinic",
-        icon: <Hospital />,
-      },
-      {
         name: "Clinic Owner",
         link: "/admin/clinicOwner",
         icon: <Laptop />,
-      },
-      {
-        name: "Clinic Schedule",
-        link: "/admin/schedule",
-        icon: <CalendarDays />,
-      },
-      {
-        name: "Services",
-        link: "/admin/service",
-        icon: <Stethoscope />,
-      },
-      {
-        name: "Treatment Plan",
-        link: "/admin/treatmentPlan",
-        icon: <Pill />,
-      },
-      {
-        name: "Appointment",
-        link: "/admin/appointment",
-        icon: <CalendarDays />,
       },
       {
         name: "Dentists",
         link: "/admin/dentist",
         icon: <Contact />,
       },
+    ],
+  },
+  {
+    title: "CLINIC",
+    items: [
+      {
+        name: "Clinic",
+        link: "/admin/clinic",
+        icon: <Hospital />,
+      },
+      // {
+      //   name: "Clinic Schedule",
+      //   link: "/admin/schedule",
+      //   icon: <CalendarDays />,
+      // },
+      // {
+      //   name: "Services",
+      //   link: "/admin/service",
+      //   icon: <Stethoscope />,
+      // },
+      // {
+      //   name: "Treatment Plan",
+      //   link: "/admin/treatmentPlan",
+      //   icon: <Pill />,
+      // },
+      // {
+      //   name: "Appointment",
+      //   link: "/admin/appointment",
+      //   icon: <CalendarDays />,
+      // },
     ],
   },
 ];

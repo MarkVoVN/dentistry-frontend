@@ -1,16 +1,19 @@
 import { request } from "../utils/axios.config";
 
-export type CustomerModel = {
-  id: string;
+export type CustomerCreateModel = {
   name: string;
   email: string;
-  dateOfBirth: Date;
+  dateOfBirth: string;
   phoneNumber: string;
   address: string;
   gender: string;
-  customerID: string;
   image?: string;
-  status: string;
+  status: boolean;
+};
+
+export type CustomerModel = CustomerCreateModel & {
+  id?: string;
+  customerID: string;
 };
 
 export type CustomerQuery = {
@@ -41,5 +44,28 @@ export const queryCustomer = (query: CustomerQuery) => {
     params: {
       ...query,
     },
+  });
+};
+
+export const updateCustomer = (data: CustomerModel) => {
+  return request({
+    method: "PUT",
+    url: `/customer/${data.customerID}`,
+    data,
+  });
+};
+
+export const createCustomer = (data: CustomerModel) => {
+  return request({
+    method: "POST",
+    url: `/customer`,
+    data,
+  });
+};
+
+export const deleteCustomer = (id: string) => {
+  return request({
+    method: "DELETE",
+    url: `/customer/${id}`,
   });
 };
