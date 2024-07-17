@@ -108,7 +108,7 @@ export default function AppointmentManagementPage() {
           </p>
         </div>
         <div>
-          <AppointmentAddDialog
+          {/* <AppointmentAddDialog
             title="Add Appointment"
             buttonTitle="Add Appointment"
             defaultValues={{
@@ -116,7 +116,7 @@ export default function AppointmentManagementPage() {
               dentistID: _.parseInt(local_dentistId),
             }}
             submitFunction={() => {}}
-          />
+          /> */}
         </div>
       </div>
       <DataTable columns={columns} data={itemList} />

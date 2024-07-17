@@ -2,6 +2,7 @@ import axios from "axios";
 
 const client = axios.create({
   baseURL: process.env.NEXT_PUBLIC_BASE_URL,
+  withCredentials: true,
 });
 
 export const request = async (options) => {
@@ -14,7 +15,8 @@ export const request = async (options) => {
   //   const { accessToken } = userState;
   //   token = accessToken;
   // }
-
+ 
+  
   const accessToken = localStorage.getItem("accessToken");
   // Set the authorization header
   accessToken !== "" &&

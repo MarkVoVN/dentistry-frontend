@@ -12,6 +12,7 @@ import {
   TreatmentPlanModel,
 } from "@/lib/api/treatmentPlanAPI";
 import CustomerTreatments from "./components/CustomerTreatments";
+import { getCurrentUser } from "@/lib/api/userAPI";
 
 export default function Profile() {
   const [profileId, setProfileId] = useState<string>();
@@ -19,7 +20,13 @@ export default function Profile() {
   const [appointments, setAppointments] = useState<AppointmentModel[]>([]);
   const [treatments, setTreatments] = useState<TreatmentPlanModel[]>([]);
   const [specificUser, setSpecificUser] = useState<any>(null);
-
+  const [cookies, setCookies] = useState<string>();
+  useEffect(() => {
+    getCurrentUser().then((res) => {
+      console.log(res);
+      setCookies(res.data.token);
+    });
+  }, []);
   useEffect(() => {
     const u = localStorage.getItem("currentUser");
     setSpecificUser(u);

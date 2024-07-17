@@ -20,6 +20,7 @@ import { getDentistById } from "@/lib/api/dentistAPI";
 import toast from "react-hot-toast";
 import { queryAppointment } from "@/lib/api/appointmentAPI";
 import _ from "lodash";
+import { Loader } from "lucide-react";
 
 export default function ServiceManagementPage() {
   const [itemList, setItemList] = useState<TreatmentPlanModel[]>([]);
@@ -92,7 +93,7 @@ export default function ServiceManagementPage() {
   const refetch = () => {
     queryClient.invalidateQueries({ queryKey: ["treatmentPlans"] }); // Adjust queryKey
   };
-
+  if (isLoading) return <Loader />;
   return (
     <div className="bg-shade-1-100% p-4 rounded-[8px] space-y-4 text-shade-2-100%">
       <div className="flex">
