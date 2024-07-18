@@ -192,8 +192,6 @@ export default function CustomerUpdateDialog({
     });
   }
 
-  console.log(form.getValues());
-
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen} modal={true}>
       <DialogContent className="lg:min-w-[50%] lg:left-[350px] lg:translate-x-[0%] max-h-[70%] overflow-y-scroll lg:overflow-auto p-0">
