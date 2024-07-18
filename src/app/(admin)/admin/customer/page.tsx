@@ -18,7 +18,7 @@ export default function CustomerPage() {
     isError,
     isSuccess,
   } = useQuery({
-    queryKey: ["clinics"],
+    queryKey: ["customers"],
     queryFn: fetchCustomerList,
   });
 
@@ -36,7 +36,7 @@ export default function CustomerPage() {
   });
 
   const refetch = () => {
-    queryClient.invalidateQueries({ queryKey: ["todos"] });
+    queryClient.invalidateQueries({ queryKey: ["customers"] });
   };
 
   return (

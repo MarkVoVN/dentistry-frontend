@@ -23,6 +23,8 @@ import { registerUser } from "@/lib/api/userAPI";
 import { useErrorNotification } from "@/hooks/useErrorNotification";
 
 import toast from "react-hot-toast";
+import { Typography } from "@/components/ui/typography";
+import Link from "next/link";
 
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
@@ -139,6 +141,17 @@ export function UseRegisterForm({ className, ...props }: UserAuthFormProps) {
           </Button>
         </form>
       </Form>
+      <div className="flex flex-row justify-center">
+        <Typography headingElement="p" headingStyle={"p"} className="">
+          Already have an account?{" "}
+          <Link
+            href="/login"
+            className="text-primary-700 hover:underline hover:text-primary"
+          >
+            Login now
+          </Link>
+        </Typography>
+      </div>
     </div>
   );
 }

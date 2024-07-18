@@ -46,7 +46,6 @@ import moment from "moment";
 import { Spinnaker } from "next/font/google";
 
 const formSchema = z.object({
-  customerID: z.string(),
   name: z.string().min(2, {
     message: "Tên khách hàng phải có ít nhất 2 ký tự",
   }),
@@ -193,6 +192,8 @@ export default function CustomerUpdateDialog({
     });
   }
 
+  console.log(form.getValues());
+
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen} modal={true}>
       <DialogContent className="lg:min-w-[50%] lg:left-[350px] lg:translate-x-[0%] max-h-[70%] overflow-y-scroll lg:overflow-auto p-0">
@@ -211,7 +212,7 @@ export default function CustomerUpdateDialog({
         <div className="gap-4 py-2 p-4">
           <Form {...form}>
             <form
-              // onSubmit={form.handleSubmit(onSubmit)}
+              onSubmit={form.handleSubmit(onSubmit)}
               className="space-y-8 pt-4"
             >
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -386,10 +387,10 @@ export default function CustomerUpdateDialog({
               <DialogFooter className="mt-4">
                 <Button
                   variant={"outline"}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    onSubmit(form.getValues());
-                  }}
+                  // onClick={(e) => {
+                  // e.preventDefault();
+                  //   onSubmit(form.getValues());
+                  // }}
                   disabled={status === "pending"}
                 >
                   {status === "pending" ? (

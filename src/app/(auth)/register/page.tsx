@@ -24,8 +24,13 @@ export default function RegisterPage() {
             <Link href="/" className="z-20 flex">
               <Image src="/dentistry.svg" alt="logo" width={150} height={150} />
             </Link>
-          
-       
+
+            <h1 className="text-2xl font-semibold tracking-tight">
+              Welcome to Dentistry
+            </h1>
+            <p className="text-sm text-muted-foreground">
+              Register to continue
+            </p>
           </div>
           <UseRegisterForm />
         </div>

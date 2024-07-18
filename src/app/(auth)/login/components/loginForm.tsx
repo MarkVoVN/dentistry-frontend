@@ -25,6 +25,8 @@ import { useErrorNotification } from "@/hooks/useErrorNotification";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import toast from "react-hot-toast";
 import useLocalStorage from "@/hooks/useLocalStorage";
+import Link from "next/link";
+import { Typography } from "@/components/typography";
 
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
@@ -55,7 +57,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
     "currentUser",
     {}
   );
- 
+
   const {
     mutate,
     status,
@@ -65,7 +67,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
     onSuccess: (res, variables) => {
       const { email, token, specificUser } = res.data;
       console.log(res);
-      
+
       // localStorage.setItem("currentUser", specificUser);
       setCurrentUser(specificUser);
 
@@ -147,6 +149,17 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
           </Button>
         </form>
       </Form>
+      <div className="flex flex-row justify-center">
+        <Typography headingElement="p" headingStyle={"p"} className="">
+          Do not have an account?{" "}
+          <Link
+            href="/register"
+            className="text-primary-700 hover:underline hover:text-primary"
+          >
+            Register now
+          </Link>
+        </Typography>
+      </div>
     </div>
   );
 }
