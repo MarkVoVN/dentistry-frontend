@@ -13,6 +13,7 @@ import { Suspense, useEffect, useState } from "react";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { useRouter } from "next/navigation";
 import { getCurrentUser } from "@/lib/api/userAPI";
+import LoadingProviders from "@/components/loading-provider";
 // const inter = Inter({ subsets: ["latin"] });
 
 // export const metadata: Metadata = {
@@ -25,9 +26,8 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
- 
   const router = useRouter();
- 
+
   useEffect(() => {
     try {
       const accessToken = localStorage.getItem("accessToken");
@@ -62,7 +62,9 @@ export default function RootLayout({
         <QueryProvider>
           <GlobalStoreProvider>
             <Header />
-            <Suspense>{children}</Suspense>
+            <Suspense>
+              <LoadingProviders>{children}</LoadingProviders>
+            </Suspense>
             <Footer />
           </GlobalStoreProvider>
         </QueryProvider>

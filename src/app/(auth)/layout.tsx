@@ -4,6 +4,7 @@ import "@/styles/globals.css";
 import QueryProvider from "@/components/provider/QueryProvider";
 import { Toaster } from "react-hot-toast";
 import { GlobalStoreProvider } from "@/lib/store/global/provider";
+import LoadingProviders from "@/components/loading-provider";
 
 export const metadata: Metadata = {
   title: "Dentistry",
@@ -36,7 +37,8 @@ export default function RootLayout({
         <QueryProvider>
           <GlobalStoreProvider>
             {/* <Header /> */}
-            {children}
+            <LoadingProviders>{children}</LoadingProviders>
+
             {/* <Footer /> */}
           </GlobalStoreProvider>
         </QueryProvider>

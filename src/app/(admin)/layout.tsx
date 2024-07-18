@@ -14,6 +14,7 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 import Image from "next/image";
 import { Typography } from "@/components/typography";
 import { Button } from "@/components/ui/button";
+import LoadingProviders from "@/components/loading-provider";
 export default function RootLayout({
   children,
 }: {
@@ -80,7 +81,7 @@ export default function RootLayout({
                         />
                         <main>
                           <div className="mx-auto max-w-screen-2xl p-2 sm:p-4 md:p-6 2xl:p-10 dark:text-shade-1-100% text-[#1C2434]">
-                            {children}
+                            <LoadingProviders>{children}</LoadingProviders>
                           </div>
                         </main>
                       </div>
