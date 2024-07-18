@@ -74,7 +74,7 @@ export default function ClinicOwnerUpdateDialog({
       name: defaultValues?.name || "",
       phoneNumber: defaultValues?.phoneNumber || "",
       email: defaultValues?.email || "",
-      clinicId: defaultValues?.clinicId || "",
+      clinicId: (defaultValues?.clinicId || "").toString(),
       status: defaultValues?.status || true,
     },
   });

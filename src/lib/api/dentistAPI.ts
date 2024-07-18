@@ -1,5 +1,6 @@
 import { request } from "../utils/axios.config";
 import _ from "lodash";
+import { ClinicModel } from "./clinicAPI";
 
 export type DentistCreateModel = {
   clinicID: number;
@@ -15,6 +16,7 @@ export type DentistCreateModel = {
 export type DentistModel = DentistCreateModel & {
   id?: string;
   dentistId: number;
+  clinic?: ClinicModel;
 };
 
 export type DentistUpdateModel = Pick<

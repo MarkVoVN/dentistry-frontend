@@ -83,6 +83,21 @@ export const columns: (ColumnDef<DentistModel> & {
     },
   },
   {
+    accessorKey: "clinic",
+    header: "Clinic",
+    cell: ({ row }) => {
+      const dentist = row.original;
+
+      return (
+        <div className="flex items-center gap-2">
+          <p className="text-neutral-8 text-[14px] not-italic leading-[normal] whitespace-nowrap">
+            {dentist.clinic?.name}
+          </p>
+        </div>
+      );
+    },
+  },
+  {
     accessorKey: "status",
     header: "Status",
     cell: ({ row }) => {
